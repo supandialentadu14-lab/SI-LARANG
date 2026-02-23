@@ -1,0 +1,59 @@
+/* 
+|--------------------------------------------------------------------------
+| Import Tailwind CSS
+|--------------------------------------------------------------------------
+|
+| Mengimpor seluruh utility class Tailwind (flex, grid, bg-*, text-*,
+| spacing, dll). Di Tailwind v4 cukup menggunakan @import ini saja.
+|
+*/
+@import 'tailwindcss';
+
+
+/* 
+|--------------------------------------------------------------------------
+| Source Scanning (Purge Detection)
+|--------------------------------------------------------------------------
+|
+| @source digunakan agar Tailwind melakukan scanning ke file-file berikut
+| untuk mendeteksi class yang digunakan. Jika tidak ditambahkan,
+| class bisa terhapus saat proses build (tree-shaking).
+|
+*/
+
+/* Scan file pagination bawaan Laravel */
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+/* Scan file hasil compile Blade (cached views) */
+@source '../../storage/framework/views/*.php';
+
+/* Scan semua file Blade di folder resources */
+@source '../**/*.blade.php';
+
+/* Scan semua file JavaScript di folder resources */
+@source '../**/*.js';
+
+
+/* 
+|--------------------------------------------------------------------------
+| Custom Theme Configuration
+|--------------------------------------------------------------------------
+|
+| @theme digunakan untuk mengoverride atau menambahkan variable desain.
+| Di sini kita mengatur font default (font-sans).
+|
+*/
+@theme {
+    /*
+    |--------------------------------------------------------------------------
+    | Default Sans Font
+    |--------------------------------------------------------------------------
+    |
+    | Mengganti font default Tailwind menjadi "Instrument Sans".
+    | Akan digunakan ketika memakai class `font-sans`.
+    |
+    */
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 
+        'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
