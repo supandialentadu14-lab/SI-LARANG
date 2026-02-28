@@ -5,8 +5,10 @@
 @section('subheader', 'Pratinjau & cetak')
 
 @section('actions')
-    <button onclick="window.print()" class="no-print btn btn-neutral"><i class="fas fa-print"></i> Cetak</button>
-    <a href="{{ route('reports.opname.export') }}" class="no-print btn btn-primary ml-2"><i class="fas fa-file-excel"></i> Export Excel</a>
+    <button type="button" onclick="openPrintPreview()" class="no-print btn btn-neutral"><i class="fas fa-print"></i> Cetak</button>
+    @if (\Illuminate\Support\Facades\Route::has('reports.opname.export'))
+        <a href="{{ route('reports.opname.export') }}" class="no-print btn btn-primary ml-2"><i class="fas fa-file-excel"></i> Export Excel</a>
+    @endif
     <form method="POST" action="{{ route('reports.opname.save') }}" class="no-print inline-block ml-2">
         @csrf
         <input type="hidden" name="id" value="{{ session('opname_current_id') ?? ($saved_id ?? '') }}">
@@ -20,6 +22,25 @@
 @endsection
 
 @section('content')
+    <script>
+        function openPrintPreview() {
+            const printArea = document.getElementById('print-area');
+            if (!printArea) return;
+            const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+                .map((el) => el.outerHTML)
+                .join('');
+            const win = window.open('', '_blank', 'width=900,height=1200');
+            if (!win) return;
+            win.document.open();
+            win.document.write(`<!doctype html><html><head><title>Print</title>${styles}</head><body>${printArea.outerHTML}</body></html>`);
+            win.document.close();
+            win.focus();
+            win.onload = () => {
+                win.print();
+                win.onafterprint = () => win.close();
+            };
+        }
+    </script>
     <div id="print-area" class="preview-paper bg-white shadow border border-gray-100 text-black">
         @if (isset($status))
             <div class="no-print mb-4 px-4 py-3 bg-green-50 text-green-700 border border-green-200 rounded">

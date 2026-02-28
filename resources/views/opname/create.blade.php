@@ -9,24 +9,6 @@
         window.opnameForm = function () {
             return {
                 items: {!! json_encode(($data['items'] ?? [])) !!},
-                async prefill() {
-                    try {
-                        const date = this.$refs.tanggal?.value || '{{ $data['tanggal'] ?? now()->toDateString() }}';
-                        const url = `{{ route('reports.opname.prefill') }}?date=${encodeURIComponent(date)}`;
-                        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-                        const json = await res.json();
-                        this.items = Array.isArray(json.items) ? json.items : [];
-                    } catch (e) {
-                        this.items = {!! json_encode(($data['items'] ?? [])) !!};
-                    }
-                },
-                addItem() { this.items.push({}); },
-                removeItem(i) { this.items.splice(i, 1); },
-                recalc(i) {
-                    const qty = parseInt(this.items[i]?.kuantitas || 0, 10);
-                    const price = parseInt(this.items[i]?.harga || 0, 10);
-                    this.items[i].jumlah = (qty * price) || 0;
-                },
                 onDateChange() { this.updatePembuka(); },
                 updatePembuka() {
                     try {
@@ -70,15 +52,15 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">Nomor</label>
-                <input type="text" name="nomor" value="{{ $data['nomor'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300" required>
+                <input type="text" name="nomor" value="{{ $data['nomor'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
             </div>
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">Tanggal</label>
-                <input x-ref="tanggal" @change="onDateChange()" type="date" name="tanggal" value="{{ $data['tanggal'] ?? now()->toDateString() }}" class="w-full px-4 py-2 rounded-lg border border-gray-300" required>
+                <input x-ref="tanggal" @change="onDateChange()" type="date" name="tanggal" value="{{ $data['tanggal'] ?? now()->toDateString() }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
             </div>
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">Tempat</label>
-                <input x-ref="tempat" @input="updatePembuka()" type="text" name="tempat" value="{{ $data['tempat'] ?? ($opd->nama_opd ?? '') }}" class="w-full px-4 py-2 rounded-lg border border-gray-300" required>
+                <input x-ref="tempat" @input="updatePembuka()" type="text" name="tempat" value="{{ $data['tempat'] ?? ($opd->nama_opd ?? '') }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
             </div>
         </div>
 
@@ -102,7 +84,7 @@
                 @endif
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Nama</label>
-                    <input x-ref="pp_nama" type="text" name="pihak_pertama[nama]" value="{{ $data['pihak_pertama']['nama'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300" required>
+                    <input x-ref="pp_nama" type="text" name="pihak_pertama[nama]" value="{{ $data['pihak_pertama']['nama'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">NIP</label>
@@ -110,7 +92,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Jabatan</label>
-                    <input x-ref="pp_jabatan" type="text" name="pihak_pertama[jabatan]" value="{{ $data['pihak_pertama']['jabatan'] ?? 'Mengetahui, Kepala Dinas Komunikasi dan Informatika' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300" required>
+                    <input x-ref="pp_jabatan" type="text" name="pihak_pertama[jabatan]" value="{{ $data['pihak_pertama']['jabatan'] ?? 'Mengetahui, Kepala Dinas Komunikasi dan Informatika' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
                 </div>
             </div>
             <div class="space-y-3">
@@ -134,7 +116,7 @@
                 @endif
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Nama</label>
-                    <input x-ref="pk_nama" type="text" name="pihak_kedua[nama]" value="{{ $data['pihak_kedua']['nama'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300" required>
+                    <input x-ref="pk_nama" type="text" name="pihak_kedua[nama]" value="{{ $data['pihak_kedua']['nama'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">NIP</label>
@@ -142,9 +124,18 @@
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Jabatan</label>
-                    <input x-ref="pk_jabatan" type="text" name="pihak_kedua[jabatan]" value="{{ $data['pihak_kedua']['jabatan'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300" required>
+                    <input x-ref="pk_jabatan" type="text" name="pihak_kedua[jabatan]" value="{{ $data['pihak_kedua']['jabatan'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
                 </div>
             </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2">
+            <button type="submit" formaction="{{ route('reports.opname.report') }}" formmethod="POST" class="btn btn-warning">
+                <i class="fas fa-eye"></i> Preview Laporan
+            </button>
+            <button type="submit" formaction="{{ route('reports.opname.save') }}" formmethod="POST" class="btn btn-success">
+                <i class="fas fa-save"></i> Simpan
+            </button>
         </div>
     </form>
 @endsection

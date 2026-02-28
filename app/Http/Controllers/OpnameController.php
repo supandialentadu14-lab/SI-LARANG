@@ -82,27 +82,29 @@ class OpnameController extends Controller
     public function report(Request $request): View
     {
         $validated = $request->validate([
-            'nomor' => 'required|string|max:100',
-            'tanggal' => 'required|date',
-            'tempat' => 'required|string|max:255',
+            'nomor' => 'nullable|string|max:100',
+            'tanggal' => 'nullable|date',
+            'tempat' => 'nullable|string|max:255',
             'pembuka' => 'nullable|string',
-            'pihak_pertama.nama' => 'required|string|max:255',
+            'pihak_pertama.nama' => 'nullable|string|max:255',
             'pihak_pertama.nip' => 'nullable|string|max:50',
-            'pihak_pertama.jabatan' => 'required|string|max:255',
-            'pihak_kedua.nama' => 'required|string|max:255',
+            'pihak_pertama.jabatan' => 'nullable|string|max:255',
+            'pihak_kedua.nama' => 'nullable|string|max:255',
             'pihak_kedua.nip' => 'nullable|string|max:50',
-            'pihak_kedua.jabatan' => 'required|string|max:255',
-            'items' => 'required|array|min:1',
-            'items.*.nama' => 'required|string|max:255',
-            'items.*.kuantitas' => 'required|integer|min:1',
-            'items.*.satuan' => 'nullable|string|max:50',
-            'items.*.harga' => 'nullable|integer|min:0',
-            'items.*.jumlah' => 'nullable|integer|min:0',
-            'items.*.kondisi' => 'nullable|string|max:3',
+            'pihak_kedua.jabatan' => 'nullable|string|max:255',
         ]);
+        $opd = OpdSetting::where('user_id', Auth::id())->first();
+        $validated['tanggal'] = $validated['tanggal'] ?? now()->toDateString();
+        $validated['tempat'] = $validated['tempat'] ?? ($opd->nama_opd ?? '');
+        $validated['nomor'] = $validated['nomor'] ?? '-';
+        $validated['pihak_pertama']['nama'] = $validated['pihak_pertama']['nama'] ?? ($opd->kepala_nama ?? '');
+        $validated['pihak_pertama']['nip'] = $validated['pihak_pertama']['nip'] ?? ($opd->kepala_nip ?? '');
+        $validated['pihak_pertama']['jabatan'] = $validated['pihak_pertama']['jabatan'] ?? ($opd->kepala_jabatan ?? '');
+        $validated['pihak_kedua']['nama'] = $validated['pihak_kedua']['nama'] ?? ($opd->pengurus_nama ?? '');
+        $validated['pihak_kedua']['nip'] = $validated['pihak_kedua']['nip'] ?? ($opd->pengurus_nip ?? '');
+        $validated['pihak_kedua']['jabatan'] = $validated['pihak_kedua']['jabatan'] ?? ($opd->pengurus_jabatan ?? '');
         $validated['items'] = $this->prefillOpnameItemsByDate($validated['tanggal']);
         $validated['user_id'] = Auth::id();
-        $opd = OpdSetting::where('user_id', Auth::id())->first();
         if (empty($validated['pembuka'])) {
             $opdNama = $opd->nama_opd ?? ($validated['tempat'] ?? '-');
             $validated['pembuka'] = $this->buildPembuka($validated['tanggal'], $opdNama);
@@ -116,7 +118,36 @@ class OpnameController extends Controller
 
     public function save(Request $request): RedirectResponse|View
     {
-        $data = session('opname_current') ?? $request->all();
+        $validated = $request->validate([
+            'nomor' => 'nullable|string|max:100',
+            'tanggal' => 'nullable|date',
+            'tempat' => 'nullable|string|max:255',
+            'pembuka' => 'nullable|string',
+            'pihak_pertama.nama' => 'nullable|string|max:255',
+            'pihak_pertama.nip' => 'nullable|string|max:50',
+            'pihak_pertama.jabatan' => 'nullable|string|max:255',
+            'pihak_kedua.nama' => 'nullable|string|max:255',
+            'pihak_kedua.nip' => 'nullable|string|max:50',
+            'pihak_kedua.jabatan' => 'nullable|string|max:255',
+        ]);
+        $opd = OpdSetting::where('user_id', Auth::id())->first();
+        $validated['tanggal'] = $validated['tanggal'] ?? now()->toDateString();
+        $validated['tempat'] = $validated['tempat'] ?? ($opd->nama_opd ?? '');
+        $validated['nomor'] = $validated['nomor'] ?? '-';
+        $validated['pihak_pertama']['nama'] = $validated['pihak_pertama']['nama'] ?? ($opd->kepala_nama ?? '');
+        $validated['pihak_pertama']['nip'] = $validated['pihak_pertama']['nip'] ?? ($opd->kepala_nip ?? '');
+        $validated['pihak_pertama']['jabatan'] = $validated['pihak_pertama']['jabatan'] ?? ($opd->kepala_jabatan ?? '');
+        $validated['pihak_kedua']['nama'] = $validated['pihak_kedua']['nama'] ?? ($opd->pengurus_nama ?? '');
+        $validated['pihak_kedua']['nip'] = $validated['pihak_kedua']['nip'] ?? ($opd->pengurus_nip ?? '');
+        $validated['pihak_kedua']['jabatan'] = $validated['pihak_kedua']['jabatan'] ?? ($opd->pengurus_jabatan ?? '');
+        $validated['items'] = $this->prefillOpnameItemsByDate($validated['tanggal']);
+        $validated['user_id'] = Auth::id();
+        if (empty($validated['pembuka'])) {
+            $opdNama = $opd->nama_opd ?? ($validated['tempat'] ?? '-');
+            $validated['pembuka'] = $this->buildPembuka($validated['tanggal'], $opdNama);
+        }
+        $data = $validated;
+        session(['opname_current' => $data]);
         $currentId = session('opname_current_id') ?? $request->input('id');
         $disk = Storage::disk('local');
         $userDir = 'users/'.Auth::id().'/opname';
@@ -244,4 +275,3 @@ class OpnameController extends Controller
         ]);
     }
 }
-
