@@ -420,48 +420,46 @@ class NotaPesananController extends Controller
         $items = ($data['items'] ?? []);
         $belanja = (string)($data['belanja'] ?? '');
         $allowedNames = [];
+        $productById = [];
         try {
-            $allowedNames = \App\Models\Product::with('category')
-                ->get()
+            $allProducts = \App\Models\Product::with('category')->get();
+            $allowedNames = $allProducts
                 ->filter(fn($p) => (optional($p->category)->name ?? '') === $belanja)
                 ->map(fn($p) => (string)$p->name)
                 ->all();
+            $productById = $allProducts
+                ->mapWithKeys(fn($p) => [(string)$p->id => (string)$p->name])
+                ->all();
         } catch (\Throwable $e) {
             $allowedNames = [];
+            $productById = [];
         }
-        $map = [];
+        $unique = [];
         foreach ($items as $it) {
+            $name = trim((string)($it['name'] ?? ''));
+            $pid = trim((string)($it['product_id'] ?? ''));
+            if ($name === '' && $pid !== '' && isset($productById[$pid])) {
+                $name = $productById[$pid];
+            }
+            if ($name !== '' && preg_match('/^\d+$/', $name) && isset($productById[$name])) {
+                $name = $productById[$name];
+            }
             $qty = (int)($it['qty'] ?? 0);
             $price = (int)($it['price'] ?? 0);
             $unit = trim((string)($it['unit'] ?? ''));
-            $k = $qty . '|' . strtolower($unit) . '|' . $price;
-            if (!isset($map[$k])) {
-                $map[$k] = $it;
-            } else {
-                $cur = $map[$k];
-                $curName = trim((string)($cur['name'] ?? ''));
-                $itName = trim((string)($it['name'] ?? ''));
-                if (preg_match('/^\d+$/', $curName)) $curName = '';
-                if (preg_match('/^\d+$/', $itName)) $itName = '';
-                $curOk = $curName !== '' && in_array($curName, $allowedNames, true);
-                $itOk = $itName !== '' && in_array($itName, $allowedNames, true);
-                if ($curOk && !$itOk) {
-                    // keep current
-                } elseif (!$curOk && $itOk) {
-                    $map[$k] = $it;
-                } elseif ($curName === '' && $itName !== '') {
-                    $map[$k] = $it;
-                }
+            if ($name === '' || preg_match('/^\d+$/', $name)) {
+                continue;
+            }
+            if (!empty($allowedNames) && !in_array($name, $allowedNames, true)) {
+                continue;
+            }
+            $key = strtolower($name) . '|' . $qty . '|' . strtolower($unit) . '|' . $price;
+            if (!isset($unique[$key])) {
+                $it['name'] = $name;
+                $unique[$key] = $it;
             }
         }
-        $data['items'] = array_values(array_filter($map, function($it) use ($allowedNames){
-            $nm = trim((string)($it['name'] ?? ''));
-            if ($nm === '') return false;
-            if (preg_match('/^\d+$/', $nm)) return false;
-            // if allowed list exists, require membership
-            if (!empty($allowedNames) && !in_array($nm, $allowedNames, true)) return false;
-            return true;
-        }));
+        $data['items'] = array_values($unique);
         Storage::disk('local')->put($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         session([
             'nota_current' => $data,

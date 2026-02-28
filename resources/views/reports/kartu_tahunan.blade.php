@@ -100,33 +100,19 @@
             .report-table { width: 100%; }
         }
         @media print {
-
-            body * {
-                visibility: hidden;
-            }
-
-            .print-area,
-            .print-area * {
-                visibility: visible;
-            }
-
-            .print-area {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area {
+                position: static !important;
+                width: auto !important;
+                overflow: visible !important;
                 border: none !important;
+                display: block !important;
+                background: #ffffff !important;
             }
-
-            .print\:hidden {
-                display: none !important;
-            }
-
-            @page {
-                size: 330mm 210mm;
-                margin: 12mm;
-            }
-            body { margin: 0; }
+            .print\:hidden { display: none !important; }
+            @page { size: 330mm 210mm; margin: 12mm; }
+            body { margin: 0; background: #ffffff !important; }
         }
     </style>
 
@@ -231,7 +217,8 @@
                         <col style="width:7%"> {{-- Jml Keluar --}}
                         <col style="width:7%"> {{-- Jml Sisa --}}
                         <col style="width:10%"> {{-- Keterangan --}}
-                    </colgroup <thead>
+                    </colgroup>
+                    <thead>
                     <tr>
                         <th rowspan="2">No</th>
                         <th rowspan="2">Tanggal</th>

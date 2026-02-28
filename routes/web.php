@@ -79,6 +79,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports/berita-pinjam-pakai/list', [PinjamPakaiController::class, 'list'])->name('reports.pinjam.list');
     Route::get('reports/berita-pinjam-pakai/{id}', [PinjamPakaiController::class, 'show'])->name('reports.pinjam.show');
     Route::post('reports/berita-pinjam-pakai/{id}/delete', [PinjamPakaiController::class, 'delete'])->name('reports.pinjam.delete');
+    Route::get('reports/berita-pinjam-pakai/{id}/delete', function () {
+        return redirect()->route('reports.pinjam.list');
+    });
 
     // Berita Acara Stock Opname Persediaan
     Route::get('reports/berita-opname', [OpnameController::class, 'form'])->name('reports.opname.form');

@@ -43,25 +43,17 @@
                     }).filter(it => (String(it.name || '').trim() !== ''));
                     const by = {};
                     (this.items || []).forEach(it => {
+                        const nm = String(it.name || '').trim();
+                        if (!nm || /^\d+$/.test(nm)) return;
                         const qty = parseInt(it.qty,10) || 0;
                         const price = parseInt(it.price,10) || 0;
                         const unit = String(it.unit || '').trim().toLowerCase();
-                        const key = `${qty}|${unit}|${price}`;
-                        const cur = by[key];
-                        const curName = cur ? String(cur.name || '').trim() : '';
-                        const itName = String(it.name || '').trim();
-                        if (!cur) {
-                            by[key] = it;
-                        } else if (curName === '' && itName !== '') {
+                        const key = `${nm.toLowerCase()}|${qty}|${unit}|${price}`;
+                        if (!by[key]) {
                             by[key] = it;
                         }
                     });
-                    this.items = Object.values(by).filter(it => {
-                        const nm = String(it.name || '').trim();
-                        if (!nm) return false;
-                        if (/^\d+$/.test(nm)) return false;
-                        return true;
-                    });
+                    this.items = Object.values(by);
                 },
                 addItem() {
                     this.items.push({ name: '', qty: '', unit: '', price: '', total: '' });

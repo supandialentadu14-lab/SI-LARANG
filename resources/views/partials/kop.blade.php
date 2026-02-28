@@ -7,11 +7,11 @@
     .kop-logo img { width: 70px; height: 70px; object-fit: contain; }
     .kop-text { text-align: center; }
     .kop-text .line1 { font-weight: 800; font-size: 16px; letter-spacing: .4px; text-transform: uppercase; line-height: 1.1; margin: 0; }
-    .kop-text .line2 { font-weight: 800; font-size: 22px; text-transform: uppercase; line-height: 1.1; margin: 2px 0 0 0; }
+    .kop-text .line2 { font-weight: 800; font-size: 22px; text-transform: uppercase; line-height: 1.1; margin: 0; }
     .kop-text .line3, .kop-text .line4 { font-style: italic; font-size: 13px; line-height: 1.1; margin: 0; }
     @media print {
         .kop-logo { width: 100px; }
-        .kop-logo img { width: 90px; height: 90px; }
+        .kop-logo img { width: 70px; height: 70px; }
         .kop-text .line2 { font-size: 22px; }
     }
 </style>
@@ -30,7 +30,7 @@
     </tr>
     <tr>
         <td colspan="2">
-            <div class="border-b-4 border-black mt-2 mb-2"></div>
+            <div class="border-b-4 border-black mt-0 mb-0"></div>
         </td>
     </tr>
 </table>

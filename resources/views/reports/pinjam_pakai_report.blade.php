@@ -20,7 +20,7 @@
 @endsection
 
 @section('content')
-    <div id="print-area" class="preview-paper bg-white shadow border border-gray-100 text-black">
+    <div id="print-area" class="preview-paper bg-white text-black">
         @if(isset($status))
             <div class="no-print mb-4 px-4 py-3 bg-green-50 text-green-700 border border-green-200 rounded">
                 {{ $status }}
@@ -42,11 +42,27 @@
                 .kop-text .line2 { font-weight: 800; font-size: 22px; }
                 .kop-text .line3, .kop-text .line4 { font-style: italic; font-size: 13px; line-height: 1.25; }
                 @media print {
-                    @page { size: auto; margin: 10mm; }
-                }
-                @media print {
+                    html, body { background: #ffffff !important; }
+                    body * { visibility: hidden; }
+                    #print-area, #print-area * { visibility: visible; }
+                    #print-area { position: static !important; width: auto !important; overflow: visible !important; }
+                    @page { size: 210mm 330mm; margin: 10mm 10mm 10mm 10mm; }
+                    body { margin: 0; }
+                    .kop { margin-top: 0 !important; }
+                    .preview-paper { width: 190mm !important; min-height: auto !important; padding: 0 6mm 2mm 6mm !important; margin: 0 !important; box-sizing: border-box; background: #ffffff !important; box-shadow: none !important; }
+                    #print-area { background: #ffffff !important; box-shadow: none !important; }
+                    .bg-gray-50, .bg-gray-100, .bg-gray-200 { background: #ffffff !important; }
+                    thead, tbody, tfoot, tr, th, td { background: #ffffff !important; }
+                    .shadow, .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .ring-1, .ring-2, .ring { box-shadow: none !important; }
+                    * { background: #ffffff !important; }
+                    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                     .kop-logo { width: 100px; }
                     .kop-text .line2 { font-size: 22px; }
+                }
+                @media screen {
+                    html, body { background: #ffffff !important; }
+                    #print-area { box-shadow: none !important; background: #ffffff !important; }
+                    .preview-paper { box-shadow: none !important; background: #ffffff !important; }
                 }
                 .preview-paper {
                     width: 210mm;
@@ -54,21 +70,25 @@
                     margin: 0 auto;
                     background: #fff;
                     padding: 10mm;
+                    line-height: 1.2;
                 }
+                .preview-paper p { margin: 2px 0; }
+                .preview-paper h2 { margin: 2px 0; }
+                .preview-paper table { margin-top: 4px; }
             </style>
             @include('partials.kop', ['opd' => $opd])
         </div>
 
-        <div class="text-center mb-4">
+        <div class="text-center mb-1">
             <h2 class="font-extrabold text-lg underline ">BERITA ACARA SERAH TERIMA BARANG INVENTARIS</h2>
             <p class="text-sm">NO: {{ $data['nomor'] }}</p>
         </div>
 
-        <p class="mb-3 text-sm">
+        <p class="mb-1 text-sm">
                 {{ $data['pembuka'] ?? ('Pada hari ini ' . \Illuminate\Support\Carbon::parse($data['tanggal'])->translatedFormat('l d F Y') . ', bertempat di ' . ucwords(strtolower(($opd->nama_opd ?? null) ?: ($data['tempat'] ?? '-'))) . ' Kabupaten Bolaang Mongondow Selatan, yang bertanda tangan dibawah ini:') }}
         </p>
 
-        <div class="mb-4">
+        <div class="mb-2">
             <table class="w-full text-sm">
                 <tr>
                     <td class="w-28 align-top">N a m a</td>
@@ -86,10 +106,10 @@
                     <td class="align-top">{{ $data['pihak_pertama']['jabatan'] }}</td>
                 </tr>
             </table>
-            <p class="mt-2 text-sm">Selanjutnya disebut <span class="font-bold">PIHAK PERTAMA</span></p>
+            <p class="mt-1 text-sm">Selanjutnya disebut <span class="font-bold">PIHAK PERTAMA</span></p>
         </div>
 
-        <div class="mb-4">
+        <div class="mb-2">
             <table class="w-full text-sm">
                 <tr>
                     <td class="w-28 align-top">N a m a</td>
@@ -107,14 +127,14 @@
                     <td class="align-top">{{ $data['pihak_kedua']['jabatan'] }}</td>
                 </tr>
             </table>
-            <p class="mt-2 text-sm">Selanjutnya disebut <span class="font-bold">PIHAK KEDUA</span></p>
+            <p class="mt-1 text-sm">Selanjutnya disebut <span class="font-bold">PIHAK KEDUA</span></p>
         </div>
 
-        <p class="mb-4 text-sm">
-            Bahwa kedua belah pihak sepakat melakukan penyerahan/terima barang inventaris sebagai berikut:
+        <p class="mb-1 text-sm">
+            Bahwa kedua belah pihak sepakat mengadakan perjanjian serah terima barang inventaris kantor/kendaraan milik Pemerintah Kabupaten Bolaang Mongondow Selatan : 
         </p>
 
-        <div class="overflow-x-auto mb-4">
+        <div class="overflow-x-auto mb-2">
             <table class="w-full text-xs border border-black print:text-[10px]">
                 <thead>
                     <tr class="text-center font-bold">
@@ -123,8 +143,8 @@
                         <th class="border border-black px-2 py-1">Merk</th>
                         <th class="border border-black px-2 py-1">Type</th>
                         <th class="border border-black px-2 py-1">Nomor Polisi (Khusus Kendaraan)</th>
-                        <th class="border border-black px-2 py-1">Tahun</th>
-                        <th class="border border-black px-2 py-1">Kondisi</th>
+                        <th class="border border-black px-2 py-1">Tahun Pembelian</th>
+                        <th class="border border-black px-2 py-1">Kondisi Barang</th>
                         <th class="border border-black px-2 py-1">Jumlah Barang</th>
                     </tr>
                 </thead>
@@ -145,17 +165,26 @@
             </table>
         </div>
 
-        <p class="mb-3 text-sm">Dengan ketentuan sebagai berikut:</p>
+        <p class="mb-1 text-sm">Dengan ketentuan sebagai berikut:</p>
         @php
             $rulesLines = preg_split("/\r\n|\n|\r/", $data['ketentuan'] ?? '');
             $rulesLines = array_values(array_filter($rulesLines, fn($l) => trim($l) !== ''));
+            $defaultRules = [
+                'PIHAK PERTAMA selaku Pengguna Barang adalah pejabat pemegang kewenangan penggunaan Barang Milik Daerah, meminjamkan Barang Milik Daerah tersebut di atas kepada PIHAK KEDUA untuk mendukung kegiatan dan kelancaran pelaksanaan tugas pada Dinas Komunikasi dan Informatika.',
+                'PIHAK KEDUA bertanggung jawab dalam hal penggunaan, pemeliharaan dan pengamanan barang tersebut sejak tanggal serah terima ini.',
+                'PIHAK KEDUA dilarang memindahtangankan barang tersebut kepada pihak lain tanpa seizin PIHAK PERTAMA;',
+                'PIHAK KEDUA sanggup mengganti rugi apabila barang yang dipinjamkan hilang;',
+                'PIHAK KEDUA wajib mengembalikan Barang Milik Daerah tersebut kepada PIHAK PERTAMA apabila telah pensiun/dimutasi/dipindahtugaskan ke Instansi lain, tanpa ada Tuntutan Ganti Rugi dan lain sebagainya yang berkaitan dengan Penyerahan Barang Milik Daerah.',
+                'Berita Acara Serah Terima ini berlaku hingga 31 Desember 2026.',
+            ];
+            $list = count($rulesLines) ? $rulesLines : $defaultRules;
         @endphp
         <style>
             .rules-table td:first-child { width: 18px; vertical-align: top; }
             .rules-table td:last-child { padding-left: 6px; }
         </style>
-        <table class="rules-table text-sm mb-6">
-            @foreach ($rulesLines as $i => $line)
+        <table class="rules-table text-sm mb-3">
+            @foreach ($list as $i => $line)
                 @php
                     $m = [];
                     $letter = '';
@@ -168,29 +197,27 @@
                     }
                 @endphp
                 <tr>
-                    <td class="font-bold">{{ $letter }}.</td>
-                    <td class="text-justify">{{ $content }}</td>
+                    <td class=" text-black">{{ $letter }}.</td>
+                    <td class="text-justify">{!! $content !!}</td>
                 </tr>
             @endforeach
         </table>
-<p class="mb-3 text-sm">Demikian Berita Acara Serah Terima Barang Inventaris ini dibuat untuk dapat dipergunakan sebagaimana mestinya.</p>
-        <div class="grid grid-cols-2 gap-6 mt-8">
-            {{-- <div class="text-left text-sm mb-2 col-start-2">
-                {{ $data['tempat'] }}, {{ \Illuminate\Support\Carbon::parse($data['tanggal'])->translatedFormat('d F Y') }}
-            </div> --}}
-            
-            <div class="text-center">
-                {{-- {{ $data['tempat'] }}, {{ \Illuminate\Support\Carbon::parse($data['tanggal'])->locale('id')->translatedFormat('d F Y')}} --}}
-                <p class="mb-1">PIHAK PERTAMA</p>
-                <div class="h-24"></div>
-                <p class="font-bold underline">{{ $data['pihak_pertama']['nama'] }}</p>
-                <p class="text-sm">NIP. {{ $data['pihak_pertama']['nip'] ?? '-' }}</p>
-            </div>
+        <p class="mb-1 text-sm">Demikian Berita Acara Serah Terima Barang Inventaris ini dibuat untuk dapat dipergunakan sebagaimana mestinya.</p>
+        <div class="text-right text-sm mb-1">
+            {{ ucwords(strtolower($data['tempat'])) }}, {{ \Illuminate\Support\Carbon::parse($data['tanggal'])->translatedFormat('d F Y') }}
+        </div>
+        <div class="grid grid-cols-2 gap-6 mt-2">
             <div class="text-center">
                 <p class="mb-1">PIHAK KEDUA</p>
                 <div class="h-24"></div>
                 <p class="font-bold underline">{{ $data['pihak_kedua']['nama'] }}</p>
                 <p class="text-sm">NIP. {{ $data['pihak_kedua']['nip'] ?? '-' }}</p>
+            </div>
+            <div class="text-center">
+                <p class="mb-1">PIHAK PERTAMA</p>
+                <div class="h-24"></div>
+                <p class="font-bold underline">{{ $data['pihak_pertama']['nama'] }}</p>
+                <p class="text-sm">NIP. {{ $data['pihak_pertama']['nip'] ?? '-' }}</p>
             </div>
         </div>
     </div>

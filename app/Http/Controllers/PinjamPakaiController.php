@@ -14,7 +14,9 @@ class PinjamPakaiController extends Controller
 {
     public function form(): View
     {
-        $data = session('pinjam_pakai_current');
+        session()->forget('pinjam_pakai_current');
+        session()->forget('pinjam_pakai_current_id');
+        $data = null;
         $opd = OpdSetting::where('user_id', Auth::id())->first();
         return view('pinjam_pakai.create', compact('data', 'opd'));
     }
@@ -54,7 +56,35 @@ class PinjamPakaiController extends Controller
 
     public function save(Request $request): View|RedirectResponse
     {
-        $data = session('pinjam_pakai_current') ?: $request->all();
+        if ($request->has('items')) {
+            $validated = $request->validate([
+                'nomor' => 'required|string|max:100',
+                'tanggal' => 'required|date',
+                'tempat' => 'required|string|max:255',
+                'pembuka' => 'nullable|string',
+                'pihak_pertama.nama' => 'required|string|max:255',
+                'pihak_pertama.nip' => 'nullable|string|max:50',
+                'pihak_pertama.jabatan' => 'required|string|max:255',
+                'pihak_kedua.nama' => 'required|string|max:255',
+                'pihak_kedua.nip' => 'nullable|string|max:50',
+                'pihak_kedua.jabatan' => 'required|string|max:255',
+                'items' => 'required|array|min:1',
+                'items.*.nama' => 'required|string|max:255',
+                'items.*.merk' => 'nullable|string|max:255',
+                'items.*.tipe' => 'nullable|string|max:255',
+                'items.*.identitas' => 'nullable|string|max:255',
+                'items.*.tahun' => 'nullable|string|max:10',
+                'items.*.kondisi' => 'nullable|string|max:50',
+                'items.*.jumlah' => 'required|integer|min:1',
+                'ketentuan' => 'nullable|string',
+                'berlaku_hingga' => 'nullable|string',
+            ]);
+            $validated['user_id'] = Auth::id();
+            $data = $validated;
+            session(['pinjam_pakai_current' => $data]);
+        } else {
+            $data = session('pinjam_pakai_current') ?: $request->all();
+        }
         $currentId = session('pinjam_pakai_current_id') ?? $request->input('id');
         $disk = Storage::disk('local');
         $userDir = 'users/'.Auth::id().'/pinjam_pakai';
@@ -74,6 +104,9 @@ class PinjamPakaiController extends Controller
         }
         $id = $currentId ?: (string) Str::uuid();
         $path = "{$userDir}/{$id}.json";
+        if (! $disk->exists($userDir)) {
+            $disk->makeDirectory($userDir);
+        }
         $disk->put($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         session()->forget('pinjam_pakai_current_id');
         return redirect()->route('reports.pinjam.list')
@@ -86,6 +119,18 @@ class PinjamPakaiController extends Controller
         if (! Storage::disk('local')->exists($path)) abort(404);
         $json = Storage::disk('local')->get($path);
         $data = json_decode($json, true) ?: [];
+        if (isset($data['items']) && is_array($data['items'])) {
+            $seen = [];
+            $unique = [];
+            foreach ($data['items'] as $row) {
+                $key = trim($row['nama'] ?? '').'|'.trim($row['merk'] ?? '').'|'.trim($row['tipe'] ?? '').'|'.trim($row['identitas'] ?? '').'|'.(string)($row['tahun'] ?? '').'|'.trim($row['kondisi'] ?? '').'|'.(string)($row['jumlah'] ?? '');
+                if (!isset($seen[$key])) {
+                    $seen[$key] = true;
+                    $unique[] = $row;
+                }
+            }
+            $data['items'] = $unique;
+        }
         session([
             'pinjam_pakai_current' => $data,
             'pinjam_pakai_current_id' => $id,
@@ -133,7 +178,7 @@ class PinjamPakaiController extends Controller
         ]);
     }
 
-    public function delete(string $id): View
+    public function delete(string $id): RedirectResponse
     {
         $disk = Storage::disk('local');
         $path = "users/".Auth::id()."/pinjam_pakai/{$id}.json";
@@ -143,27 +188,7 @@ class PinjamPakaiController extends Controller
         } else {
             $status = 'Berita acara tidak ditemukan';
         }
-        $files = $disk->files('users/'.Auth::id().'/pinjam_pakai');
-        $items = [];
-        foreach ($files as $file) {
-            if (! str_ends_with($file, '.json')) continue;
-            $json = $disk->get($file);
-            $data = json_decode($json, true) ?: [];
-            $items[] = [
-                'id' => basename($file, '.json'),
-                'updated' => $disk->lastModified($file),
-                'nomor' => $data['nomor'] ?? '',
-                'tanggal' => $data['tanggal'] ?? '',
-                'tempat' => $data['tempat'] ?? '',
-                'pihak_pertama' => $data['pihak_pertama']['nama'] ?? '',
-                'pihak_kedua' => $data['pihak_kedua']['nama'] ?? '',
-            ];
-        }
-        usort($items, fn($a, $b) => $b['updated'] <=> $a['updated']);
-        return view('pinjam_pakai.index', [
-            'items' => $items,
-            'status' => $status,
-        ]);
+        return redirect()->route('reports.pinjam.list')->with('status', $status);
     }
 
     public function export()
@@ -219,4 +244,3 @@ class PinjamPakaiController extends Controller
             ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
     }
 }
-
