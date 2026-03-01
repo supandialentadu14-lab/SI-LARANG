@@ -22,7 +22,6 @@
 
     <div class="bg-white rounded-lg shadow p-6 mb-6 print:hidden">
         <button type="button" onclick="window.print()" class="btn btn-neutral"> <i class="fas fa-print"></i> Print</button>
-        <a href="{{ route('reports.penerimaan.export') }}" class="btn btn-primary ml-2"> <i class="fas fa-file-excel"></i> Export Excel</a>
         <form method="POST" action="{{ route('reports.penerimaan.save') }}" class="inline-block ml-2">
             @csrf
             <input type="hidden" name="id" value="{{ session('penerimaan_current_id') }}">

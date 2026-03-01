@@ -240,9 +240,18 @@ class BelanjaModalController extends Controller
                 'status' => $it['st'] ?? '',
             ];
         }
+        $unique = [];
+        $seen = [];
+        foreach ($items as $row) {
+            $key = ($row['nama_kegiatan'] ?? '').'|'.($row['pekerjaan'] ?? '').'|'.($row['nilai_kontrak'] ?? '').'|'.($row['tanggal_mulai'] ?? '').'|'.($row['tanggal_akhir'] ?? '').'|'.($row['uang_muka'] ?? '').'|'.($row['termin1'] ?? '').'|'.($row['termin2'] ?? '').'|'.($row['termin3'] ?? '').'|'.($row['termin4'] ?? '').'|'.($row['status'] ?? '');
+            if (!isset($seen[$key])) {
+                $seen[$key] = true;
+                $unique[] = $row;
+            }
+        }
         $prefill = [
             'tahun' => $saved['tahun'] ?? now()->year,
-            'items' => $items,
+            'items' => $unique,
         ];
         session(['belanja_modal_current' => $prefill, 'belanja_modal_current_id' => $id]);
         $opd = OpdSetting::where('user_id', Auth::id())->first();
@@ -311,15 +320,6 @@ class BelanjaModalController extends Controller
         return view('reports.belanja_modal_report', compact('data', 'opd', 'master'));
     }
 
-    public function export()
-    {
-        $opd = OpdSetting::where('user_id', Auth::id())->first();
-        $master = $this->loadNotaMaster();
-        $data = session('belanja_modal_current');
-        if (!$data) abort(400, 'Tidak ada data untuk diekspor');
-        return $this->exportExcel('reports.belanja_modal_report', compact('data', 'opd', 'master'), 'belanja-modal.xls');
-    }
-
     protected function loadNotaMaster(): array
     {
         $row = NotaMaster::where('user_id', Auth::id())->first();
@@ -345,52 +345,5 @@ class BelanjaModalController extends Controller
             'pengurus_pengguna' => ['nama' => '', 'nip' => ''],
             'bendahara' => ['nama' => '', 'nip' => ''],
         ];
-    }
-
-    protected function exportExcel(string $view, array $params, string $filename)
-    {
-        $content = view($view, $params)->render();
-        try {
-            libxml_use_internal_errors(true);
-            $dom = new \DOMDocument('1.0', 'UTF-8');
-            $dom->loadHTML($content);
-            $xpath = new \DOMXPath($dom);
-            $styles = '';
-            foreach ($xpath->query('//style') as $styleNode) {
-                $styles .= $styleNode->nodeValue."\n";
-            }
-            $nodes = $xpath->query("//*[@id='print-area']");
-            if ($nodes && $nodes->length > 0) {
-                $node = $nodes->item(0);
-                $inner = '';
-                foreach ($node->childNodes as $child) {
-                    $inner .= $dom->saveHTML($child);
-                }
-                $content = '<div id="print-area">'.$inner.'</div>';
-                if ($styles) {
-                    $content = '<style>'.$styles.'</style>'.$content;
-                }
-            }
-            libxml_clear_errors();
-        } catch (\Throwable $e) {
-        }
-        $injectCss = '<style>
-            .no-print{display:none !important;}
-            body{background:#ffffff !important;}
-            body *{display:none !important;}
-            #print-area, #print-area *{display:block !important;}
-            .w-full{width:100% !important;}
-            .border-collapse{border-collapse:collapse !important;}
-            .text-xs{font-size:12px !important;}
-            .text-sm{font-size:13px !important;}
-            .text-center{text-align:center !important;}
-            .font-bold{font-weight:700 !important;}
-        </style>';
-        $content = $injectCss.$content;
-        $headers = [
-            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
-        ];
-        return response($content, 200, $headers);
     }
 }

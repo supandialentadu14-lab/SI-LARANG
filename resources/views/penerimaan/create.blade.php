@@ -40,9 +40,13 @@
                 </div>
             </div>
         </div>
-        <div class="flex justify-between items-center">
-            <a href="{{ route('reports.pemeriksaan.form') }}" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-bold">Kembali</a>
-            <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold shadow">Buat Laporan</button>
+        <div class="flex items-center justify-end gap-2 pt-2">
+            <button type="submit" formaction="{{ route('reports.penerimaan.save') }}" class="btn btn-success text-white">
+                <i class="fas fa-save"></i> Simpan
+            </button>
+            <button type="submit" formaction="{{ route('reports.penerimaan.report') }}" class="btn btn-warning">
+                <i class="fas fa-file-alt"></i> Preview Laporan
+            </button>
         </div>
     </form>
 @endsection

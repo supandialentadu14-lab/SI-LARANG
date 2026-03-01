@@ -15,48 +15,64 @@
                         const v = this.$refs.tanggal?.value;
                         const tempat = this.$refs.tempat?.value || '-';
                         if (!v) return;
-                        const d = new Date(v);
-                        const hari = d.toLocaleDateString('id-ID', { weekday: 'long' });
-                        const bulan = d.toLocaleDateString('id-ID', { month: 'long' });
-                        const tanggal = d.getDate();
-                        const tahun = d.getFullYear();
+                        const parts = v.split('-');
+                        const year = parseInt(parts[0], 10);
+                        const monthIndex = parseInt(parts[1], 10) - 1;
+                        const day = parseInt(parts[2], 10);
+                        const d = new Date(year, monthIndex, day);
+                        
+                        const hariMap = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                        const bulanMap = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                        
+                        const hari = hariMap[d.getDay()];
+                        const bulan = bulanMap[d.getMonth()];
+                        const tanggal = day;
+                        const tahun = year;
                         const toWords = (n) => {
                             n = parseInt(n, 10);
-                            const h = [\"\",\"satu\",\"dua\",\"tiga\",\"empat\",\"lima\",\"enam\",\"tujuh\",\"delapan\",\"sembilan\",\"sepuluh\",\"sebelas\"];
-                            const cap = s => s.replace(/\\b\\w/g, c => c.toUpperCase());
+                            const h = ["","satu","dua","tiga","empat","lima","enam","tujuh","delapan","sembilan","sepuluh","sebelas"];
+                            const cap = s => s.replace(/\b\w/g, c => c.toUpperCase());
                             const w = (v) => {
                                 if (v < 12) return h[v];
-                                if (v < 20) return w(v-10) + \" belas\";
-                                if (v < 100) return w(Math.floor(v/10)) + \" puluh \" + w(v%10);
-                                if (v < 200) return \"seratus \" + w(v-100);
-                                if (v < 1000) return w(Math.floor(v/100)) + \" ratus \" + w(v%100);
-                                if (v < 2000) return \"seribu \" + w(v-1000);
-                                if (v < 1000000) return w(Math.floor(v/1000)) + \" ribu \" + w(v%1000);
-                                if (v < 1000000000) return w(Math.floor(v/1000000)) + \" juta \" + w(v%1000000);
+                                if (v < 20) return w(v-10) + " belas";
+                                if (v < 100) return w(Math.floor(v/10)) + " puluh " + w(v%10);
+                                if (v < 200) return "seratus " + w(v-100);
+                                if (v < 1000) return w(Math.floor(v/100)) + " ratus " + w(v%100);
+                                if (v < 2000) return "seribu " + w(v-1000);
+                                if (v < 1000000) return w(Math.floor(v/1000)) + " ribu " + w(v%1000);
+                                if (v < 1000000000) return w(Math.floor(v/1000000)) + " juta " + w(v%1000000);
                                 return String(v);
                             };
                             return cap(w(n).trim());
                         };
                         const tanggalKata = toWords(tanggal);
                         const tahunKata = toWords(tahun);
+                        const cap = s => s.replace(/\b\w/g, c => c.toUpperCase());
                         this.$refs.pembuka.value =
-                            `Pada hari ini ${hari} Tanggal ${tanggalKata} Bulan ${bulan} Tahun ${tahunKata}, bertempat di ${tempat} Kabupaten Bolaang Mongondow Selatan, yang bertanda tangan dibawah ini:`;
+                            `Pada hari ini ${hari} Tanggal ${cap(tanggalKata)} Bulan ${bulan} Tahun ${cap(tahunKata)}, yang bertanda tangan di bawah ini:`;
                     } catch (e) {}
                 }
             }
         }
     </script>
-    <form method="POST" action="{{ route('reports.opname.report') }}" x-data="opnameForm()" x-init="$nextTick(() => updatePembuka())" class="bg-white rounded-lg shadow p-6 space-y-6">
+    <form method="POST" action="{{ route('reports.opname.save') }}" x-data="opnameForm()" x-init="$nextTick(() => { updatePembuka(); })" class="bg-white rounded-lg shadow p-6 space-y-6">
         @csrf
+        @if(session('opname_current_id'))
+            <input type="hidden" name="id" value="{{ session('opname_current_id') }}">
+        @endif
+        @if(isset($data['id']))
+            <input type="hidden" name="id" value="{{ $data['id'] }}">
+        @endif
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">Nomor</label>
                 <input type="text" name="nomor" value="{{ $data['nomor'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
+                <p class="text-xs text-gray-500 mt-1">Masukkan nomor urut (contoh: 001). Akan otomatis diformat.</p>
             </div>
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">Tanggal</label>
-                <input x-ref="tanggal" @change="onDateChange()" type="date" name="tanggal" value="{{ $data['tanggal'] ?? now()->toDateString() }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
+                <input x-ref="tanggal" @change="updatePembuka()" type="date" name="tanggal" value="{{ $data['tanggal'] ?? now()->toDateString() }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
             </div>
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">Tempat</label>
@@ -66,7 +82,7 @@
 
         <div>
             <label class="block text-sm font-bold text-gray-700 mb-1">Narasi Pembuka</label>
-            <textarea x-ref="pembuka" name="pembuka" rows="4" class="w-full px-4 py-2 rounded-lg border border-gray-300">{{ $data['pembuka'] ?? ('Pada hari ini ' . \Illuminate\Support\Carbon::parse($data['tanggal'] ?? now())->translatedFormat('l d F Y') . ', bertempat di ' . (($opd->nama_opd ?? null) ?: ($data['tempat'] ?? '-')) . ' Kabupaten Bolaang Mongondow Selatan, yang bertanda tangan dibawah ini:') }}</textarea>
+            <textarea x-ref="pembuka" name="pembuka" rows="4" class="w-full px-4 py-2 rounded-lg border border-gray-300">{{ $data['pembuka'] ?? '' }}</textarea>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -130,11 +146,11 @@
         </div>
 
         <div class="flex items-center justify-end gap-2 pt-2">
-            <button type="submit" formaction="{{ route('reports.opname.report') }}" formmethod="POST" class="btn btn-warning">
-                <i class="fas fa-eye"></i> Preview Laporan
-            </button>
-            <button type="submit" formaction="{{ route('reports.opname.save') }}" formmethod="POST" class="btn btn-success">
+            <button type="submit" formaction="{{ route('reports.opname.save') }}" class="btn btn-success text-white">
                 <i class="fas fa-save"></i> Simpan
+            </button>
+            <button type="submit" formaction="{{ route('reports.opname.report') }}" class="btn btn-warning">
+                <i class="fas fa-file-alt"></i> Preview Laporan
             </button>
         </div>
     </form>

@@ -4,7 +4,7 @@
 @section('subheader', 'Perbarui kwitansi berdasarkan BAP Penerimaan Barang')
 
 @section('content')
-    <form action="{{ route('reports.kwitansi.report') }}" method="POST" class="max-w-3xl mx-auto bg-white rounded-lg shadow p-6 space-y-6">
+    <form action="{{ route('reports.kwitansi.update', $id) }}" method="POST" class="max-w-3xl mx-auto bg-white rounded-lg shadow p-6 space-y-6">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -37,10 +37,10 @@
             </div>
         </div>
         <div class="flex items-center justify-end gap-2">
-            <a href="{{ route('reports.kwitansi.export') }}" class="btn btn-primary">
-                <i class="fas fa-file-excel"></i> Export Excel
-            </a>
-            <button type="submit" class="btn btn-warning">
+            <button type="submit" class="btn btn-success text-white">
+                <i class="fas fa-save"></i> Perbarui
+            </button>
+            <button type="submit" formaction="{{ route('reports.kwitansi.report') }}" class="btn btn-warning">
                 <i class="fas fa-file-alt"></i> Preview Laporan
             </button>
         </div>

@@ -132,4 +132,50 @@
 
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const nosurInput = document.querySelector('[name="nosur"]');
+        const dateInput = document.querySelector('[name="date"]');
+        
+        function toRoman(num) {
+            const romans = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+            return romans[num] || "";
+        }
+        
+        function formatNomorSurat() {
+            if (!nosurInput || !dateInput) return;
+            
+            let val = nosurInput.value.trim();
+            if (/^\d+$/.test(val) && !val.includes('/')) {
+                const dateVal = new Date(dateInput.value);
+                if (!isNaN(dateVal.getTime())) {
+                    const month = dateVal.getMonth() + 1;
+                    const year = dateVal.getFullYear();
+                    const romanMonth = toRoman(month);
+                    const formatted = `${val}/BAPB/DISKOMINFO/${romanMonth}/${year}`;
+                    nosurInput.value = formatted;
+                }
+            }
+        }
+        
+        if (nosurInput && dateInput) {
+            nosurInput.addEventListener('blur', formatNomorSurat);
+            nosurInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    formatNomorSurat();
+                }
+            });
+            
+            // Also format on form submit to ensure it's saved correctly
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    formatNomorSurat();
+                });
+            }
+        }
+    });
+</script>
+
 @endsection

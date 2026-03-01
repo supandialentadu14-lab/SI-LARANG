@@ -17,7 +17,22 @@ class OpnameController extends Controller
     {
         $dt = \Carbon\Carbon::parse($tanggal)->locale('id');
         $hari = $dt->translatedFormat('l');
+        // Force Indonesian translation for day names if standard locale fails
+        $hariMap = [
+            'Sunday' => 'Minggu', 'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu'
+        ];
+        if (isset($hariMap[$hari])) { $hari = $hariMap[$hari]; }
+        
         $bulan = $dt->translatedFormat('F');
+        // Force Indonesian translation for month names
+        $bulanMap = [
+            'January' => 'Januari', 'February' => 'Februari', 'March' => 'Maret', 'April' => 'April',
+            'May' => 'Mei', 'June' => 'Juni', 'July' => 'Juli', 'August' => 'Agustus',
+            'September' => 'September', 'October' => 'Oktober', 'November' => 'November', 'December' => 'Desember'
+        ];
+        if (isset($bulanMap[$bulan])) { $bulan = $bulanMap[$bulan]; }
+
         $tanggalKata = ucwords($this->toWordsId((int) $dt->format('d')));
         $tahunKata = ucwords($this->toWordsId((int) $dt->format('Y')));
         return "Pada hari ini {$hari} Tanggal {$tanggalKata} Bulan {$bulan} Tahun {$tahunKata}, bertempat di {$opdNama} Kabupaten Bolaang Mongondow Selatan, yang bertanda tangan dibawah ini:";
@@ -79,6 +94,26 @@ class OpnameController extends Controller
         return view('opname.create', compact('data', 'opd'));
     }
 
+    protected function formatRomawi(int $number): string
+    {
+        $map = [
+            'M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400,
+            'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40,
+            'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1
+        ];
+        $returnValue = '';
+        while ($number > 0) {
+            foreach ($map as $roman => $int) {
+                if ($number >= $int) {
+                    $number -= $int;
+                    $returnValue .= $roman;
+                    break;
+                }
+            }
+        }
+        return $returnValue;
+    }
+
     public function report(Request $request): View
     {
         $validated = $request->validate([
@@ -96,7 +131,20 @@ class OpnameController extends Controller
         $opd = OpdSetting::where('user_id', Auth::id())->first();
         $validated['tanggal'] = $validated['tanggal'] ?? now()->toDateString();
         $validated['tempat'] = $validated['tempat'] ?? ($opd->nama_opd ?? '');
-        $validated['nomor'] = $validated['nomor'] ?? '-';
+        
+        $tanggalObj = \Carbon\Carbon::parse($validated['tanggal']);
+        $tahunAnggaran = $tanggalObj->year;
+        
+        // Format Nomor Otomatis: [Input]/BAHSOP-BHP/DISKOMINFO/[BulanRomawi]/[Tahun]
+        $inputNomor = trim((string)($validated['nomor'] ?? '-'));
+        if (preg_match('/^\d+$/', $inputNomor)) {
+            $bulanRomawi = $this->formatRomawi($tanggalObj->month);
+            $nomorFormatted = "{$inputNomor}/BAHSOP-BHP/DISKOMINFO/{$bulanRomawi}/{$tahunAnggaran}";
+        } else {
+            $nomorFormatted = $inputNomor;
+        }
+        $validated['nomor'] = $nomorFormatted;
+
         $validated['pihak_pertama']['nama'] = $validated['pihak_pertama']['nama'] ?? ($opd->kepala_nama ?? '');
         $validated['pihak_pertama']['nip'] = $validated['pihak_pertama']['nip'] ?? ($opd->kepala_nip ?? '');
         $validated['pihak_pertama']['jabatan'] = $validated['pihak_pertama']['jabatan'] ?? ($opd->kepala_jabatan ?? '');
@@ -133,7 +181,20 @@ class OpnameController extends Controller
         $opd = OpdSetting::where('user_id', Auth::id())->first();
         $validated['tanggal'] = $validated['tanggal'] ?? now()->toDateString();
         $validated['tempat'] = $validated['tempat'] ?? ($opd->nama_opd ?? '');
-        $validated['nomor'] = $validated['nomor'] ?? '-';
+        
+        $tanggalObj = \Carbon\Carbon::parse($validated['tanggal']);
+        $tahunAnggaran = $tanggalObj->year;
+        
+        // Format Nomor Otomatis: [Input]/BAHSOP-BHP/DISKOMINFO/[BulanRomawi]/[Tahun]
+        $inputNomor = trim((string)($validated['nomor'] ?? '-'));
+        if (preg_match('/^\d+$/', $inputNomor)) {
+            $bulanRomawi = $this->formatRomawi($tanggalObj->month);
+            $nomorFormatted = "{$inputNomor}/BAHSOP-BHP/DISKOMINFO/{$bulanRomawi}/{$tahunAnggaran}";
+        } else {
+            $nomorFormatted = $inputNomor;
+        }
+        $validated['nomor'] = $nomorFormatted;
+
         $validated['pihak_pertama']['nama'] = $validated['pihak_pertama']['nama'] ?? ($opd->kepala_nama ?? '');
         $validated['pihak_pertama']['nip'] = $validated['pihak_pertama']['nip'] ?? ($opd->kepala_nip ?? '');
         $validated['pihak_pertama']['jabatan'] = $validated['pihak_pertama']['jabatan'] ?? ($opd->kepala_jabatan ?? '');
@@ -147,32 +208,34 @@ class OpnameController extends Controller
             $validated['pembuka'] = $this->buildPembuka($validated['tanggal'], $opdNama);
         }
         $data = $validated;
-        session(['opname_current' => $data]);
-        $currentId = session('opname_current_id') ?? $request->input('id');
+        // Pastikan nomor yang sudah diformat masuk ke $data yang akan disimpan
+        $data['nomor'] = $nomorFormatted;
+        
+        // Simpan data ke disk
         $disk = Storage::disk('local');
         $userDir = 'users/'.Auth::id().'/opname';
-        $files = $disk->exists($userDir) ? $disk->files($userDir) : [];
-        foreach ($files as $file) {
-            if (! str_ends_with($file, '.json')) continue;
-            $json = $disk->get($file);
-            $existing = json_decode($json, true) ?: [];
-            $fid = basename($file, '.json');
-            if ($fid === $currentId) {
-                continue;
-            }
-            if (($existing['nomor'] ?? null) === ($data['nomor'] ?? null)) {
-                return view('reports.opname_report', [
-                    'data' => $data,
-                    'error' => 'Nomor berita acara sudah ada. Tidak bisa menyimpan.',
-                ]);
-            }
+        if (! $disk->exists($userDir)) {
+            $disk->makeDirectory($userDir);
         }
-        $id = $currentId ?: (string) Str::uuid();
-        $path = "{$userDir}/{$id}.json";
+
+        // Cek ID dari session (jika edit) atau generate baru
+        $currentId = session('opname_current_id');
+        // Jika tidak ada di session, cek input hidden
+        if (!$currentId) {
+             $currentId = $request->input('id');
+        }
+        // Jika masih tidak ada, generate UUID baru
+        if (!$currentId) {
+             $currentId = (string) Str::uuid();
+        }
+        
+        $path = "{$userDir}/{$currentId}.json";
         $disk->put($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        session()->forget('opname_current_id');
-        return redirect()->route('reports.opname.list')
-            ->with('status', $currentId ? 'Berita acara berhasil diperbarui' : 'Berita acara berhasil disimpan');
+        
+        // Bersihkan session setelah simpan
+        session()->forget(['opname_current', 'opname_current_id']);
+        
+        return redirect()->route('reports.opname.list')->with('status', 'Berita Acara Opname berhasil disimpan');
     }
 
     public function edit(string $id): View
@@ -194,7 +257,8 @@ class OpnameController extends Controller
     public function list(): View
     {
         $disk = Storage::disk('local');
-        $files = $disk->files('users/'.Auth::id().'/opname');
+        $userDir = 'users/'.Auth::id().'/opname';
+        $files = $disk->exists($userDir) ? $disk->files($userDir) : [];
         $items = [];
         foreach ($files as $file) {
             if (! str_ends_with($file, '.json')) continue;

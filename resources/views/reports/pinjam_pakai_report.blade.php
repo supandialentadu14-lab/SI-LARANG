@@ -6,7 +6,6 @@
 
 @section('actions')
     <button onclick="window.print()" class="no-print btn btn-neutral"><i class="fas fa-print"></i> Cetak</button>
-    <a href="{{ route('reports.pinjam.export') }}" class="no-print btn btn-primary ml-2"><i class="fas fa-file-excel"></i> Export Excel</a>
     <form method="POST" action="{{ route('reports.pinjam.save') }}" class="no-print inline-block ml-2">
         @csrf
         <input type="hidden" name="id" value="{{ session('pinjam_pakai_current_id') ?? ($saved_id ?? '') }}">

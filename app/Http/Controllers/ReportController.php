@@ -919,32 +919,7 @@ $endDate = $request->input(
         return view('nota_pesanan.create', compact('data', 'opd', 'options', 'products', 'categories', 'master', 'suppliers'));
     }
     
-    protected function loadNotaMaster(): array
-    {
-        $row = NotaMaster::where('user_id', Auth::id())->first();
-        if ($row) {
-            return [
-                'opd' => ['nama' => $row->opd_nama ?? '', 'alamat' => $row->opd_alamat ?? ''],
-                'ppk' => ['nama' => $row->ppk_nama ?? '', 'nip' => $row->ppk_nip ?? '', 'alamat' => $row->ppk_alamat ?? ''],
-                'penyedia' => ['toko' => $row->penyedia_toko ?? '', 'pemilik' => $row->penyedia_pemilik ?? '', 'alamat' => $row->penyedia_alamat ?? ''],
-                'pejabat' => ['nama' => $row->pejabat_nama ?? '', 'nip' => $row->pejabat_nip ?? ''],
-                'pptk' => ['nama' => $row->pptk_nama ?? '', 'nip' => $row->pptk_nip ?? ''],
-                'pengurus_barang' => ['nama' => $row->pengurus_barang_nama ?? '', 'nip' => $row->pengurus_barang_nip ?? ''],
-                'pengurus_pengguna' => ['nama' => $row->pengurus_pengguna_nama ?? '', 'nip' => $row->pengurus_pengguna_nip ?? ''],
-                'bendahara' => ['nama' => $row->bendahara_nama ?? '', 'nip' => $row->bendahara_nip ?? ''],
-            ];
-        }
-        return [
-            'opd' => ['nama' => '', 'alamat' => ''],
-            'ppk' => ['nama' => '', 'nip' => '', 'alamat' => ''],
-            'penyedia' => ['toko' => '', 'pemilik' => '', 'alamat' => ''],
-            'pejabat' => ['nama' => '', 'nip' => ''],
-            'pptk' => ['nama' => '', 'nip' => ''],
-            'pengurus_barang' => ['nama' => '', 'nip' => ''],
-            'pengurus_pengguna' => ['nama' => '', 'nip' => ''],
-            'bendahara' => ['nama' => '', 'nip' => ''],
-        ];
-    }
+
     
     public function notaMasterForm(): View
     {
@@ -1805,116 +1780,13 @@ $endDate = $request->input(
         return redirect()->route('reports.penerimaan.list')->with('status', 'BAP Penerimaan dihapus');
     }
     
-    protected function exportExcel(string $view, array $params, string $filename)
-    {
-        $content = view($view, $params)->render();
-        try {
-            libxml_use_internal_errors(true);
-            $dom = new \DOMDocument('1.0', 'UTF-8');
-            $dom->loadHTML($content);
-            $xpath = new \DOMXPath($dom);
-            $styles = '';
-            foreach ($xpath->query('//style') as $styleNode) {
-                $styles .= $styleNode->nodeValue."\n";
-            }
-            $nodes = $xpath->query("//*[@id='print-area']");
-            if ($nodes && $nodes->length > 0) {
-                $node = $nodes->item(0);
-                $inner = '';
-                foreach ($node->childNodes as $child) {
-                    $inner .= $dom->saveHTML($child);
-                }
-                $content = '<div id="print-area">'.$inner.'</div>';
-                if ($styles) {
-                    $content = '<style>'.$styles.'</style>'.$content;
-                }
-            }
-            libxml_clear_errors();
-        } catch (\Throwable $e) {
-            // fallback: keep original content
-        }
-        $injectCss = '<style>
-            .no-print{display:none !important;}
-            body{background:#ffffff !important;}
-            body *{display:none !important;}
-            #print-area, #print-area *{display:block !important;}
-            /* Fallback Tailwind-like utilities commonly used in reports */
-            .w-full{width:100% !important;}
-            .border-collapse{border-collapse:collapse !important;}
-            .text-xs{font-size:12px !important;}
-            .text-sm{font-size:13px !important;}
-            .text-center{text-align:center !important;}
-            .font-bold{font-weight:700 !important;}
-            .underline{text-decoration:underline !important;}
-            .px-1{padding-left:4px !important;padding-right:4px !important;}
-            .px-2{padding-left:8px !important;padding-right:8px !important;}
-            .py-1{padding-top:4px !important;padding-bottom:4px !important;}
-            .py-2{padding-top:8px !important;padding-bottom:8px !important;}
-            .border{border:1px solid #000 !important;}
-            .border-black{border-color:#000 !important;}
-            .border-gray-400{border-color:#9ca3af !important;}
-            table{border-collapse:collapse !important;}
-            th,td{vertical-align:middle;}
-        </style>';
-        $excelHeader = '<!DOCTYPE html>
-<html xmlns:o=\"urn:schemas-microsoft-com:office:office\"
-      xmlns:x=\"urn:schemas-microsoft-com:office:excel\"
-      xmlns=\"http://www.w3.org/TR/REC-html40\">
-<head>
-<meta http-equiv=\"Content-Type\" content=\"application/vnd.ms-excel; charset=UTF-8\"/>
-<!--[if gte mso 9]><xml>
-<x:ExcelWorkbook>
-  <x:ExcelWorksheets>
-    <x:ExcelWorksheet>
-      <x:Name>Report</x:Name>
-      <x:WorksheetOptions>
-        <x:DisplayGridlines/>
-        <x:PageSetup>
-          <x:Layout Orientation=\"Landscape\"/>
-          <x:Header x:Margin=\"0.5\"/>
-          <x:Footer x:Margin=\"0.5\"/>
-          <x:PageMargins x:Bottom=\"0.75\" x:Left=\"0.7\" x:Right=\"0.7\" x:Top=\"0.75\"/>
-        </x:PageSetup>
-        <x:FitToPage/>
-        <x:CenterHorizontally/>
-      </x:WorksheetOptions>
-    </x:ExcelWorksheet>
-  </x:ExcelWorksheets>
-</x:ExcelWorkbook>
-</xml><![endif]-->
-'.$injectCss.'
-</head><body>';
-        $excelFooter = '</body></html>';
-        $html = $excelHeader.$content.$excelFooter;
-        return response($html, 200, [
-            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
-        ]);
-    }
+
     
-    public function notaPesananExport()
-    {
-        $opd = OpdSetting::where('user_id', Auth::id())->first();
-        $data = session('nota_current');
-        if (!$data) abort(400, 'Tidak ada data untuk diekspor');
-        return $this->exportExcel('reports.nota_pesanan_report', compact('data', 'opd'), 'nota-pesanan.xls');
-    }
+
     
-    public function pemeriksaanExport()
-    {
-        $opd = OpdSetting::where('user_id', Auth::id())->first();
-        $data = session('bap_current');
-        if (!$data) abort(400, 'Tidak ada data untuk diekspor');
-        return $this->exportExcel('reports.pemeriksaan_report', compact('data', 'opd'), 'bap-pemeriksaan.xls');
-    }
+
     
-    public function penerimaanExport()
-    {
-        $opd = OpdSetting::where('user_id', Auth::id())->first();
-        $data = session('penerimaan_current');
-        if (!$data) abort(400, 'Tidak ada data untuk diekspor');
-        return $this->exportExcel('reports.penerimaan_report', compact('data', 'opd'), 'bap-penerimaan.xls');
-    }
+
     
     protected function listPenerimaanDocs(): array
     {
@@ -1988,13 +1860,7 @@ $endDate = $request->input(
         return view('reports.kwitansi_report', compact('data', 'opd'));
     }
     
-    public function kwitansiExport()
-    {
-        $opd = OpdSetting::where('user_id', Auth::id())->first();
-        $data = session('kwitansi_current');
-        if (!$data) abort(400, 'Tidak ada data untuk diekspor');
-        return $this->exportExcel('reports.kwitansi_report', compact('data', 'opd'), 'kwitansi.xls');
-    }
+
     
     protected function findPenerimaanByNomor(?string $nomor): ?array
     {
@@ -2097,95 +1963,7 @@ $endDate = $request->input(
         ]);
     }
     
-    public function opnameExport()
-    {
-        $opd = OpdSetting::where('user_id', Auth::id())->first();
-        $data = session('opname_current');
-        if (!$data) abort(400, 'Tidak ada data untuk diekspor');
-        return $this->exportExcel('reports.opname_report', ['data' => $data, 'opd' => $opd], 'opname-barang.xls');
-    }
-    
-    public function belanjaModalExport()
-    {
-        $opd = OpdSetting::where('user_id', Auth::id())->first();
-        $master = $this->loadNotaMaster();
-        $data = session('belanja_modal_current');
-        if (!$data) abort(400, 'Tidak ada data untuk diekspor');
-        return $this->exportExcel('reports.belanja_modal_report', compact('data', 'opd', 'master'), 'belanja-modal.xls');
-    }
-    
-    public function pinjamPakaiExport()
-    {
-        $opd = OpdSetting::where('user_id', Auth::id())->first();
-        $data = session('pinjam_pakai_current');
-        if (!$data) abort(400, 'Tidak ada data untuk diekspor');
-        return $this->exportExcel('reports.pinjam_pakai_report', ['data' => $data, 'opd' => $opd], 'pinjam-pakai.xls');
-    }
-    
-    public function persediaanExport(Request $request)
-    {
-        $opd = OpdSetting::where('user_id', Auth::id())->first();
-        $master = $this->loadNotaMaster();
-        $startDate = $request->input('start_date', now()->startOfYear()->toDateString());
-        $endDate = $request->input('end_date', now()->endOfYear()->toDateString());
-        $transactions = StockTransaction::with('product')
-            ->whereBetween('date', [$startDate, $endDate])
-            ->orderBy('date', 'asc')
-            ->orderBy('created_at', 'asc')
-            ->get();
-        $grouped = $transactions->groupBy(function ($item) { return $item->date.'-'.$item->product_id; });
-        $reportData = [];
-        foreach ($grouped as $items) {
-            $first = $items->first();
-            $masuk = $items->where('type', 'in')->sum('quantity');
-            $keluar = $items->where('type', 'out')->sum('quantity');
-            $reportData[] = [
-                'date' => $first->date,
-                'product_id' => $first->product_id,
-                'name' => $first->product->name,
-                'harga' => $first->product->price ?? 0,
-                'satuan' => $first->product->unit ?? '',
-                'masuk' => $masuk,
-                'keluar' => $keluar,
-            ];
-        }
-        return $this->exportExcel('reports.index', compact('reportData', 'startDate', 'endDate', 'opd', 'master'), 'laporan-persediaan.xls');
-    }
-    
-    public function kartuTahunanExport(Request $request)
-    {
-        $opd = OpdSetting::where('user_id', Auth::id())->first();
-        $master = $this->loadNotaMaster();
-        $startDate = $request->input('start_date', now()->startOfYear()->toDateString());
-        $endDate = $request->input('end_date', now()->endOfYear()->toDateString());
-        $transactions = StockTransaction::with('product')
-            ->whereBetween('date', [$startDate, $endDate])
-            ->orderBy('product_id', 'asc')
-            ->orderBy('date', 'asc')
-            ->orderBy('created_at', 'asc')
-            ->get();
-        $grouped = [];
-        foreach ($transactions as $trx) {
-            if (! $trx->product) { continue; }
-            $pid = (int) $trx->product_id;
-            if (! isset($grouped[$pid])) {
-                $grouped[$pid] = ['product' => $trx->product, 'rows' => [], 'saldo' => 0];
-            }
-            $masuk = 0; $keluar = 0;
-            if ($trx->type === 'in') { $masuk = $trx->quantity; $grouped[$pid]['saldo'] += $trx->quantity; }
-            if ($trx->type === 'out') { $keluar = $trx->quantity; $grouped[$pid]['saldo'] -= $trx->quantity; }
-            $grouped[$pid]['rows'][] = [
-                'date' => $trx->date,
-                'nosur' => $trx->nosur ?? '-',
-                'masuk' => $masuk,
-                'keluar' => $keluar,
-                'harga' => $trx->product->price ?? 0,
-                'sisa' => $grouped[$pid]['saldo'],
-                'keterangan' => $trx->notes ?? '-',
-            ];
-        }
-        return $this->exportExcel('reports.kartu_tahunan', compact('grouped', 'startDate', 'endDate', 'opd', 'master'), 'kartu-persediaan-tahunan.xls');
-    }
+
     public function opnameDelete(string $id): View
     {
         $disk = Storage::disk('local');
@@ -2217,5 +1995,32 @@ $endDate = $request->input(
             'items' => $items,
             'status' => $status,
         ]);
+    }
+
+    protected function loadNotaMaster(): array
+    {
+        $row = NotaMaster::where('user_id', Auth::id())->first();
+        if ($row) {
+            return [
+                'opd' => ['nama' => $row->opd_nama ?? '', 'alamat' => $row->opd_alamat ?? ''],
+                'ppk' => ['nama' => $row->ppk_nama ?? '', 'nip' => $row->ppk_nip ?? '', 'alamat' => $row->ppk_alamat ?? ''],
+                'penyedia' => ['toko' => $row->penyedia_toko ?? '', 'pemilik' => $row->penyedia_pemilik ?? '', 'alamat' => $row->penyedia_alamat ?? ''],
+                'pejabat' => ['nama' => $row->pejabat_nama ?? '', 'nip' => $row->pejabat_nip ?? ''],
+                'pptk' => ['nama' => $row->pptk_nama ?? '', 'nip' => $row->pptk_nip ?? ''],
+                'pengurus_barang' => ['nama' => $row->pengurus_barang_nama ?? '', 'nip' => $row->pengurus_barang_nip ?? ''],
+                'pengurus_pengguna' => ['nama' => $row->pengurus_pengguna_nama ?? '', 'nip' => $row->pengurus_pengguna_nip ?? ''],
+                'bendahara' => ['nama' => $row->bendahara_nama ?? '', 'nip' => $row->bendahara_nip ?? ''],
+            ];
+        }
+        return [
+            'opd' => ['nama' => '', 'alamat' => ''],
+            'ppk' => ['nama' => '', 'nip' => '', 'alamat' => ''],
+            'penyedia' => ['toko' => '', 'pemilik' => '', 'alamat' => ''],
+            'pejabat' => ['nama' => '', 'nip' => ''],
+            'pptk' => ['nama' => '', 'nip' => ''],
+            'pengurus_barang' => ['nama' => '', 'nip' => ''],
+            'pengurus_pengguna' => ['nama' => '', 'nip' => ''],
+            'bendahara' => ['nama' => '', 'nip' => ''],
+        ];
     }
 }

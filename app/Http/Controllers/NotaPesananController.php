@@ -169,6 +169,37 @@ class NotaPesananController extends Controller
         return view('reports.nota_pesanan_report', compact('data', 'opd'));
     }
 
+    protected function getSafeFilename(string $nomor): string
+    {
+        // Ganti karakter tidak aman dengan dash, tapi pertahankan keterbacaan
+        // Ganti slash, backslash, spasi dengan dash
+        $safe = str_replace(['/', '\\', ' '], ['-', '-', '-'], $nomor);
+        // Hapus karakter lain yang tidak aman untuk filesystem (tetap izinkan alfanumerik, dash, underscore, titik)
+        $safe = preg_replace('/[^a-zA-Z0-9\-\_\.]/', '', $safe);
+        // Pastikan tidak kosong (fallback ke uuid jika nomor aneh/kosong)
+        return $safe ?: (string) Str::uuid();
+    }
+
+    protected function formatRomawi(int $number): string
+    {
+        $map = [
+            'M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400,
+            'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40,
+            'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1
+        ];
+        $returnValue = '';
+        while ($number > 0) {
+            foreach ($map as $roman => $int) {
+                if ($number >= $int) {
+                    $number -= $int;
+                    $returnValue .= $roman;
+                    break;
+                }
+            }
+        }
+        return $returnValue;
+    }
+
     public function save(Request $request): RedirectResponse
     {
         $opd = OpdSetting::where('user_id', Auth::id())->first();
@@ -211,11 +242,26 @@ class NotaPesananController extends Controller
                 $penyedia = $existing['penyedia'];
             }
         }
+        
+        $tanggalObj = \Carbon\Carbon::parse($payload['tanggal'] ?? now()->toDateString());
+        $tahunAnggaran = $payload['tahun'] ?? now()->year;
+        
+        // Format Nomor Nota Otomatis: [Input]/NPB/KOMINFO/[BulanRomawi]/[Tahun]
+        $inputNomor = trim((string)($payload['nomor'] ?? ''));
+        // Jika input hanya angka, format ulang
+        if (preg_match('/^\d+$/', $inputNomor)) {
+            $bulanRomawi = $this->formatRomawi($tanggalObj->month);
+            $nomorFormatted = "{$inputNomor}/NPB/KOMINFO/{$bulanRomawi}/{$tahunAnggaran}";
+        } else {
+            // Jika sudah ada format atau kosong, gunakan apa adanya
+            $nomorFormatted = $inputNomor;
+        }
+
         $data = [
             'kegiatan' => $payload['kegiatan'] ?? '',
             'sub_kegiatan' => $payload['sub_kegiatan'] ?? '',
             'rekening' => $payload['rekening'] ?? '',
-            'tahun' => $payload['tahun'] ?? now()->year,
+            'tahun' => $tahunAnggaran,
             'pejabat' => $master['pejabat'],
             'pptk' => $master['pptk'],
             'pengurus_barang' => $master['pengurus_barang'],
@@ -223,13 +269,14 @@ class NotaPesananController extends Controller
             'ppk' => $master['ppk'],
             'penyedia' => $penyedia,
             'bendahara' => $master['bendahara'],
-            'nomor' => $payload['nomor'] ?? '',
+            'nomor' => $nomorFormatted,
             'tanggal' => $payload['tanggal'] ?? now()->toDateString(),
             'belanja' => $payload['belanja'] ?? '',
             'items' => $cleanItems,
         ];
-        $currentId = session('nota_current_id') ?? $request->input('id');
-        $id = $currentId ?: (string) Str::uuid();
+        
+        // Gunakan nomor sebagai ID file agar unik
+        $id = $this->getSafeFilename($data['nomor']);
         Storage::disk('local')->put("users/".Auth::id()."/nota-pesanan/{$id}.json", json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
         $grand = array_sum(array_map(fn($r) => (int) ($r['total'] ?? 0), $cleanItems));
@@ -268,10 +315,9 @@ class NotaPesananController extends Controller
                 'total' => (int) $row['total'],
             ]);
         }
-        if ($currentId) {
-            session()->forget('nota_current_id');
-        }
-        return redirect()->route('reports.nota.list')->with('status', $currentId ? 'Nota pesanan diperbarui' : 'Nota pesanan disimpan');
+        
+        session()->forget('nota_current_id');
+        return redirect()->route('reports.nota.list')->with('status', 'Nota pesanan disimpan');
     }
 
     public function update(Request $request, string $id): RedirectResponse
@@ -307,11 +353,26 @@ class NotaPesananController extends Controller
                 $penyedia = $existing['penyedia'];
             }
         }
+        
+        $tanggalObj = \Carbon\Carbon::parse($payload['tanggal'] ?? now()->toDateString());
+        $tahunAnggaran = $payload['tahun'] ?? now()->year;
+        
+        // Format Nomor Nota Otomatis: [Input]/NPB/KOMINFO/[BulanRomawi]/[Tahun]
+        $inputNomor = trim((string)($payload['nomor'] ?? ''));
+        // Jika input hanya angka, format ulang
+        if (preg_match('/^\d+$/', $inputNomor)) {
+            $bulanRomawi = $this->formatRomawi($tanggalObj->month);
+            $nomorFormatted = "{$inputNomor}/NPB/KOMINFO/{$bulanRomawi}/{$tahunAnggaran}";
+        } else {
+            // Jika sudah ada format atau kosong, gunakan apa adanya
+            $nomorFormatted = $inputNomor;
+        }
+
         $data = [
             'kegiatan' => $payload['kegiatan'] ?? '',
             'sub_kegiatan' => $payload['sub_kegiatan'] ?? '',
             'rekening' => $payload['rekening'] ?? '',
-            'tahun' => $payload['tahun'] ?? now()->year,
+            'tahun' => $tahunAnggaran,
             'pejabat' => $master['pejabat'],
             'pptk' => $master['pptk'],
             'pengurus_barang' => $master['pengurus_barang'],
@@ -319,12 +380,23 @@ class NotaPesananController extends Controller
             'ppk' => $master['ppk'],
             'penyedia' => $penyedia,
             'bendahara' => $master['bendahara'],
-            'nomor' => $payload['nomor'] ?? '',
+            'nomor' => $nomorFormatted,
             'tanggal' => $payload['tanggal'] ?? now()->toDateString(),
             'belanja' => $payload['belanja'] ?? '',
             'items' => $cleanItems,
         ];
-        Storage::disk('local')->put("users/".Auth::id()."/nota-pesanan/{$id}.json", json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        
+        // Gunakan nomor sebagai ID baru
+        $newId = $this->getSafeFilename($data['nomor']);
+        
+        // Jika ID berubah (nomor berubah), hapus file lama
+        if ($newId !== $id) {
+            if (Storage::disk('local')->exists("users/".Auth::id()."/nota-pesanan/{$id}.json")) {
+                Storage::disk('local')->delete("users/".Auth::id()."/nota-pesanan/{$id}.json");
+            }
+        }
+        
+        Storage::disk('local')->put("users/".Auth::id()."/nota-pesanan/{$newId}.json", json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
         $grand = array_sum(array_map(fn($r) => (int) ($r['total'] ?? 0), $cleanItems));
         $terbilang = $this->toWordsIdInternal($grand);
@@ -511,60 +583,7 @@ class NotaPesananController extends Controller
         return redirect()->route('reports.nota.list')->with('status', 'Nota pesanan dan dokumen terkait dihapus');
     }
 
-    public function export()
-    {
-        $opd = OpdSetting::where('user_id', Auth::id())->first();
-        $data = session('nota_current');
-        if (!$data) abort(400, 'Tidak ada data untuk diekspor');
-        return $this->exportExcel('reports.nota_pesanan_report', compact('data', 'opd'), 'nota-pesanan.xls');
-    }
 
-    protected function exportExcel(string $view, array $params, string $filename)
-    {
-        $content = view($view, $params)->render();
-        try {
-            libxml_use_internal_errors(true);
-            $dom = new \DOMDocument('1.0', 'UTF-8');
-            $dom->loadHTML($content);
-            $xpath = new \DOMXPath($dom);
-            $styles = '';
-            foreach ($xpath->query('//style') as $styleNode) {
-                $styles .= $styleNode->nodeValue."\n";
-            }
-            $nodes = $xpath->query("//*[@id='print-area']");
-            if ($nodes && $nodes->length > 0) {
-                $node = $nodes->item(0);
-                $inner = '';
-                foreach ($node->childNodes as $child) {
-                    $inner .= $dom->saveHTML($child);
-                }
-                $content = '<div id="print-area">'.$inner.'</div>';
-                if ($styles) {
-                    $content = '<style>'.$styles.'</style>'.$content;
-                }
-            }
-            libxml_clear_errors();
-        } catch (\Throwable $e) {
-        }
-        $injectCss = '<style>
-            .no-print{display:none !important;}
-            body{background:#ffffff !important;}
-            body *{display:none !important;}
-            #print-area, #print-area *{display:block !important;}
-            .w-full{width:100% !important;}
-            .border-collapse{border-collapse:collapse !important;}
-            .text-xs{font-size:12px !important;}
-            .text-sm{font-size:13px !important;}
-            .text-center{text-align:center !important;}
-            .font-bold{font-weight:700 !important;}
-        </style>';
-        $content = $injectCss.$content;
-        $headers = [
-            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
-        ];
-        return response($content, 200, $headers);
-    }
 
     protected function toWordsIdInternal(int $value): string
     {

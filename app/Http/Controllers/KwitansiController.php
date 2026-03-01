@@ -131,6 +131,22 @@ class KwitansiController extends Controller
         return null;
     }
 
+    protected function findFullNotaByNomor(?string $nomor): array
+    {
+        if (!$nomor) return [];
+        $disk = Storage::disk('local');
+        $dir = 'users/'.Auth::id().'/nota-pesanan';
+        $files = $disk->exists($dir) ? $disk->files($dir) : [];
+        foreach ($files as $file) {
+            if (! str_ends_with($file, '.json')) continue;
+            $data = json_decode($disk->get($file), true) ?: [];
+            if (trim(($data['nomor'] ?? '')) === trim($nomor)) {
+                return $data;
+            }
+        }
+        return [];
+    }
+
     public function form(Request $request)
     {
         $opd = OpdSetting::where('user_id', Auth::id())->first();
@@ -181,13 +197,226 @@ class KwitansiController extends Controller
         return view('reports.kwitansi_report', compact('data', 'opd'));
     }
 
-    public function export()
+    public function save(Request $request)
     {
-        $opd = OpdSetting::where('user_id', Auth::id())->first();
-        $data = session('kwitansi_current');
-        if (!$data) abort(400, 'Tidak ada data untuk diekspor');
-        return $this->exportExcel('reports.kwitansi_report', compact('data', 'opd'), 'kwitansi.xls');
+        return $this->store($request);
     }
+
+    public function update(Request $request, $id)
+    {
+        return $this->store($request, $id);
+    }
+
+    protected function formatRomawi(int $number): string
+    {
+        $map = [
+            'M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400,
+            'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40,
+            'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1
+        ];
+        $returnValue = '';
+        while ($number > 0) {
+            foreach ($map as $roman => $int) {
+                if ($number >= $int) {
+                    $number -= $int;
+                    $returnValue .= $roman;
+                    break;
+                }
+            }
+        }
+        return $returnValue;
+    }
+
+    protected function store(Request $request, $oldId = null)
+    {
+        try {
+            $opd = OpdSetting::where('user_id', Auth::id())->first();
+            $master = $this->loadNotaMaster();
+            $payload = $request->all();
+            
+            \Illuminate\Support\Facades\Log::info('Kwitansi Store Payload:', $payload);
+
+            $selected = null;
+            $penerimaanNomor = $payload['penerimaan_nomor'] ?? '';
+            
+            if ($penerimaanNomor) {
+                foreach ($this->listPenerimaanDocs() as $doc) {
+                    if (trim($doc['nomor'] ?? '') === trim($penerimaanNomor)) { 
+                        $selected = $doc; 
+                        break; 
+                    }
+                }
+            }
+            
+            $total = (int)($selected['total'] ?? 0);
+            $tanggalObj = \Carbon\Carbon::parse($payload['tanggal'] ?? now()->toDateString());
+            $tanggalStr = $tanggalObj->locale('id')->translatedFormat('d F Y');
+            
+            $uraianBelanja = (($selected['belanja'] ?? '') ?: '');
+            
+            $notaData = $selected['nota'] ?? [];
+            
+            // Ambil data nota pesanan terbaru jika ada
+            if (!empty($notaData['nomor'])) {
+                $freshNota = $this->findFullNotaByNomor($notaData['nomor']);
+                if (!empty($freshNota)) {
+                    $notaData = array_merge($notaData, $freshNota);
+                }
+            }
+            
+            $kegiatan = $notaData['kegiatan'] ?? '...';
+            $subKegiatan = $notaData['sub_kegiatan'] ?? '...';
+            $namaPekerjaan = $notaData['pekerjaan'] ?? $uraianBelanja;
+            $tahunAnggaran = $payload['tahun'] ?? now()->year;
+            
+            // Format yang diminta user:
+            // "[Nama Pekerjaan] Pada Keg. [Sub Kegiatan] [Kegiatan] Tahun [Tahun Anggaran]"
+            // Pastikan jika pekerjaan/belanja sudah mengandung kata "Belanja", tidak perlu ditambah prefix.
+            
+            $uraianFull = "Belanja {$namaPekerjaan} Pada Keg. {$subKegiatan} {$kegiatan} Tahun {$tahunAnggaran}";
+            
+            // Format Nomor KWT Otomatis: [Input]/KW/KOMINFO/[BulanRomawi]/[Tahun]
+            $inputNomor = trim((string)($payload['nomor_kwt'] ?? ''));
+            // Jika input hanya angka, format ulang
+            if (preg_match('/^\d+$/', $inputNomor)) {
+                $bulanRomawi = $this->formatRomawi($tanggalObj->month);
+                $nomorKwtFormatted = "{$inputNomor}/KW/KOMINFO/{$bulanRomawi}/{$tahunAnggaran}";
+            } else {
+                // Jika sudah ada format atau kosong, gunakan apa adanya
+                $nomorKwtFormatted = $inputNomor;
+            }
+
+            $data = [
+                'tahun' => $payload['tahun'] ?? now()->year,
+                'rekening' => $payload['rekening'] ?? '',
+                'nomor_kwt' => $nomorKwtFormatted,
+                'tanggal' => $payload['tanggal'] ?? now()->toDateString(),
+                'penerimaan_nomor' => $penerimaanNomor,
+                'jumlah' => $total,
+                'terbilang' => ucwords($this->toWordsId((int)$total)) . ' Rupiah',
+                'pembayaran_uraian' => $uraianFull,
+                'lokasi_tanggal' => 'Bolaang Uki, ' . $tanggalStr,
+                'pejabat' => [
+                    'pptk' => $master['pptk']['nama'] ?? '',
+                    'bendahara' => $master['bendahara']['nama'] ?? '',
+                    'pihak_ketiga' => $payload['pihak_ketiga_nama'] ?? ($selected['nota']['penyedia']['pemilik'] ?? ($selected['nota']['penyedia']['toko'] ?? '')),
+                    'pengguna' => $master['ppk']['nama'] ?? '',
+                ],
+                'opd_nama' => $opd->nama_opd ?? '',
+                'bendahara_nip' => $master['bendahara']['nip'] ?? '',
+                'pptk_nip' => $master['pptk']['nip'] ?? '',
+                'ppk_nip' => $master['ppk']['nip'] ?? '',
+            ];
+
+            // Sanitasi nomor untuk nama file
+            $rawNomor = trim((string)($data['nomor_kwt'] ?? ''));
+            if ($rawNomor === '') {
+                $rawNomor = 'KWT-'.uniqid();
+            }
+            // Ganti slash dengan dash, hapus karakter aneh
+            $nomorSafe = str_replace(['/', '\\'], '-', $rawNomor);
+            $nomorSafe = preg_replace('/[^a-zA-Z0-9\-\_\.]/', '', $nomorSafe);
+            
+            if (trim($nomorSafe) === '') {
+                 $nomorSafe = 'KWT-'.uniqid();
+            }
+            $newId = $nomorSafe;
+            
+            // Pastikan direktori ada
+            $dirPath = "users/".Auth::id()."/kwitansi";
+            if (!Storage::disk('local')->exists($dirPath)) {
+                Storage::disk('local')->makeDirectory($dirPath);
+            }
+
+            // Jika update dan ID berubah, hapus file lama
+            if ($oldId && $oldId !== $newId) {
+                $oldPath = "{$dirPath}/{$oldId}.json";
+                if (Storage::disk('local')->exists($oldPath)) {
+                    Storage::disk('local')->delete($oldPath);
+                }
+            }
+
+            $fullPath = "{$dirPath}/{$newId}.json";
+            \Illuminate\Support\Facades\Log::info("Saving Kwitansi to: {$fullPath}");
+
+            // Simpan ke JSON
+            Storage::disk('local')->put($fullPath, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+            
+            if (!Storage::disk('local')->exists($fullPath)) {
+                throw new \Exception("File gagal ditulis ke disk: {$fullPath}");
+            }
+
+            session()->forget('kwitansi_current');
+            $msg = $oldId ? 'Kwitansi berhasil diperbarui' : 'Kwitansi berhasil disimpan';
+            return redirect()->route('reports.kwitansi.list')->with('status', $msg);
+
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error("Gagal simpan kwitansi: " . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error($e->getTraceAsString());
+            return back()->withInput()->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
+        }
+    }
+
+    public function list()
+    {
+        $disk = Storage::disk('local');
+        $dir = 'users/'.Auth::id().'/kwitansi';
+        $files = $disk->exists($dir) ? $disk->files($dir) : [];
+        $items = [];
+        foreach ($files as $file) {
+            if (! str_ends_with($file, '.json')) continue;
+            $data = json_decode($disk->get($file), true) ?: [];
+            $items[] = [
+                'id' => basename($file, '.json'),
+                'nomor_kwt' => $data['nomor_kwt'] ?? '',
+                'tanggal' => $data['tanggal'] ?? '',
+                'penerimaan_nomor' => $data['penerimaan_nomor'] ?? '',
+                'jumlah' => $data['jumlah'] ?? 0,
+                'uraian' => $data['pembayaran_uraian'] ?? '',
+            ];
+        }
+        usort($items, fn($a, $b) => ($b['tanggal'] ?? '') <=> ($a['tanggal'] ?? ''));
+        return view('kwitansi.index', compact('items'));
+    }
+
+    public function show($id)
+    {
+        $disk = Storage::disk('local');
+        $path = "users/".Auth::id()."/kwitansi/{$id}.json";
+        if (! $disk->exists($path)) abort(404);
+        
+        $data = json_decode($disk->get($path), true);
+        $opd = OpdSetting::where('user_id', Auth::id())->first();
+        
+        return view('reports.kwitansi_report', compact('data', 'opd'));
+    }
+
+    public function edit($id)
+    {
+        $disk = Storage::disk('local');
+        $path = "users/".Auth::id()."/kwitansi/{$id}.json";
+        if (! $disk->exists($path)) abort(404);
+        
+        $data = json_decode($disk->get($path), true);
+        $opd = OpdSetting::where('user_id', Auth::id())->first();
+        $docs = $this->listPenerimaanDocs();
+        
+        return view('kwitansi.edit', compact('data', 'opd', 'docs', 'id'));
+    }
+
+
+
+    public function delete($id)
+    {
+        $disk = Storage::disk('local');
+        $path = "users/".Auth::id()."/kwitansi/{$id}.json";
+        if ($disk->exists($path)) {
+            $disk->delete($path);
+        }
+        return redirect()->route('reports.kwitansi.list')->with('status', 'Kwitansi dihapus');
+    }
+
+
 
     public function printAll(Request $request)
     {
@@ -271,49 +500,6 @@ class KwitansiController extends Controller
         ]);
     }
 
-    protected function exportExcel(string $view, array $params, string $filename)
-    {
-        $content = view($view, $params)->render();
-        try {
-            libxml_use_internal_errors(true);
-            $dom = new \DOMDocument('1.0', 'UTF-8');
-            $dom->loadHTML($content);
-            $xpath = new \DOMXPath($dom);
-            $styles = '';
-            foreach ($xpath->query('//style') as $styleNode) {
-                $styles .= $styleNode->nodeValue."\n";
-            }
-            $nodes = $xpath->query("//*[@id='print-area']");
-            if ($nodes && $nodes->length > 0) {
-                $node = $nodes->item(0);
-                $inner = '';
-                foreach ($node->childNodes as $child) {
-                    $inner .= $dom->saveHTML($child);
-                }
-                $content = '<div id="print-area">'.$inner.'</div>';
-                if ($styles) {
-                    $content = '<style>'.$styles.'</style>'.$content;
-                }
-            }
-            libxml_clear_errors();
-        } catch (\Throwable $e) {
-        }
-        $injectCss = '<style>
-            .no-print{display:none !important;}
-            body{background:#ffffff !important;}
-            body *{display:none !important;}
-            #print-area, #print-area *{display:block !important;}
-            .w-full{width:100% !important;}
-            .border-collapse{border-collapse:collapse !important;}
-            .text-xs{font-size:12px !important;}
-            .text-sm{font-size:13px !important;}
-            .text-center{text-align:center !important;}
-            .font-bold{font-weight:700 !important;}
-        </style>';
-        $content = $injectCss.$content;
-        return response($content)
-            ->header('Content-Type', 'application/vnd.ms-excel')
-            ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
-    }
+
 }
 

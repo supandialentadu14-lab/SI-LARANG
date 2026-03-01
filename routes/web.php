@@ -57,24 +57,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports',
         [ReportController::class, 'index']
     )->name('reports.index');
-    Route::get('reports/export',
-        [ReportController::class, 'persediaanExport']
-    )->name('reports.index.export');
 
     // Report kartu per item (yang baru seperti gambar)
     // Report kartu tahunan (jika dipakai)
     Route::get('reports/kartu.tahunan',
         [ReportController::class, 'kartuTahunan']
     )->name('reports.kartu.tahunan');
-    Route::get('reports/kartu.tahunan/export',
-        [ReportController::class, 'kartuTahunanExport']
-    )->name('reports.kartu.tahunan.export');
 
     // Berita Acara Pinjam Pakai
     Route::get('reports/berita-pinjam-pakai', [PinjamPakaiController::class, 'form'])->name('reports.pinjam.form');
     Route::post('reports/berita-pinjam-pakai', [PinjamPakaiController::class, 'report'])->name('reports.pinjam.report');
     Route::post('reports/berita-pinjam-pakai/save', [PinjamPakaiController::class, 'save'])->name('reports.pinjam.save');
-    Route::get('reports/berita-pinjam-pakai/export', [PinjamPakaiController::class, 'export'])->name('reports.pinjam.export');
     Route::get('reports/berita-pinjam-pakai/{id}/edit', [PinjamPakaiController::class, 'edit'])->name('reports.pinjam.edit');
     Route::get('reports/berita-pinjam-pakai/list', [PinjamPakaiController::class, 'list'])->name('reports.pinjam.list');
     Route::get('reports/berita-pinjam-pakai/{id}', [PinjamPakaiController::class, 'show'])->name('reports.pinjam.show');
@@ -100,7 +93,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports/belanja-modal/save', function () {
         return redirect()->route('reports.belanja.modal.list');
     });
-    Route::get('reports/belanja-modal/export', [BelanjaModalController::class, 'export'])->name('reports.belanja.modal.export');
     Route::get('reports/belanja-modal/list', [BelanjaModalController::class, 'index'])->name('reports.belanja.modal.list');
     Route::get('reports/belanja-modal/preview-all', [BelanjaModalController::class, 'previewAll'])->name('reports.belanja.modal.preview_all');
     Route::get('reports/belanja-modal/{id}', [BelanjaModalController::class, 'show'])->name('reports.belanja.modal.show');
@@ -111,7 +103,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports/nota-pesanan', [NotaPesananController::class, 'form'])->name('reports.nota.form');
     Route::post('reports/nota-pesanan', [NotaPesananController::class, 'report'])->name('reports.nota.report');
     Route::post('reports/nota-pesanan/save', [NotaPesananController::class, 'save'])->name('reports.nota.save');
-    Route::get('reports/nota-pesanan/export', [NotaPesananController::class, 'export'])->name('reports.nota.export');
     Route::get('reports/nota-pesanan/list', [NotaPesananController::class, 'list'])->name('reports.nota.list');
     Route::get('reports/nota-pesanan/{id}', [NotaPesananController::class, 'show'])->name('reports.nota.show');
     Route::get('reports/nota-pesanan/{id}/edit', [NotaPesananController::class, 'edit'])->name('reports.nota.edit');
@@ -122,7 +113,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports/berita-pemeriksaan', [PemeriksaanController::class, 'form'])->name('reports.pemeriksaan.form');
     Route::post('reports/berita-pemeriksaan', [PemeriksaanController::class, 'report'])->name('reports.pemeriksaan.report');
     Route::post('reports/berita-pemeriksaan/save', [PemeriksaanController::class, 'save'])->name('reports.pemeriksaan.save');
-    Route::get('reports/berita-pemeriksaan/export', [PemeriksaanController::class, 'export'])->name('reports.pemeriksaan.export');
     Route::get('reports/berita-pemeriksaan/list', [PemeriksaanController::class, 'list'])->name('reports.pemeriksaan.list');
     Route::get('reports/berita-pemeriksaan/{id}', [PemeriksaanController::class, 'show'])->name('reports.pemeriksaan.show');
     Route::get('reports/berita-pemeriksaan/{id}/edit', [PemeriksaanController::class, 'edit'])->name('reports.pemeriksaan.edit');
@@ -131,7 +121,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports/berita-penerimaan', [PenerimaanController::class, 'form'])->name('reports.penerimaan.form');
     Route::post('reports/berita-penerimaan', [PenerimaanController::class, 'report'])->name('reports.penerimaan.report');
     Route::post('reports/berita-penerimaan/save', [PenerimaanController::class, 'save'])->name('reports.penerimaan.save');
-    Route::get('reports/berita-penerimaan/export', [PenerimaanController::class, 'export'])->name('reports.penerimaan.export');
     Route::get('reports/berita-penerimaan/list', [PenerimaanController::class, 'list'])->name('reports.penerimaan.list');
     Route::get('reports/berita-penerimaan/{id}/edit', [PenerimaanController::class, 'edit'])->name('reports.penerimaan.edit');
     Route::get('reports/berita-penerimaan/{id}', [PenerimaanController::class, 'show'])->name('reports.penerimaan.show');
@@ -139,8 +128,13 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('reports/kwitansi', [KwitansiController::class, 'form'])->name('reports.kwitansi.form');
     Route::post('reports/kwitansi', [KwitansiController::class, 'report'])->name('reports.kwitansi.report');
-    Route::get('reports/kwitansi/export', [KwitansiController::class, 'export'])->name('reports.kwitansi.export');
+    Route::post('reports/kwitansi/save', [KwitansiController::class, 'save'])->name('reports.kwitansi.save');
     Route::get('reports/kwitansi/print-all', [KwitansiController::class, 'printAll'])->name('reports.kwitansi.print_all');
+    Route::get('reports/kwitansi/list', [KwitansiController::class, 'list'])->name('reports.kwitansi.list');
+    Route::get('reports/kwitansi/{id}/show', [KwitansiController::class, 'show'])->name('reports.kwitansi.show');
+    Route::get('reports/kwitansi/{id}/edit', [KwitansiController::class, 'edit'])->name('reports.kwitansi.edit');
+    Route::post('reports/kwitansi/{id}/update', [KwitansiController::class, 'update'])->name('reports.kwitansi.update');
+    Route::post('reports/kwitansi/{id}/delete', [KwitansiController::class, 'delete'])->name('reports.kwitansi.delete');
     Route::get('settings/opd', [OpdController::class, 'edit'])->name('settings.opd.edit');
     Route::post('settings/opd', [OpdController::class, 'update'])->name('settings.opd.update');
     Route::get('settings/opd/list', [OpdController::class, 'index'])->name('settings.opd.index');

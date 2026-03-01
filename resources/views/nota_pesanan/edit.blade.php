@@ -11,7 +11,11 @@
                 tanggal: '{{ $data['tanggal'] ?? now()->toDateString() }}',
                 belanja: '{{ $data['belanja'] ?? ($categories->first()->name ?? '') }}',
                 items: {!! json_encode(($data['items'] ?? [])) !!},
+                nextKey: 1,
                 products: {!! json_encode($products->map(fn($p) => ['id'=>$p->id,'name'=>$p->name,'unit'=>$p->unit,'price'=>$p->price ?? 0,'category_id'=>$p->category_id,'category_name'=>optional($p->category)->name])) !!},
+                ensureKeys() {
+                    this.items = (this.items || []).map(it => ({ ...it, _key: it._key || (this.nextKey++) }));
+                },
                 init() {
                     const normalizeName = (val) => {
                         const s = String(val ?? '').trim();
@@ -54,9 +58,10 @@
                         }
                     });
                     this.items = Object.values(by);
+                    this.ensureKeys();
                 },
                 addItem() {
-                    this.items.push({ name: '', qty: '', unit: '', price: '', total: '' });
+                    this.items.push({ _key: this.nextKey++, name: '', qty: '', unit: '', price: '', total: '' });
                     requestAnimationFrame(() => {
                         const sc = document.querySelector('main');
                         if (sc) sc.scrollTo({ top: sc.scrollHeight, behavior: 'smooth' });
@@ -176,7 +181,7 @@
                         </select>
                     </div>
                     <div class="p-3 border border-gray-200 rounded-lg bg-white">
-                        <label class="block text xs font-bold text-gray-700 uppercase mb-1">Penyedia</label>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Penyedia</label>
                         <select name="supplier_id" class="w-full rounded-lg border border-gray-300 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300">
                             <option value="">-- Pilih Penyedia --</option>
                             @foreach ($suppliers as $s)
@@ -208,7 +213,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <template x-for="(row, ridx) in rows()" :key="`${row.it.qty}|${row.it.unit}|${row.it.price}`">
+                    <template x-for="(row, ridx) in rows()" :key="row.it._key">
                         <tr class="border-t">
                             <td class="px-3 py-2 text-center font-bold" x-text="ridx + 1"></td>
                             <td class="px-3 py-2">
@@ -247,10 +252,10 @@
                 <i class="fas fa-plus"></i> Tambah Baris
             </button>
             <div class="flex gap-2">
-                <button type="submit" class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-green-600 text-white hover:bg-green-700">
+                <button type="submit" class="btn btn-success text-white">
                     <i class="fas fa-save"></i> Perbarui
                 </button>
-                <button type="submit" formmethod="POST" formaction="{{ route('reports.nota.report') }}" class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-orange-500 text-white hover:bg-orange-600">
+                <button type="submit" formmethod="POST" formaction="{{ route('reports.nota.report') }}" class="btn btn-warning">
                     <i class="fas fa-file-alt"></i> Preview Laporan
                 </button>
             </div>

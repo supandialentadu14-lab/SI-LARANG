@@ -218,10 +218,13 @@
             overflow: hidden;
             white-space: nowrap;
             width: 100%;
-            height: 36px;
+            min-height: 36px;
+            padding: 4px 0;
             border-radius: 0.5rem;
             background: linear-gradient(90deg, rgba(99,102,241,.12), rgba(124,58,237,.12));
             border: 1px solid rgba(99,102,241,.15);
+            display: flex;
+            align-items: center;
         }
 
         .marquee-text {
@@ -236,6 +239,7 @@
             letter-spacing: .4px;
             animation: marqueeMove 18s linear infinite;
             text-shadow: 0 0 1px rgba(255,255,255,.2);
+            line-height: normal;
         }
         .marquee-container:hover .marquee-text {
             animation-play-state: paused;
@@ -395,8 +399,10 @@
                 </a>
 
                 <div class="w-full space-y-2">
-                    <div x-data="{ key: 'master', open: false, popover:false }" class="relative" x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('products.*') || request()->routeIs('categories.*') || request()->routeIs('suppliers.*') ? 'true' : 'false' }}); })()">
-                        <button @click="sidebarOpen ? (open = !open, (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (popover = !popover)"
+                    <div x-data="{ key: 'master', open: false, popover:false }" class="relative" 
+                         @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
+                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('products.*') || request()->routeIs('categories.*') || request()->routeIs('suppliers.*') ? 'true' : 'false' }}); })()">
+                        <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (popover = !popover)"
                             class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
@@ -428,8 +434,10 @@
                         </div>
                     </div>
                     
-                    <div x-data="{ key: 'pengadaan', open: false, popover:false }" class="relative" x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('reports.belanja.*') || request()->routeIs('reports.nota.*') ? 'true' : 'false' }}); })()">
-                        <button @click="sidebarOpen ? (open = !open, (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (popover = !popover)"
+                    <div x-data="{ key: 'pengadaan', open: false, popover:false }" class="relative" 
+                         @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
+                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('reports.belanja.*') || request()->routeIs('reports.nota.*') ? 'true' : 'false' }}); })()">
+                        <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (popover = !popover)"
                             class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
@@ -470,12 +478,13 @@
                             <div class="px-2 py-1 text-xs font-bold opacity-70 mt-2">Belanja Barang dan Jasa</div>
                             <a href="{{ route('reports.nota.form') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Surat Pesanan</a>
                             <a href="{{ route('reports.nota.list') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Daftar Surat Pesanan</a>
-                            <a href="{{ route('reports.kwitansi.form') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Kwitansi</a>
                         </div>
                     </div>
                     
-                    <div x-data="{ key: 'transaksi', open: false }" x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('stock.*') || request()->routeIs('reports.index') || request()->routeIs('reports.kartu.tahunan') ? 'true' : 'false' }}); })()">
-                        <button @click="sidebarOpen ? (open = !open, (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('stock.index') }}')"
+                    <div x-data="{ key: 'transaksi', open: false }" 
+                         @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
+                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('stock.*') || request()->routeIs('reports.index') || request()->routeIs('reports.kartu.tahunan') ? 'true' : 'false' }}); })()">
+                        <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('stock.index') }}')"
                             class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
@@ -503,8 +512,35 @@
                         </div>
                     </div>
                     
-                    <div x-data="{ key: 'berita', open: false }" x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('reports.pinjam.*') || request()->routeIs('reports.opname.*') ? 'true' : 'false' }}); })()">
-                        <button @click="sidebarOpen ? (open = !open, (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('reports.pinjam.list') }}')"
+                    <div x-data="{ key: 'kwitansi', open: false }" 
+                         @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
+                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('reports.kwitansi.*') ? 'true' : 'false' }}); })()">
+                        <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('reports.kwitansi.list') }}')"
+                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg"
+                            :class="sidebarOpen ? 'justify-between' : 'justify-center'">
+                            <span class="flex items-center gap-2">
+                                <i class="fas fa-receipt"></i>
+                                <span x-show="sidebarOpen" x-cloak>Kwitansi</span>
+                            </span>
+                            <svg x-show="sidebarOpen" x-cloak :class="{ 'rotate-180': open }" class="w-4 h-4 transform transition-transform duration-300"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linecap="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="sidebarOpen && open" x-cloak class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
+                            <a href="{{ route('reports.kwitansi.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.kwitansi.list') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
+                                Daftar Kwitansi
+                            </a>
+                            <a href="{{ route('reports.kwitansi.form') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.kwitansi.form') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
+                                Buat Baru
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div x-data="{ key: 'berita', open: false }" 
+                         @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
+                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('reports.pinjam.*') || request()->routeIs('reports.opname.*') ? 'true' : 'false' }}); })()">
+                        <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('reports.pinjam.list') }}')"
                             class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
@@ -531,8 +567,10 @@
                             </a>
                         </div>
                     </div>
-                    <div x-data="{ key: 'settings', open: false }" x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('settings.opd.*') || request()->routeIs('settings.nota.master.*') ? 'true' : 'false' }}); })()">
-                        <button @click="sidebarOpen ? (open = !open, (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('settings.opd.index') }}')"
+                    <div x-data="{ key: 'settings', open: false }" 
+                         @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
+                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('settings.opd.*') || request()->routeIs('settings.nota.master.*') ? 'true' : 'false' }}); })()">
+                        <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('settings.opd.index') }}')"
                             class="w-full flex items-center px-4 py-3 text-white text-sm font-semibold hover:bg-indigo-700 transition rounded-lg"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
@@ -587,7 +625,7 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden" :style="{ backgroundColor: 'var(--body-bg)' }">
             <!-- Topbar -->
-            <header class="shadow h-16 flex items-center justify-between px-6 z-20" :style="{ backgroundColor: '#ffffff', color: 'var(--body-text)' }">
+            <header class="shadow min-h-[4rem] h-auto flex items-center justify-between px-6 z-20 py-2" :style="{ backgroundColor: '#ffffff', color: 'var(--body-text)' }">
                 <button @click="sidebarOpen = !sidebarOpen"
                     class="lg:hidden focus:outline-none" :style="{ color: '#374151' }">
                     <i class="fas fa-bars text-xl"></i>
@@ -595,7 +633,7 @@
 
                 <!-- Search Bar or Spacer -->
                 <!-- MARQUEE TEXT -->
-                <div class="hidden md:block flex-1 mx-6">
+                <div class="hidden md:block flex-1 mx-6 min-w-0">
                     <div class="marquee-container group">
                         <div class="marquee-text">
                             <span class="inline-flex items-center">
@@ -607,7 +645,7 @@
                 </div>
 
 
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-4 flex-shrink-0">
                     <div class="relative" x-data="{ notifyOpen: false }">
                         <button @click="notifyOpen = !notifyOpen"
                             class="text-gray-400 hover:text-blue-600 transition relative focus:outline-none">

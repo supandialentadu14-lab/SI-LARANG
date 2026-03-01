@@ -83,11 +83,11 @@
                         <i class="fas fa-plus"></i>
                         Tambah Baris
                     </button>
-                    <button type="submit" formmethod="POST" formaction="{{ route('reports.belanja.modal.save') }}" class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-green-600 text-white hover:bg-green-700">
+                    <button type="submit" formmethod="POST" formaction="{{ route('reports.belanja.modal.save') }}" class="btn btn-success text-white">
                         <i class="fas fa-save"></i>
                         Simpan
                     </button>
-                    <button type="submit" formmethod="POST" formaction="{{ route('reports.belanja.modal.report') }}" class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-orange-500 text-white hover:bg-orange-600">
+                    <button type="submit" formmethod="POST" formaction="{{ route('reports.belanja.modal.report') }}" class="btn btn-warning">
                         <i class="fas fa-file-alt"></i>
                         Preview Laporan
                     </button>

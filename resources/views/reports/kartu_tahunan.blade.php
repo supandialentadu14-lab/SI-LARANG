@@ -137,10 +137,6 @@
                     <i class="fas fa-print"></i>
                     Print
                 </button>
-                <a href="{{ route('reports.kartu.tahunan.export', ['start_date' => $startDate, 'end_date' => $endDate]) }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">
-                    <i class="fas fa-file-excel"></i>
-                    Export Excel
-                </a>
             </div>
         </form>
     </div>

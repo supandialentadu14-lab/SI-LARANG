@@ -6,9 +6,6 @@
 
 @section('actions')
     <button type="button" onclick="openPrintPreview()" class="no-print btn btn-neutral"><i class="fas fa-print"></i> Cetak</button>
-    @if (\Illuminate\Support\Facades\Route::has('reports.opname.export'))
-        <a href="{{ route('reports.opname.export') }}" class="no-print btn btn-primary ml-2"><i class="fas fa-file-excel"></i> Export Excel</a>
-    @endif
     <form method="POST" action="{{ route('reports.opname.save') }}" class="no-print inline-block ml-2">
         @csrf
         <input type="hidden" name="id" value="{{ session('opname_current_id') ?? ($saved_id ?? '') }}">
@@ -90,7 +87,7 @@
             </div>
 
             <p class="mb-3 text-sm">
-                {{ $data['pembuka'] ?? 'Pada hari ini ' . \Illuminate\Support\Carbon::parse($data['tanggal'])->translatedFormat('l d F Y') . ', bertempat di ' . ucwords(strtolower($opd->nama_opd ?? $data['tempat'] ?? '-')) . ' Kabupaten Bolaang Mongondow Selatan, yang bertanda tangan dibawah ini:' }}
+                {{ $data['pembuka'] ?? 'Pada hari ini ' . \Illuminate\Support\Carbon::parse($data['tanggal'])->locale('id')->translatedFormat('l d F Y') . ', bertempat di ' . ucwords(strtolower($opd->nama_opd ?? $data['tempat'] ?? '-')) . ' Kabupaten Bolaang Mongondow Selatan, yang bertanda tangan dibawah ini:' }}
             </p>
 
             <div class="mb-4">
@@ -176,18 +173,18 @@
             
             <div class="grid grid-cols-2 gap-6 mt-6">
                 <div class="text-center">
-                    <p class="mb-1">Mengetahui</p>
-                    <p class="mb-1">Kepala Dinas Komunikasi dan Informatika</p>
-                    <div class="h-24"></div>
-                    <p class="font-bold underline">{{ $opd->kepala_nama ?? ($data['pihak_pertama']['nama'] ?? '') }}</p>
-                    <p class="text-sm">NIP. {{ $opd->kepala_nip ?? ($data['pihak_pertama']['nip'] ?? '-') }}</p>
-                </div>
-                <div class="text-center">
                     <p class="mb-1">&nbsp;</p>
                     <p class="mb-1">Pengurus Barang Pengguna</p>
                     <div class="h-24"></div>
                     <p class="font-bold underline">{{ $opd->pengurus_nama ?? ($data['pihak_kedua']['nama'] ?? '') }}</p>
                     <p class="text-sm">NIP. {{ $opd->pengurus_nip ?? ($data['pihak_kedua']['nip'] ?? '-') }}</p>
+                </div>
+                <div class="text-center">
+                    <p class="mb-1">Mengetahui</p>
+                    <p class="mb-1">Kepala Dinas Komunikasi dan Informatika</p>
+                    <div class="h-24"></div>
+                    <p class="font-bold underline">{{ $opd->kepala_nama ?? ($data['pihak_pertama']['nama'] ?? '') }}</p>
+                    <p class="text-sm">NIP. {{ $opd->kepala_nip ?? ($data['pihak_pertama']['nip'] ?? '-') }}</p>
                 </div>
             </div>
         

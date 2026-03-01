@@ -4,7 +4,7 @@
 @section('subheader', 'Buat kwitansi berdasarkan BAP Penerimaan Barang')
 
 @section('content')
-    <form action="{{ route('reports.kwitansi.report') }}" method="POST" class="max-w-3xl mx-auto bg-white rounded-lg shadow p-6 space-y-6">
+    <form action="{{ route('reports.kwitansi.save') }}" method="POST" class="max-w-3xl mx-auto bg-white rounded-lg shadow p-6 space-y-6">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -17,11 +17,11 @@
             </div>
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">Nomor KWT</label>
-                <input type="text" name="nomor_kwt" value="{{ $data['nomor_kwt'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
+                <input type="text" name="nomor_kwt" value="{{ $data['nomor_kwt'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300" required>
             </div>
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">Tanggal</label>
-                <input type="date" name="tanggal" value="{{ $data['tanggal'] ?? now()->toDateString() }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
+                <input type="date" name="tanggal" value="{{ $data['tanggal'] ?? now()->toDateString() }}" class="w-full px-4 py-2 rounded-lg border border-gray-300" required>
             </div>
             <div class="md:col-span-2">
                 <label class="block text-sm font-bold text-gray-700 mb-1">Nomor BAP Penerimaan</label>
@@ -37,10 +37,10 @@
             </div>
         </div>
         <div class="flex items-center justify-end gap-2">
-            <a href="{{ route('reports.kwitansi.export') }}" class="btn btn-primary">
-                <i class="fas fa-file-excel"></i> Export Excel
-            </a>
-            <button type="submit" class="btn btn-warning">
+            <button type="submit" class="btn btn-success text-white">
+                <i class="fas fa-save"></i> Simpan
+            </button>
+            <button type="submit" formaction="{{ route('reports.kwitansi.report') }}" class="btn btn-warning">
                 <i class="fas fa-file-alt"></i> Preview Laporan
             </button>
         </div>

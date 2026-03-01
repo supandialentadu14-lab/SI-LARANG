@@ -20,7 +20,7 @@
             .doc { width: 210mm; min-height: 330mm; margin: 16px auto; background: #fff; box-shadow: 0 10px 25px rgba(0,0,0,.08); padding: 10mm; }
         }
     </style>
-    <div id="print-area" class="bg-white rounded-lg shadow p-6">
+    <div id="print-area">
         <div class="doc">{!! $notaHtml !!}</div>
         <div class="doc">{!! $pemeriksaanHtml !!}</div>
         <div class="doc">{!! $penerimaanHtml !!}</div>

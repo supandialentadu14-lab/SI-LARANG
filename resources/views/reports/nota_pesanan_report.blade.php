@@ -165,9 +165,6 @@
         <button type="button" onclick="window.print()" class="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold shadow">
             Print
         </button>
-        <a href="{{ route('reports.nota.export') }}" class="inline-block ml-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow">
-            Export Excel
-        </a>
     </div>
 
     <div id="print-area" class="preview-paper">
@@ -259,7 +256,7 @@
         </table>
         <br>
         <div class="kop">
-            <h1>NOTA PESANAN BARANG / BAHAN</h1>
+            <h1 class="text-center font-extrabold mb-4">NOTA PESANAN BARANG / BAHAN</h1>
         </div>
 
         <p class="text-sm mb-2">Dengan hormat,</p>

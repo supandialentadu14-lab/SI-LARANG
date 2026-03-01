@@ -10,6 +10,15 @@
             return {
                 tahun: '{{ $data['tahun'] ?? now()->year }}',
                 items: {!! json_encode(($data['items'] ?? [])) !!},
+                init() {
+                    const seen = new Set();
+                    this.items = (this.items || []).filter((row) => {
+                        const key = `${row.nama_kegiatan || ''}|${row.pekerjaan || ''}|${row.nilai_kontrak || ''}|${row.tanggal_mulai || ''}|${row.tanggal_akhir || ''}|${row.uang_muka || ''}|${row.termin1 || ''}|${row.termin2 || ''}|${row.termin3 || ''}|${row.termin4 || ''}|${row.status || ''}`;
+                        if (seen.has(key)) return false;
+                        seen.add(key);
+                        return true;
+                    });
+                },
                 addItem() {
                     this.items.push({
                         nama_kegiatan: '',
@@ -43,7 +52,7 @@
         }
     </script>
 
-    <form method="POST" action="{{ route('reports.belanja.modal.save') }}" x-data="belanjaModalForm()" class="bg-white rounded-lg shadow p-6 space-y-6">
+    <form method="POST" action="{{ route('reports.belanja.modal.save') }}" x-data="belanjaModalForm()" x-init="init()" class="bg-white rounded-lg shadow p-6 space-y-6">
         @csrf
         <input type="hidden" name="id" value="{{ session('belanja_modal_current_id') }}">
 
@@ -62,11 +71,11 @@
                         <i class="fas fa-plus"></i>
                         Tambah Baris
                     </button>
-                    <button type="submit" formmethod="POST" class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-green-600 text-white hover:bg-green-700">
+                    <button type="submit" formmethod="POST" class="btn btn-success text-white">
                         <i class="fas fa-save"></i>
                         Simpan
                     </button>
-                    <button type="submit" formmethod="POST" formaction="{{ route('reports.belanja.modal.report') }}" class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-orange-500 text-white hover:bg-orange-600">
+                    <button type="submit" formmethod="POST" formaction="{{ route('reports.belanja.modal.report') }}" class="btn btn-warning">
                         <i class="fas fa-file-alt"></i>
                         Preview Laporan
                     </button>

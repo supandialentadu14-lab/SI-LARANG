@@ -130,11 +130,11 @@
         </div>
 
         <div class="flex items-center justify-end gap-2 pt-2">
-            <button type="submit" formaction="{{ route('reports.opname.report') }}" formmethod="POST" class="btn btn-warning">
-                <i class="fas fa-eye"></i> Preview Laporan
-            </button>
-            <button type="submit" formaction="{{ route('reports.opname.save') }}" formmethod="POST" class="btn btn-success">
+            <button type="submit" formaction="{{ route('reports.opname.save') }}" formmethod="POST" class="btn btn-success text-white">
                 <i class="fas fa-save"></i> Perbarui
+            </button>
+            <button type="submit" formaction="{{ route('reports.opname.report') }}" formmethod="POST" class="btn btn-warning">
+                <i class="fas fa-file-alt"></i> Preview Laporan
             </button>
         </div>
     </form>

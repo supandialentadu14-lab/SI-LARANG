@@ -100,6 +100,26 @@ class PemeriksaanController extends Controller
         return (string) $value;
     }
 
+    protected function formatRomawi(int $number): string
+    {
+        $map = [
+            'M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400,
+            'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40,
+            'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1
+        ];
+        $returnValue = '';
+        while ($number > 0) {
+            foreach ($map as $roman => $int) {
+                if ($number >= $int) {
+                    $number -= $int;
+                    $returnValue .= $roman;
+                    break;
+                }
+            }
+        }
+        return $returnValue;
+    }
+
     public function report(Request $request): View
     {
         $opd = OpdSetting::where('user_id', Auth::id())->first();
@@ -137,8 +157,21 @@ class PemeriksaanController extends Controller
         $bulan = $dt->translatedFormat('F');
         $tanggalKata = ucwords($this->toWordsId((int) $dt->format('d')));
         $tahunKata = ucwords($this->toWordsId((int) $dt->format('Y')));
+        
+        $tanggalObj = \Carbon\Carbon::parse($payload['tanggal'] ?? now()->toDateString());
+        $tahunAnggaran = $tanggalObj->year;
+        
+        // Format Nomor Otomatis: [Input]/BAPB/DISKOMINFO/[BulanRomawi]/[Tahun]
+        $inputNomor = trim((string)($payload['nomor'] ?? ''));
+        if (preg_match('/^\d+$/', $inputNomor)) {
+            $bulanRomawi = $this->formatRomawi($tanggalObj->month);
+            $nomorFormatted = "{$inputNomor}/BAPB/DISKOMINFO/{$bulanRomawi}/{$tahunAnggaran}";
+        } else {
+            $nomorFormatted = $inputNomor;
+        }
+
         $data = [
-            'nomor' => $payload['nomor'] ?? '',
+            'nomor' => $nomorFormatted,
             'tanggal' => $payload['tanggal'] ?? now()->toDateString(),
             'tempat' => $payload['tempat'] ?? ($opd->nama_opd ?? ''),
             'nota' => [
@@ -274,58 +307,5 @@ class PemeriksaanController extends Controller
         return redirect()->route('reports.pemeriksaan.list')->with('status', 'Berita acara dihapus');
     }
 
-    public function export()
-    {
-        $opd = OpdSetting::where('user_id', Auth::id())->first();
-        $data = session('bap_current');
-        if (!$data) abort(400, 'Tidak ada data untuk diekspor');
-        return $this->exportExcel('reports.pemeriksaan_report', compact('data', 'opd'), 'bap-pemeriksaan.xls');
-    }
 
-    protected function exportExcel(string $view, array $params, string $filename)
-    {
-        $content = view($view, $params)->render();
-        try {
-            libxml_use_internal_errors(true);
-            $dom = new \DOMDocument('1.0', 'UTF-8');
-            $dom->loadHTML($content);
-            $xpath = new \DOMXPath($dom);
-            $styles = '';
-            foreach ($xpath->query('//style') as $styleNode) {
-                $styles .= $styleNode->nodeValue."\n";
-            }
-            $nodes = $xpath->query("//*[@id='print-area']");
-            if ($nodes && $nodes->length > 0) {
-                $node = $nodes->item(0);
-                $inner = '';
-                foreach ($node->childNodes as $child) {
-                    $inner .= $dom->saveHTML($child);
-                }
-                $content = '<div id="print-area">'.$inner.'</div>';
-                if ($styles) {
-                    $content = '<style>'.$styles.'</style>'.$content;
-                }
-            }
-            libxml_clear_errors();
-        } catch (\Throwable $e) {
-        }
-        $injectCss = '<style>
-            .no-print{display:none !important;}
-            body{background:#ffffff !important;}
-            body *{display:none !important;}
-            #print-area, #print-area *{display:block !important;}
-            .w-full{width:100% !important;}
-            .border-collapse{border-collapse:collapse !important;}
-            .text-xs{font-size:12px !important;}
-            .text-sm{font-size:13px !important;}
-            .text-center{text-align:center !important;}
-            .font-bold{font-weight:700 !important;}
-        </style>';
-        $content = $injectCss.$content;
-        $headers = [
-            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
-        ];
-        return response($content, 200, $headers);
-    }
 }

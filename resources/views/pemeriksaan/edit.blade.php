@@ -34,15 +34,13 @@
                 <input type="date" name="tanggal" value="{{ old('tanggal', $data['tanggal'] ?? now()->toDateString()) }}" class="w-full px-4 py-2 rounded-lg border border-gray-300" required>
             </div>
         </div>
-        <div class="flex items-center gap-3">
-            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg shadow">
-                Pratinjau
+        <div class="flex items-center justify-end gap-2 pt-2">
+            <button type="submit" formaction="{{ route('reports.pemeriksaan.save') }}" class="btn btn-success text-white">
+                <i class="fas fa-save"></i> Perbarui
             </button>
-            @if (session()->has('bap_current_id'))
-                <a href="{{ route('reports.pemeriksaan.edit', session('bap_current_id')) }}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-4 py-2 rounded-lg shadow">
-                    Edit
-                </a>
-            @endif
+            <button type="submit" formaction="{{ route('reports.pemeriksaan.report') }}" class="btn btn-warning">
+                <i class="fas fa-file-alt"></i> Preview Laporan
+            </button>
         </div>
     </form>
 @endsection
