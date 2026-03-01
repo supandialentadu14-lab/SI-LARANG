@@ -37,7 +37,7 @@
                     id="name"
                     type="text" {{-- tipe text --}}
                     name="name" {{-- nama field --}}
-                    :value="old('name')" {{-- isi ulang jika validasi gagal --}}
+                    value="{{ old('name') }}" {{-- isi ulang jika validasi gagal --}}
                     required {{-- wajib diisi --}}
                     autofocus {{-- fokus otomatis saat halaman dibuka --}}
                     class="pl-10 block w-full rounded-lg border-gray-300 border py-3 px-4 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-brand-500 shadow-sm transition sm:text-sm"
@@ -67,7 +67,7 @@
                     id="email"
                     type="email" {{-- tipe email --}}
                     name="email"
-                    :value="old('email')" {{-- isi ulang jika gagal --}}
+                    value="{{ old('email') }}" {{-- isi ulang jika gagal --}}
                     required {{-- wajib diisi --}}
                     class="pl-10 block w-full rounded-lg border-gray-300 border py-3 px-4 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-brand-500 shadow-sm transition sm:text-sm"
                     placeholder="nama@perusahaan.com">

@@ -117,23 +117,24 @@
     </style>
 
 
-    <div class="print:hidden rounded-xl shadow-md border border-indigo-200 bg-gradient-to-r from-indigo-50 via-white to-orange-50 p-4 mb-6">
-        <form method="GET" action="{{ route('reports.kartu.tahunan') }}" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-            <div>
-                <label class="block text-[10px] font-bold text-indigo-700 uppercase mb-1">From Date</label>
-                <input type="date" name="start_date" value="{{ $startDate }}" class="w-full rounded-lg border-indigo-200 text-sm bg-white shadow-sm focus:ring-2 focus:ring-orange-300 focus:border-orange-500">
+    <div class="print:hidden rounded-xl shadow-md border bg-white p-4 mb-6">
+        <form method="GET" action="{{ route('reports.kartu.tahunan') }}" class="flex items-end justify-between gap-4">
+            <div class="flex gap-4 flex-1">
+                <div class="w-1/4">
+                    <label class="block text-[10px] font-bold text-indigo-700 uppercase mb-1">From Date</label>
+                    <input type="date" name="start_date" value="{{ $startDate }}" class="w-full rounded-lg border-indigo-200 text-sm bg-white shadow-sm focus:ring-2 focus:ring-orange-300 focus:border-orange-500">
+                </div>
+                <div class="w-1/4">
+                    <label class="block text-[10px] font-bold text-indigo-700 uppercase mb-1">To Date</label>
+                    <input type="date" name="end_date" value="{{ $endDate }}" class="w-full rounded-lg border-indigo-200 text-sm bg-white shadow-sm focus:ring-2 focus:ring-orange-300 focus:border-orange-500">
+                </div>
             </div>
-            <div>
-                <label class="block text-[10px] font-bold text-indigo-700 uppercase mb-1">To Date</label>
-                <input type="date" name="end_date" value="{{ $endDate }}" class="w-full rounded-lg border-indigo-200 text-sm bg-white shadow-sm focus:ring-2 focus:ring-orange-300 focus:border-orange-500">
-            </div>
-            <div class="md:col-span-2"></div>
-            <div class="flex gap-1 justify-end">
-                <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600">
+            <div class="flex gap-2">
+                <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-500 text-white font-bold hover:bg-orange-600 shadow-sm">
                     <i class="fas fa-filter"></i>
                     Filter
                 </button>
-                <button type="button" onclick="window.print()" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-black text-white hover:bg-black">
+                <button type="button" onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black text-white font-bold hover:bg-gray-800 shadow-sm">
                     <i class="fas fa-print"></i>
                     Print
                 </button>

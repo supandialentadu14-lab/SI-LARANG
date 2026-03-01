@@ -7,6 +7,9 @@
         class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition transform hover:-translate-y-0.5 flex items-center">
         <i class="fas fa-plus mr-2"></i> Tambah Barang
     </a>
+    <form action="{{ route('products.bulk_delete') }}" method="POST" id="bulk-delete-products-form" class="hidden no-soft" onsubmit="return confirm('Hapus semua barang terpilih?');">
+        @csrf
+    </form>
 @endsection
 
 @section('content')
@@ -24,8 +27,6 @@
         </div>
 
         <div class="overflow-x-auto">
-            <form action="{{ route('products.bulk_delete') }}" method="POST" class="no-soft" onsubmit="return confirm('Hapus semua barang terpilih?');">
-                @csrf
             <table class="w-full text-sm text-left text-gray-600">
                 <thead class="bg-gray-100 text-gray-600 uppercase text-xs font-bold">
                     <tr>
@@ -44,7 +45,7 @@
                     @forelse($products as $product)
                         <tr class="hover:bg-orange-50 transition group">
                             <td class="px-6 py-4">
-                                <input type="checkbox" name="ids[]" value="{{ $product->id }}" class="row-check">
+                                <input type="checkbox" name="ids[]" value="{{ $product->id }}" class="row-check" form="bulk-delete-products-form">
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
@@ -117,11 +118,10 @@
             </table>
             <div class="px-6 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
                 <div class="text-xs text-gray-500">Pilih baris untuk menghapus sekaligus</div>
-                <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed" id="bulk-delete-btn" disabled>
+                <button type="submit" form="bulk-delete-products-form" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed" id="bulk-delete-btn" disabled>
                     <i class="fas fa-trash"></i> Hapus Terpilih
                 </button>
             </div>
-            </form>
         </div>
 
         <div class="px-6 py-4 border-t border-gray-100 bg-gray-50">

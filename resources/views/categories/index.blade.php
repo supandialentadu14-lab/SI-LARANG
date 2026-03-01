@@ -16,6 +16,11 @@
         
         Tambah Jenis Belanja
     </a>
+    
+    {{-- Form Bulk Delete --}}
+    <form action="{{ route('categories.bulk_delete') }}" method="POST" id="bulk-delete-form" class="hidden no-soft" onsubmit="return confirm('Hapus semua jenis belanja terpilih?');">
+        @csrf
+    </form>
 @endsection
 
 {{-- Section utama konten --}}
@@ -28,8 +33,6 @@
         <div class="overflow-x-auto">
 
             {{-- Tabel daftar kategori --}}
-            <form action="{{ route('categories.bulk_delete') }}" method="POST" class="no-soft" onsubmit="return confirm('Hapus semua jenis belanja terpilih?');">
-                @csrf
             <table class="w-full text-sm text-left text-gray-600">
 
                 {{-- Header tabel --}}
@@ -53,7 +56,7 @@
 
                         <tr class="hover:bg-orange-50 transition">
                             <td class="px-6 py-4">
-                                <input type="checkbox" name="ids[]" value="{{ $category->id }}" class="row-check">
+                                <input type="checkbox" name="ids[]" value="{{ $category->id }}" class="row-check" form="bulk-delete-form">
                             </td>
 
                             {{-- Nama kategori --}}
@@ -121,12 +124,11 @@
             </table>
             <div class="px-6 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
                 <div class="text-xs text-gray-500">Pilih baris untuk menghapus sekaligus</div>
-                <button type="submit" id="bulk-delete-categories-btn" disabled
+                <button type="submit" form="bulk-delete-form" id="bulk-delete-categories-btn" disabled
                     class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed">
                     <i class="fas fa-trash"></i> Hapus Terpilih
                 </button>
             </div>
-            </form>
         </div>
 
         {{-- Pagination --}}
