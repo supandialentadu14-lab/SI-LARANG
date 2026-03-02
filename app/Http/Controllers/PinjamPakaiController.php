@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+
 class PinjamPakaiController extends Controller
 {
     public function form(): View
@@ -193,8 +196,37 @@ class PinjamPakaiController extends Controller
                 'pihak_kedua' => $data['pihak_kedua']['nama'] ?? '',
             ];
         }
-        usort($items, fn($a, $b) => $b['updated'] <=> $a['updated']);
-        return view('pinjam_pakai.index', compact('items'));
+        usort($items, function ($a, $b) {
+            // 1. Urutkan berdasarkan Tanggal (Terbaru ke Terlama)
+            $dateA = $a['tanggal'];
+            $dateB = $b['tanggal'];
+            
+            if ($dateA !== $dateB) {
+                return $dateB <=> $dateA;
+            }
+
+            // 2. Jika Tanggal sama, urutkan berdasarkan Nomor Surat (Tertinggi ke Terendah)
+            // Asumsi format nomor: "011/BASTBI..." -> ambil angka pertama "011"
+            $numA = (int) explode('/', $a['nomor'])[0];
+            $numB = (int) explode('/', $b['nomor'])[0];
+
+            return $numB <=> $numA;
+        });
+
+        // Manual Pagination
+        $perPage = 5;
+        $page = request()->get('page', 1);
+        $offset = ($page - 1) * $perPage;
+        
+        $itemsPaginated = new LengthAwarePaginator(
+            array_slice($items, $offset, $perPage),
+            count($items),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        return view('pinjam_pakai.index', ['items' => $itemsPaginated]);
     }
 
     public function show(string $id): View
@@ -218,11 +250,22 @@ class PinjamPakaiController extends Controller
         $path = "users/".Auth::id()."/pinjam_pakai/{$id}.json";
         if ($disk->exists($path)) {
             $disk->delete($path);
-            $status = 'Berita acara berhasil dihapus';
-        } else {
-            $status = 'Berita acara tidak ditemukan';
         }
-        return redirect()->route('reports.pinjam.list')->with('status', $status);
+        return redirect()->route('reports.pinjam.list')->with('status', 'Berita acara berhasil dihapus');
+    }
+
+    public function bulkDelete(Request $request): RedirectResponse
+    {
+        $ids = $request->input('ids', []);
+        $count = 0;
+        foreach ($ids as $id) {
+            $path = "users/".Auth::id()."/pinjam_pakai/{$id}.json";
+            if (Storage::disk('local')->exists($path)) {
+                Storage::disk('local')->delete($path);
+                $count++;
+            }
+        }
+        return redirect()->route('reports.pinjam.list')->with('status', "{$count} Berita acara berhasil dihapus");
     }
 
 

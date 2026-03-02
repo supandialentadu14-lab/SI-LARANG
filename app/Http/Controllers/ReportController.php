@@ -220,16 +220,9 @@ class ReportController extends Controller
     {
         $opd = OpdSetting::where('user_id', Auth::id())->first();
         $master = $this->loadNotaMaster();
-        $startDate = $request->input(
-    'start_date',
-    now()->startOfYear()->toDateString()
-);
 
-$endDate = $request->input(
-    'end_date',
-    now()->endOfYear()->toDateString()
-);
-
+        $startDate = $request->input('start_date') ?: now()->startOfYear()->toDateString();
+        $endDate = $request->input('end_date') ?: now()->toDateString();
 
         $transactions = StockTransaction::with('product')
             ->whereBetween('date', [$startDate, $endDate])
@@ -295,22 +288,16 @@ $endDate = $request->input(
     {
         $opd = OpdSetting::where('user_id', Auth::id())->first();
         $master = $this->loadNotaMaster();
-        // Mengambil tanggal mulai dari input
-        // Jika tidak ada input, default ke awal bulan sekarang
-        $startDate = $request->input(
-    'start_date',
-    now()->startOfYear()->toDateString()
-);
 
-$endDate = $request->input(
-    'end_date',
-    now()->endOfYear()->toDateString()
-);
+        // Mengambil tanggal mulai dari input (handle empty string)
+        $startDate = $request->input('start_date') ?: now()->startOfYear()->toDateString();
 
+        // Mengambil tanggal akhir dari input (handle empty string)
+        $endDate = $request->input('end_date') ?: now()->toDateString();
 
         // Mengambil data transaksi stok berdasarkan rentang tanggal
         $transactions = StockTransaction::with('product') // Eager loading relasi product
-            ->whereBetween('date', [$startDate, $endDate]) // Filter tanggal
+            ->whereBetween('date', [$startDate, $endDate]) // Filter tanggal (rentang start s/d end)
             ->orderBy('date', 'asc')        // Urutkan berdasarkan tanggal
             ->orderBy('created_at', 'asc')  // Jika tanggal sama, urutkan berdasarkan waktu input
             ->get();

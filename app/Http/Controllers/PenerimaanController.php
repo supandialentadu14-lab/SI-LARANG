@@ -115,14 +115,37 @@ class PenerimaanController extends Controller
         return $returnValue;
     }
 
+    protected function getBapNomorMap(): array
+    {
+        $pemeriksaanDocs = $this->listPemeriksaanDocs();
+        $bapMap = [];
+        foreach ($pemeriksaanDocs as $doc) {
+            $bapNomor = $doc['nomor'] ?? '';
+            $notaNomor = $doc['nota']['nomor'] ?? '';
+            
+            // Map BAP Nomor to itself (if stored correctly)
+            if ($bapNomor) $bapMap[$bapNomor] = $bapNomor;
+            
+            // Map Nota Nomor to BAP Nomor (fix for when Nota Nomor was stored instead)
+            if ($notaNomor) $bapMap[$notaNomor] = $bapNomor;
+        }
+        return $bapMap;
+    }
+
     public function report(Request $request): View
     {
         $opd = OpdSetting::where('user_id', Auth::id())->first();
         $master = $this->loadNotaMaster();
         $payload = $request->all();
+        
+        // Use mapping to find correct BAP Doc
+        $bapMap = $this->getBapNomorMap();
+        $inputRef = $payload['pemeriksaan_nomor'] ?? '';
+        $realBapNomor = $bapMap[$inputRef] ?? $inputRef;
+        
         $selected = null;
         foreach ($this->listPemeriksaanDocs() as $doc) {
-            if (($doc['nomor'] ?? '') === ($payload['pemeriksaan_nomor'] ?? '')) { $selected = $doc; break; }
+            if (($doc['nomor'] ?? '') === $realBapNomor) { $selected = $doc; break; }
         }
         $items = $selected['items'] ?? [];
         $cleanItems = [];
@@ -164,7 +187,7 @@ class PenerimaanController extends Controller
             'nomor' => $nomorFormatted,
             'tanggal' => $payload['tanggal'] ?? now()->toDateString(),
             'tempat' => $payload['tempat'] ?? ($opd->nama_opd ?? ''),
-            'pemeriksaan_nomor' => $payload['pemeriksaan_nomor'] ?? '',
+            'pemeriksaan_nomor' => $realBapNomor, // Use corrected BAP Number
             'nota' => $selected['nota'] ?? [],
             'items' => $cleanItems,
             'terbilang' => ucwords($this->toWordsId((int) $totalSum)),
@@ -200,19 +223,26 @@ class PenerimaanController extends Controller
     public function list(): View
     {
         $disk = Storage::disk('local');
+        $bapMap = $this->getBapNomorMap(); // Use helper
+
         $dir = 'users/'.Auth::id().'/bap-penerimaan';
         $files = $disk->exists($dir) ? $disk->files($dir) : [];
         $items = [];
         foreach ($files as $file) {
             if (! str_ends_with($file, '.json')) continue;
             $data = json_decode($disk->get($file), true) ?: [];
+            
+            $storedRef = $data['pemeriksaan_nomor'] ?? '';
+            // Try to find the correct BAP Number from the map
+            $realBapNomor = $bapMap[$storedRef] ?? $storedRef;
+
             $items[] = [
                 'id' => basename($file, '.json'),
                 'updated' => $disk->lastModified($file),
                 'nomor' => $data['nomor'] ?? '',
                 'tanggal' => $data['tanggal'] ?? '',
                 'total' => $data['total'] ?? 0,
-                'pemeriksaan_nomor' => $data['pemeriksaan_nomor'] ?? '',
+                'pemeriksaan_nomor' => $realBapNomor,
             ];
         }
         usort($items, fn($a, $b) => $b['updated'] <=> $a['updated']);
@@ -227,6 +257,12 @@ class PenerimaanController extends Controller
         }
         $json = Storage::disk('local')->get($path);
         $data = json_decode($json, true) ?: [];
+        
+        // Fix BAP Nomor in loaded data for editing
+        $bapMap = $this->getBapNomorMap();
+        $storedRef = $data['pemeriksaan_nomor'] ?? '';
+        $data['pemeriksaan_nomor'] = $bapMap[$storedRef] ?? $storedRef;
+        
         session([
             'penerimaan_current' => $data,
             'penerimaan_current_id' => $id,
@@ -244,6 +280,12 @@ class PenerimaanController extends Controller
         }
         $json = Storage::disk('local')->get($path);
         $data = json_decode($json, true) ?: [];
+        
+        // Fix BAP Nomor in loaded data for viewing
+        $bapMap = $this->getBapNomorMap();
+        $storedRef = $data['pemeriksaan_nomor'] ?? '';
+        $data['pemeriksaan_nomor'] = $bapMap[$storedRef] ?? $storedRef;
+        
         $opd = OpdSetting::where('user_id', Auth::id())->first();
         session(['penerimaan_current' => $data, 'penerimaan_current_id' => $id]);
         return view('reports.penerimaan_report', compact('data', 'opd'));
@@ -258,6 +300,18 @@ class PenerimaanController extends Controller
         return redirect()->route('reports.penerimaan.list')->with('status', 'BAP Penerimaan dihapus');
     }
 
-
+    public function bulkDelete(Request $request): RedirectResponse
+    {
+        $ids = $request->input('ids', []);
+        $count = 0;
+        foreach ($ids as $id) {
+            $path = "users/".Auth::id()."/bap-penerimaan/{$id}.json";
+            if (Storage::disk('local')->exists($path)) {
+                Storage::disk('local')->delete($path);
+                $count++;
+            }
+        }
+        return redirect()->route('reports.penerimaan.list')->with('status', "{$count} BAP Penerimaan dihapus");
+    }
 }
 

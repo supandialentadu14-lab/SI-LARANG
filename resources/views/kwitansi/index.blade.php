@@ -1,63 +1,82 @@
 @extends('layouts.admin')
 
 @section('header', 'Daftar Kwitansi')
-@section('subheader', 'Kelola dokumen kwitansi yang tersimpan')
-
 @section('content')
-<div class="bg-white rounded-lg shadow">
-    <div class="p-4 border-b flex justify-between items-center">
-        <h3 class="text-lg font-medium text-gray-900">List Dokumen</h3>
-        <a href="{{ route('reports.kwitansi.form') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
-            <i class="fas fa-plus mr-2"></i>Buat Baru
-        </a>
-    </div>
-    
-    @if(session('status'))
-        <div class="p-4 bg-green-50 text-green-700 border-l-4 border-green-500">
-            {{ session('status') }}
-        </div>
-    @endif
 
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left text-gray-500">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+<div x-data="{
+    selected: [],
+    allSelected: false,
+    toggleAll() {
+        this.allSelected = !this.allSelected;
+        if (this.allSelected) {
+            this.selected = [
+                @foreach ($items as $item)
+                    '{{ $item['id'] }}',
+                @endforeach
+            ];
+        } else {
+            this.selected = [];
+        }
+    },
+    updateSelectAll() {
+        this.allSelected = this.selected.length === {{ count($items) }};
+    }
+}" class="bg-white rounded-lg shadow p-6 mb-6">
+
+    <div class="flex justify-between items-center mb-4">
+        <div class="flex items-center gap-2">
+            <a href="{{ route('reports.kwitansi.form') }}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold shadow">
+                <i class="fas fa-plus"></i> Buat Kwitansi
+            </a>
+            <form x-show="selected.length > 0" method="POST" action="{{ route('reports.kwitansi.bulk_delete') }}" class="inline-block" onsubmit="return confirm('Hapus ' + this.closest('div').querySelector('[x-text]').innerText + ' item terpilih?')">
+                @csrf
+                <input type="hidden" name="ids[]" x-model="selected">
+                <button type="submit" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold shadow">
+                    <i class="fas fa-trash"></i> Hapus (<span x-text="selected.length"></span>)
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto border rounded-lg">
+        <table class="w-full text-sm text-left text-gray-700">
+            <thead class="bg-gray-100 text-xs uppercase font-bold">
                 <tr>
-                    <th class="px-6 py-3 w-12 text-center">NO</th>
-                    <th class="px-6 py-3">NOMOR KWITANSI</th>
-                    <th class="px-6 py-3">TANGGAL</th>
-                    <th class="px-6 py-3">NOMOR BAP PENERIMAAN</th>
-                    <th class="px-6 py-3">JUMLAH (RP)</th>
-                    <th class="px-6 py-3 text-right">AKSI</th>
+                    <th class="px-3 py-2 w-10">
+                        <input type="checkbox" @click="toggleAll()" x-model="allSelected" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </th>
+                    <th class="px-3 py-2">Nomor Kwitansi</th>
+                    <th class="px-3 py-2">Tanggal</th>
+                    <th class="px-3 py-2">Nomor BAP Penerimaan</th>
+                    <th class="px-3 py-2">Jumlah (Rp)</th>
+                    <th class="px-3 py-2 text-right">Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($items as $idx => $item)
-                    <tr class="bg-white border-b hover:bg-gray-50">
-                        <td class="px-6 py-4 text-center">{{ $idx + 1 }}</td>
-                        <td class="px-6 py-4 font-medium text-gray-900">{{ $item['nomor_kwt'] ?: '-' }}</td>
-                        <td class="px-6 py-4">
+                @forelse($items as $item)
+                    <tr class="border-t hover:bg-gray-50 transition" :class="{ 'bg-indigo-50': selected.includes('{{ $item['id'] }}') }">
+                        <td class="px-3 py-2">
+                            <input type="checkbox" value="{{ $item['id'] }}" x-model="selected" @click="updateSelectAll()" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        </td>
+                        <td class="px-3 py-2 font-medium text-gray-900">{{ $item['nomor_kwt'] ?: '-' }}</td>
+                        <td class="px-3 py-2">
                             {{ \Carbon\Carbon::parse($item['tanggal'])->translatedFormat('d F Y') }}
                         </td>
-                        <td class="px-6 py-4">{{ $item['penerimaan_nomor'] ?: '-' }}</td>
-                        <td class="px-6 py-4 font-mono">
-                            {{ number_format($item['jumlah'], 0, ',', '.') }}
+                        <td class="px-3 py-2">{{ $item['penerimaan_nomor'] ?: '-' }}</td>
+                        <td class="px-3 py-2 font-mono">
+                            {{ number_format((int)$item['jumlah'], 0, ',', '.') }}
                         </td>
-                        <td class="px-6 py-4 text-right space-x-2">
-                            <a href="{{ route('reports.kwitansi.show', $item['id']) }}" class="text-blue-600 hover:text-blue-900 font-medium">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ route('reports.kwitansi.edit', $item['id']) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <form action="{{ route('reports.kwitansi.delete', $item['id']) }}" method="POST" class="inline-block" onsubmit="return confirm('Hapus dokumen ini?')">
-                                @csrf
-                                <button type="submit" class="text-red-600 hover:text-red-900 font-medium"><i class="fas fa-trash"></i></button>
-                            </form>
+                        <td class="px-3 py-2 text-right">
+                            @include('partials.action_buttons', [
+                                'show' => route('reports.kwitansi.show', $item['id']),
+                                'edit' => route('reports.kwitansi.edit', $item['id']),
+                                'delete' => route('reports.kwitansi.delete', $item['id']),
+                            ])
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                        <td colspan="6" class="px-3 py-6 text-center text-gray-500">
                             Belum ada dokumen tersimpan.
                         </td>
                     </tr>

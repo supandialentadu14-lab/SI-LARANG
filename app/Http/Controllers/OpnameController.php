@@ -306,36 +306,27 @@ class OpnameController extends Controller
         return response()->json(['items' => $items]);
     }
 
-    public function delete(string $id): View
+    public function delete(string $id): RedirectResponse
     {
         $disk = Storage::disk('local');
         $path = "users/".Auth::id()."/opname/{$id}.json";
         if ($disk->exists($path)) {
             $disk->delete($path);
-            $status = 'Berita acara berhasil dihapus';
-        } else {
-            $status = 'Berita acara tidak ditemukan';
         }
-        $files = $disk->files('users/'.Auth::id().'/opname');
-        $items = [];
-        foreach ($files as $file) {
-            if (! str_ends_with($file, '.json')) continue;
-            $json = $disk->get($file);
-            $data = json_decode($json, true) ?: [];
-            $items[] = [
-                'id' => basename($file, '.json'),
-                'updated' => $disk->lastModified($file),
-                'nomor' => $data['nomor'] ?? '',
-                'tanggal' => $data['tanggal'] ?? '',
-                'tempat' => $data['tempat'] ?? '',
-                'pihak_pertama' => $data['pihak_pertama']['nama'] ?? '',
-                'pihak_kedua' => $data['pihak_kedua']['nama'] ?? '',
-            ];
+        return redirect()->route('reports.opname.list')->with('status', 'Berita acara berhasil dihapus');
+    }
+
+    public function bulkDelete(Request $request): RedirectResponse
+    {
+        $ids = $request->input('ids', []);
+        $count = 0;
+        foreach ($ids as $id) {
+            $path = "users/".Auth::id()."/opname/{$id}.json";
+            if (Storage::disk('local')->exists($path)) {
+                Storage::disk('local')->delete($path);
+                $count++;
+            }
         }
-        usort($items, fn($a, $b) => $b['updated'] <=> $a['updated']);
-        return view('opname.index', [
-            'items' => $items,
-            'status' => $status,
-        ]);
+        return redirect()->route('reports.opname.list')->with('status', "{$count} Berita acara berhasil dihapus");
     }
 }

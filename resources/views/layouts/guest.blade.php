@@ -76,56 +76,90 @@
     </style>
 </head>
 
-<body class="font-sans antialiased text-gray-900 bg-gray-50 flex min-h-screen overflow-hidden">
+<body class="font-sans antialiased text-gray-900 bg-gray-900 flex min-h-screen overflow-hidden">
     <!-- Left Side - Image/Illustration -->
-    <div class="hidden lg:flex w-1/2 relative bg-brand-600 overflow-hidden items-center justify-center animate__animated animate__fadeIn">
+    <div class="hidden lg:flex w-1/2 relative bg-gray-900 overflow-hidden items-center justify-center">
         <!-- Abstract Background Shapes -->
-        <div class="absolute inset-0 bg-gradient-to-br from-brand-600 to-brand-800"></div>
-        <div class="absolute -top-24 -left-24 w-96 h-96 bg-brand-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float"></div>
-        <div class="absolute top-1/2 -right-24 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float" style="animation-delay: 2s"></div>
-        <div class="absolute -bottom-24 left-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float" style="animation-delay: 4s"></div>
+        <div class="absolute inset-0 bg-gradient-to-tr from-brand-900/90 via-gray-900/40 to-purple-900/90 z-0"></div>
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 z-10 mix-blend-overlay"></div>
         
-        <!-- Pattern Overlay -->
-        <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')"></div>
+        <!-- Animated Blobs -->
+        <div class="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] bg-brand-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob"></div>
+        <div class="absolute top-[20%] -right-[10%] w-[40%] h-[40%] bg-purple-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-[10%] left-[20%] w-[45%] h-[45%] bg-pink-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-4000"></div>
 
-        <!-- Main Image -->
-        <div class="relative z-10 p-12 w-full max-w-2xl animate__animated animate__zoomIn">
-            <img src="{{ asset('images/login-bg-new.jpg') }}" class="w-full h-auto object-cover rounded-2xl shadow-2xl transform hover:scale-105 transition duration-700 ease-in-out border-4 border-white/20">
-            <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg animate-bounce">
-                <span class="text-brand-900 font-bold text-xl">v2.0</span>
+        <!-- Main Image Container -->
+        <div class="relative z-20 w-full h-full p-12 flex items-center justify-center animate__animated animate__fadeIn">
+            <div class="relative w-full max-w-sm aspect-square rounded-[2rem] overflow-hidden shadow-2xl border border-white/10 group">
+                <div class="absolute inset-0 bg-brand-500/10 group-hover:bg-transparent transition duration-500 z-10"></div>
+                <img src="{{ asset('images/login-bg-new.jpg') }}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-1000 ease-in-out">
+                
+                <!-- Floating Badge -->
+                <div class="absolute bottom-6 right-6 bg-white/10 backdrop-blur-md border border-white/20 p-3 rounded-xl shadow-xl animate-float z-20">
+                    <div class="flex items-center gap-3">
+                        <div class="p-1.5 bg-green-500/20 rounded-lg">
+                            <i class="fas fa-shield-alt text-green-400 text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-white font-bold text-xs">Secure System</p>
+                            <p class="text-white/60 text-[10px]">Data Encrypted</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Text Overlay -->
-        <div class="absolute bottom-12 left-12 z-20 text-white animate__animated animate__fadeInUp animate__delay-1s">
-            <h2 class="text-4xl font-bold mb-2">SI-LARANG</h2>
-            <p class="text-brand-100 text-lg max-w-md">Sistem Informasi Pengelolaan Persediaan Barang Daerah yang Modern & Terintegrasi.</p>
+        <div class="absolute bottom-8 left-8 z-30">
+            <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-white tracking-tight drop-shadow-sm mb-1">SI-LARANG</h2>
+            <p class="text-blue-100/80 font-medium text-sm max-w-xs">Sistem Informasi Pengelolaan Persediaan Barang Daerah.</p>
         </div>
     </div>
 
     <!-- Right Side - Login Form -->
-    <div class="w-full lg:w-1/2 flex items-center justify-center p-6 relative bg-white">
-        <!-- Background Pattern for Right Side -->
-        <div class="absolute inset-0 bg-pattern z-0"></div>
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-6 relative bg-gray-900">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 z-0"></div>
+        <div class="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-brand-900/20 to-transparent z-0"></div>
         
         <div class="w-full max-w-md relative z-10 animate__animated animate__fadeInRight">
-            <div class="text-center lg:hidden mb-8 animate__animated animate__fadeInDown">
-                <div class="inline-flex items-center justify-center mb-3 p-2 bg-white rounded-xl shadow-lg">
-                    <img src="{{ asset('images/silarang-logo.png') }}" alt="Logo SI-LARANG" class="h-16 w-16 rounded-lg" onerror="this.style.display='none'">
+            
+            <!-- Logo Mobile -->
+            <div class="text-center lg:hidden mb-8">
+                <div class="inline-flex items-center justify-center mb-4 p-3 bg-white/5 backdrop-blur-md rounded-2xl shadow-xl border border-white/10">
+                    <img src="{{ asset('images/silarang-logo.png') }}" alt="Logo SI-LARANG" class="h-14 w-14 object-contain" onerror="this.style.display='none'">
                 </div>
-                <h2 class="text-2xl font-bold text-gray-900 tracking-tight">SI-LARANG</h2>
-                <p class="text-sm text-gray-500 font-medium">Sistem Informasi Persediaan Barang</p>
+                <h2 class="text-2xl font-bold text-white">SI-LARANG</h2>
             </div>
 
-            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-8 sm:p-10 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
-                {{ $slot }}
+            <!-- Glass Card Form -->
+            <div class="bg-white/5 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] border border-white/10 p-8 sm:p-10 relative overflow-hidden group">
+                <!-- Shine Effect -->
+                <div class="absolute inset-0 -translate-x-full group-hover:animate-[shine_1.5s_infinite] bg-gradient-to-r from-transparent via-white/5 to-transparent z-0 pointer-events-none"></div>
+                
+                <div class="relative z-10">
+                    {{ $slot }}
+                </div>
             </div>
 
-            <div class="mt-8 text-center space-y-2 animate__animated animate__fadeIn animate__delay-1s">
-                <p class="text-xs text-gray-400">Sistem Informasi Pengelolaan Persediaan Barang.</p>
-                <p class="text-xs text-gray-400 font-medium">Copyright © 2026 Emon Alentadu. Seluruh Hak Cipta Dilindungi.</p>
+            <!-- Footer -->
+            <div class="mt-8 text-center animate__animated animate__fadeIn animate__delay-1s">
+                <p class="text-[10px] text-white/40 font-medium tracking-widest uppercase">Copyright © 2026 Emon Alentadu</p>
             </div>
         </div>
     </div>
+
+    <style>
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob { animation: blob 7s infinite; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+        @keyframes shine { 100% { left: 125%; } }
+    </style>
 </body>
 </html>

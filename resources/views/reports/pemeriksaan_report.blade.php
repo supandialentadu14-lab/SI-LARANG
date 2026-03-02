@@ -19,19 +19,43 @@
 @endsection
 
 @section('content')
-    <div id="print-area" class="preview-paper bg-white shadow border border-gray-100 text-black">
+    <div id="print-area" class="preview-paper bg-white text-black">
         <div class="mb-4">
             <style>
-                .preview-paper { width: 210mm; min-height: 330mm; margin: 0 auto; background: #fff; padding: 10mm; }
+                .preview-paper { 
+                    width: 210mm; 
+                    min-height: 330mm; 
+                    margin: 0 auto; 
+                    background: #fff; 
+                    padding: 5mm 15mm;
+                    line-height: 1.4;
+                }
+                .preview-paper p { margin: 5px 0; }
+                .preview-paper h2 { margin: 5px 0; }
+                .preview-paper table { margin-top: 6px; }
                 @media print {
                     body * { visibility: hidden; }
                     #print-area, #print-area * { visibility: visible; }
                     #print-area { position: static !important; width: auto !important; overflow: visible !important; }
-                    @page { size: auto; margin: 10mm; }
+                    @page { size: 210mm 330mm; margin: 5mm 15mm; }
+                    body { margin: 0; }
+                    .preview-paper { 
+                        width: 100% !important; 
+                        min-height: auto !important; 
+                        padding: 0 !important; 
+                        margin: 0 !important; 
+                        box-sizing: border-box; 
+                        background: #ffffff !important; 
+                        box-shadow: none !important; 
+                        line-height: 1.4;
+                    }
+                    .preview-paper p { margin: 5px 0; }
+                    .preview-paper h2 { margin: 5px 0; }
+                    .preview-paper table { margin-top: 6px; }
                 }
                 @media screen {
                     #print-area { width: 210mm; margin: 0 auto; }
-                    .preview-paper { width: 210mm; min-height: 330mm; margin: 16px auto; background: #fff; box-shadow: 0 10px 25px rgba(0,0,0,.08); padding: 10mm; }
+                    .preview-paper { width: 210mm; min-height: 330mm; margin: 16px auto; background: #fff; box-shadow: 0 10px 25px rgba(0,0,0,.08); padding: 5mm 15mm; }
                 }
                 table.items td, table.items th { border: 1px solid #000; }
             </style>

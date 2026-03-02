@@ -3,6 +3,14 @@
 @section('header', 'Nota Pesanan')
 @section('content')
     <style>
+        .preview-paper { 
+            width: 210mm; 
+            min-height: 330mm; 
+            margin: 0 auto; 
+            background: #ffffff; 
+            padding: 5mm 15mm;
+            line-height: 1.4;
+        }
         @media print {
             body * {
                 visibility: hidden;
@@ -20,15 +28,26 @@
             }
 
             @page {
-                size: auto;
-                margin: 12mm;
+                size: 210mm 330mm;
+                margin: 5mm 15mm;
+            }
+            body { margin: 0; }
+            .preview-paper { 
+                width: 100% !important; 
+                min-height: auto !important; 
+                padding: 0 !important; 
+                margin: 0 !important; 
+                box-sizing: border-box; 
+                background: #ffffff !important; 
+                box-shadow: none !important; 
+                line-height: 1.4;
             }
         }
 
         @media screen {
             html, body { background: #f3f4f6; }
             #print-area { width: 210mm; margin: 0 auto; }
-            .preview-paper { width: 210mm; min-height: 330mm; margin: 16px auto; background: #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,.08); padding: 10mm; }
+            .preview-paper { width: 210mm; min-height: 330mm; margin: 16px auto; background: #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,.08); padding: 5mm 15mm; }
         }
 
         .kop {
@@ -161,10 +180,62 @@
         /*   */
     </style>
 
-    <div class="bg-white rounded-lg shadow p-6 mb-6 print:hidden">
-        <button type="button" onclick="window.print()" class="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold shadow">
-            Print
+    <div class="bg-white rounded-lg shadow p-6 mb-6 print:hidden flex gap-2">
+        <button type="button" onclick="history.back()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-bold shadow">
+            <i class="fas fa-arrow-left mr-2"></i> Kembali
         </button>
+        <button type="button" onclick="window.print()" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg font-bold shadow">
+            <i class="fas fa-print mr-2"></i> Print
+        </button>
+        <form action="{{ route('reports.nota.save') }}" method="POST" class="inline">
+            @csrf
+            {{-- Hidden inputs from $data --}}
+            <input type="hidden" name="nomor" value="{{ $data['nomor'] }}">
+            <input type="hidden" name="tanggal" value="{{ $data['tanggal'] }}">
+            <input type="hidden" name="tahun" value="{{ $data['tahun'] }}">
+            <input type="hidden" name="kegiatan" value="{{ $data['kegiatan'] }}">
+            <input type="hidden" name="sub_kegiatan" value="{{ $data['sub_kegiatan'] }}">
+            <input type="hidden" name="rekening" value="{{ $data['rekening'] }}">
+            <input type="hidden" name="belanja" value="{{ $data['belanja'] }}">
+            
+            {{-- Pihak-pihak --}}
+            <input type="hidden" name="pejabat_nama" value="{{ $data['pejabat']['nama'] ?? '' }}">
+            <input type="hidden" name="pejabat_nip" value="{{ $data['pejabat']['nip'] ?? '' }}">
+            <input type="hidden" name="pptk_nama" value="{{ $data['pptk']['nama'] ?? '' }}">
+            <input type="hidden" name="pptk_nip" value="{{ $data['pptk']['nip'] ?? '' }}">
+            <input type="hidden" name="pb_nama" value="{{ $data['pengurus_barang']['nama'] ?? '' }}">
+            <input type="hidden" name="pb_nip" value="{{ $data['pengurus_barang']['nip'] ?? '' }}">
+            <input type="hidden" name="pbp_nama" value="{{ $data['pengurus_pengguna']['nama'] ?? '' }}">
+            <input type="hidden" name="pbp_nip" value="{{ $data['pengurus_pengguna']['nip'] ?? '' }}">
+            <input type="hidden" name="ppk_nama" value="{{ $data['ppk']['nama'] ?? '' }}">
+            <input type="hidden" name="ppk_nip" value="{{ $data['ppk']['nip'] ?? '' }}">
+            <input type="hidden" name="bendahara_nama" value="{{ $data['bendahara']['nama'] ?? '' }}">
+            <input type="hidden" name="bendahara_nip" value="{{ $data['bendahara']['nip'] ?? '' }}">
+
+            {{-- Penyedia --}}
+            {{-- Note: Controller prioritizes supplier_id, then session. We pass values directly to be safe or rely on session if controller supports it. 
+                 But controller 'save' reads from session('nota_current') only for penyedia fallback. 
+                 Since we are passing explicit data, we might need to pass penyedia details if they are editable? 
+                 Actually 'save' doesn't seem to read penyedia_toko etc from request directly unless we modify it.
+                 Wait, 'save' uses: 
+                 $penyedia = ['toko' => '', ...];
+                 if ($sid = $request->input('supplier_id')) { ... } else { $existing = session('nota_current') ... }
+                 So if we don't pass supplier_id, it will look in session.
+                 Since 'report' method saved to session 'nota_current', 'save' should pick it up!
+            --}}
+            
+            {{-- Items --}}
+            @foreach($data['items'] as $idx => $item)
+                <input type="hidden" name="items[{{ $idx }}][name]" value="{{ $item['name'] }}">
+                <input type="hidden" name="items[{{ $idx }}][qty]" value="{{ $item['qty'] }}">
+                <input type="hidden" name="items[{{ $idx }}][unit]" value="{{ $item['unit'] }}">
+                <input type="hidden" name="items[{{ $idx }}][price]" value="{{ $item['price'] }}">
+            @endforeach
+
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold shadow">
+                <i class="fas fa-save mr-2"></i> Simpan
+            </button>
+        </form>
     </div>
 
     <div id="print-area" class="preview-paper">

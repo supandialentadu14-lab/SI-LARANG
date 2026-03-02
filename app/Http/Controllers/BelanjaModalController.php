@@ -267,7 +267,37 @@ class BelanjaModalController extends Controller
             abort(404);
         }
         Storage::disk('local')->delete($path);
+        
+        // Also delete from database if exists
+        $bm = BelanjaModal::where('user_id', Auth::id())->where('dataset_id', $id)->first();
+        if ($bm) {
+            $bm->items()->delete();
+            $bm->delete();
+        }
+
         return redirect()->route('reports.belanja.modal.list')->with('status', 'Data belanja modal dihapus');
+    }
+
+    public function bulkDelete(Request $request): RedirectResponse
+    {
+        $ids = $request->input('ids', []);
+        $count = 0;
+        foreach ($ids as $id) {
+            $path = "users/".Auth::id()."/belanja-modal/{$id}.json";
+            if (Storage::disk('local')->exists($path)) {
+                Storage::disk('local')->delete($path);
+                
+                // Also delete from database if exists
+                $bm = BelanjaModal::where('user_id', Auth::id())->where('dataset_id', $id)->first();
+                if ($bm) {
+                    $bm->items()->delete();
+                    $bm->delete();
+                }
+                
+                $count++;
+            }
+        }
+        return redirect()->route('reports.belanja.modal.list')->with('status', "{$count} Data belanja modal dihapus");
     }
 
     public function previewAll(): View
@@ -287,16 +317,16 @@ class BelanjaModalController extends Controller
                 $years[] = (int)$data['tahun'];
             }
             foreach (($data['items'] ?? []) as $it) {
-                $nm = $it['nm'] ?? '';
-                $pk = $it['pk'] ?? '';
-                $nk = (int)($it['nk'] ?? 0);
-                $tm = $it['tm'] ?? '';
-                $ta = $it['ta'] ?? '';
-                $um = (int)($it['um'] ?? 0);
-                $t1 = (int)($it['t1'] ?? 0);
-                $t2 = (int)($it['t2'] ?? 0);
-                $t3 = (int)($it['t3'] ?? 0);
-                $t4 = (int)($it['t4'] ?? 0);
+                $nm = $it['nm'] ?? ($it['nama_kegiatan'] ?? '');
+                $pk = $it['pk'] ?? ($it['pekerjaan'] ?? '');
+                $nk = (int)($it['nk'] ?? ($it['nilai_kontrak'] ?? 0));
+                $tm = $it['tm'] ?? ($it['tanggal_mulai'] ?? '');
+                $ta = $it['ta'] ?? ($it['tanggal_akhir'] ?? '');
+                $um = (int)($it['um'] ?? ($it['uang_muka'] ?? 0));
+                $t1 = (int)($it['t1'] ?? ($it['termin1'] ?? 0));
+                $t2 = (int)($it['t2'] ?? ($it['termin2'] ?? 0));
+                $t3 = (int)($it['t3'] ?? ($it['termin3'] ?? 0));
+                $t4 = (int)($it['t4'] ?? ($it['termin4'] ?? 0));
                 $ttl = (int)($it['ttl'] ?? ($um + $t1 + $t2 + $t3 + $t4));
                 $st = $it['st'] ?? '';
                 $clean[] = compact('nm','pk','nk','tm','ta','um','t1','t2','t3','t4','ttl','st');

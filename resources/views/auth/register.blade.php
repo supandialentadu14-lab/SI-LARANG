@@ -1,155 +1,114 @@
 {{-- Menggunakan layout untuk user yang belum login (guest) --}}
 <x-guest-layout>
 
-    {{-- Bagian Judul Halaman Register --}}
-    <div class="mb-10">
-        <div class="flex items-center gap-3">
-            <img src="{{ asset('images/silarang-logo.png') }}" alt="Logo SI-LARANG" class="h-20 w-20 rounded-md ring-2 ring-indigo-200" onerror="this.style.display='none'">
-            <div>
-                <h2 class="text-3xl font-bold text-gray-900">Daftar Akun SI-LARANG</h2>
-                <p class="text-gray-500 mt-1">Buat akun untuk mengelola persediaan.</p>
-            </div>
-        </div>
+    {{-- Header Form --}}
+    <div class="mb-8 text-center">
+        <h3 class="text-2xl font-bold text-gray-800">Buat Akun Baru</h3>
+        <p class="text-gray-500 text-sm mt-1">Daftar untuk mulai mengelola persediaan</p>
     </div>
 
-    {{-- Form register, method POST ke route 'register' --}}
     <form method="POST" action="{{ route('register') }}" class="space-y-5">
-
-        {{-- Token keamanan CSRF Laravel (wajib) --}}
         @csrf
 
-        {{-- ================= INPUT NAMA ================= --}}
-        <div>
-            {{-- Label Nama Lengkap --}}
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+        {{-- Input Nama --}}
+        <div class="group">
+            <label for="name" class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1 tracking-wide">
                 Nama Lengkap
             </label>
-
-            <div class="relative"> {{-- Agar icon bisa di posisi absolute --}}
-                
-                {{-- Icon user --}}
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fas fa-user text-gray-400"></i>
+            <div class="relative transition-all duration-300 transform group-hover:-translate-y-0.5">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-600 transition-colors">
+                    <i class="far fa-user text-lg"></i>
                 </div>
-
-                {{-- Input Nama --}}
                 <input 
                     id="name"
-                    type="text" {{-- tipe text --}}
-                    name="name" {{-- nama field --}}
-                    value="{{ old('name') }}" {{-- isi ulang jika validasi gagal --}}
-                    required {{-- wajib diisi --}}
-                    autofocus {{-- fokus otomatis saat halaman dibuka --}}
-                    class="pl-10 block w-full rounded-lg border-gray-300 border py-3 px-4 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-brand-500 shadow-sm transition sm:text-sm"
+                    type="text"
+                    name="name"
+                    value="{{ old('name') }}"
+                    required
+                    autofocus
+                    class="form-input pl-12 block w-full rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white py-3.5 px-4 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-0 transition-all duration-200 shadow-sm"
                     placeholder="Nama Lengkap">
             </div>
-
-            {{-- Menampilkan pesan error validasi name --}}
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
-        {{-- ================= INPUT EMAIL ================= --}}
-        <div>
-            {{-- Label Email --}}
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+        {{-- Input Email --}}
+        <div class="group">
+            <label for="email" class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1 tracking-wide">
                 Alamat Email
             </label>
-
-            <div class="relative">
-                
-                {{-- Icon email --}}
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fas fa-envelope text-gray-400"></i>
+            <div class="relative transition-all duration-300 transform group-hover:-translate-y-0.5">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-600 transition-colors">
+                    <i class="far fa-envelope text-lg"></i>
                 </div>
-
-                {{-- Input Email --}}
                 <input 
                     id="email"
-                    type="email" {{-- tipe email --}}
+                    type="email"
                     name="email"
-                    value="{{ old('email') }}" {{-- isi ulang jika gagal --}}
-                    required {{-- wajib diisi --}}
-                    class="pl-10 block w-full rounded-lg border-gray-300 border py-3 px-4 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-brand-500 shadow-sm transition sm:text-sm"
-                    placeholder="nama@perusahaan.com">
+                    value="{{ old('email') }}"
+                    required
+                    class="form-input pl-12 block w-full rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white py-3.5 px-4 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-0 transition-all duration-200 shadow-sm"
+                    placeholder="nama@email.com">
             </div>
-
-            {{-- Menampilkan pesan error validasi email --}}
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        {{-- ================= INPUT PASSWORD ================= --}}
-        <div>
-            {{-- Label Password --}}
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
-                Kata Sandi
+        {{-- Input Password --}}
+        <div class="group">
+            <label for="password" class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1 tracking-wide">
+                Password
             </label>
-
-            <div class="relative">
-                
-                {{-- Icon gembok --}}
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fas fa-lock text-gray-400"></i>
+            <div class="relative transition-all duration-300 transform group-hover:-translate-y-0.5">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-600 transition-colors">
+                    <i class="fas fa-lock text-lg"></i>
                 </div>
-
-                {{-- Input Password --}}
                 <input 
                     id="password"
-                    type="password" {{-- tipe password --}}
+                    type="password"
                     name="password"
-                    required {{-- wajib diisi --}}
-                    autocomplete="new-password" {{-- bantu browser isi password baru --}}
-                    class="pl-10 block w-full rounded-lg border-gray-300 border py-3 px-4 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-brand-500 shadow-sm transition sm:text-sm"
-                    placeholder="Minimal 8 karakter">
+                    required
+                    autocomplete="new-password"
+                    class="form-input pl-12 block w-full rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white py-3.5 px-4 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-0 transition-all duration-200 shadow-sm"
+                    placeholder="••••••••">
             </div>
-
-            {{-- Menampilkan pesan error validasi password --}}
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
-        {{-- ================= KONFIRMASI PASSWORD ================= --}}
-        <div>
-            {{-- Label Konfirmasi Password --}}
-            <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">
-                Konfirmasi Kata Sandi
+        {{-- Input Confirm Password --}}
+        <div class="group">
+            <label for="password_confirmation" class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1 tracking-wide">
+                Konfirmasi Password
             </label>
-
-            <div class="relative">
-                
-                {{-- Icon gembok --}}
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fas fa-lock text-gray-400"></i>
+            <div class="relative transition-all duration-300 transform group-hover:-translate-y-0.5">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-600 transition-colors">
+                    <i class="fas fa-check-circle text-lg"></i>
                 </div>
-
-                {{-- Input Konfirmasi Password --}}
                 <input 
                     id="password_confirmation"
-                    type="password" {{-- tipe password --}}
-                    name="password_confirmation" {{-- harus sama dengan validasi Laravel --}}
-                    required {{-- wajib diisi --}}
-                    class="pl-10 block w-full rounded-lg border-gray-300 border py-3 px-4 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-brand-500 shadow-sm transition sm:text-sm"
-                    placeholder="Ulangi kata sandi">
+                    type="password"
+                    name="password_confirmation"
+                    required
+                    class="form-input pl-12 block w-full rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white py-3.5 px-4 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-0 transition-all duration-200 shadow-sm"
+                    placeholder="••••••••">
             </div>
+            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        {{-- ================= TOMBOL SUBMIT ================= --}}
-        <div>
+        <div class="pt-4">
             <button 
-                type="submit" {{-- tombol kirim form --}}
-                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition duration-150">
-                Daftar
+                type="submit"
+                class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg shadow-brand-500/40 text-sm font-bold text-white bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl active:scale-95 tracking-wide uppercase">
+                Daftar Sekarang <i class="fas fa-user-plus ml-2 mt-0.5"></i>
             </button>
         </div>
-
     </form>
 
-    {{-- ================= LINK KE LOGIN ================= --}}
-    <p class="mt-8 text-center text-sm text-gray-500">
-        Sudah punya akun?
-        <a 
-            href="{{ route('login') }}" {{-- arah ke halaman login --}}
-            class="font-medium text-brand-600 hover:text-brand-500">
-            Masuk
-        </a>
-    </p>
-
+    <div class="mt-8 text-center">
+        <p class="text-sm text-gray-500">
+            Sudah punya akun?
+            <a href="{{ route('login') }}" class="font-bold text-brand-600 hover:text-brand-700 hover:underline transition-all">
+                Masuk disini
+            </a>
+        </p>
+    </div>
 </x-guest-layout>

@@ -102,8 +102,8 @@
         }
 
         .sidebar-modern {
-            background: radial-gradient(1200px 600px at -10% 10%, rgba(124, 58, 237, .25) 0%, rgba(14, 20, 40, 0) 40%) , 
-                        radial-gradient(1200px 600px at 120% 40%, rgba(14, 165, 233, .25) 0%, rgba(14, 20, 40, 0) 40%) , 
+            background: radial-gradient(1200px 600px at -10% 10%, rgba(167, 139, 250, 0.25) 0%, rgba(14, 20, 40, 0) 50%) , 
+                        radial-gradient(1200px 600px at 120% 40%, rgba(56, 189, 248, 0.25) 0%, rgba(14, 20, 40, 0) 50%) , 
                         var(--sidebar-bg);
             color: var(--sidebar-text);
             min-height: 100vh;
@@ -112,7 +112,7 @@
             transform: translateZ(0);
         }
 
-        .nav-link { display:flex; align-items:center; padding:.9rem 1rem; color: var(--sidebar-text); transition: all .2s; border-left: 3px solid transparent; border-radius:.75rem; }
+        .nav-link { display:flex; align-items:center; padding:.9rem 1rem; color: var(--sidebar-text); transition: all .2s; border-left: 3px solid transparent; border-radius:.75rem; cursor: pointer; }
 
         .nav-link:hover { color: var(--sidebar-text); background-color: var(--sidebar-hover); }
 
@@ -136,8 +136,6 @@
         #page-header p {
             color: #6b7280;
         }
-        .nav-trail { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-        .nav-trail .crumb { font-size: 12px; color: #374151; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 999px; padding: 4px 10px; }
         .card {
             border: 1px solid #f3f4f6;
             border-radius: .75rem;
@@ -167,6 +165,15 @@
         button:hover {
             transform: translateY(-1px);
         }
+        /* GLOBAL CURSOR RULES */
+        a, button, [role="button"], input[type="submit"], input[type="button"], input[type="reset"], select {
+            cursor: pointer !important;
+        }
+        /* Cursor for datalist dropdown arrow */
+        input[list]::-webkit-calendar-picker-indicator {
+            cursor: pointer !important;
+        }
+        .cursor-pointer { cursor: pointer !important; }
         .submenu-stagger a {
             opacity: 0;
             transform: translateY(4px);
@@ -389,7 +396,7 @@
             <nav class="flex-1 overflow-y-auto py-4">
 
                 <a href="{{ route('dashboard') }}"
-                    class="flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg {{ request()->routeIs('dashboard') ? 'bg-indigo-800' : '' }}"
+                    class="flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg hover:bg-indigo-500 hover:text-white {{ request()->routeIs('dashboard') ? 'bg-indigo-500 text-white' : '' }}"
                     :class="sidebarOpen ? 'justify-between' : 'justify-center'">
 
                     <span class="flex items-center gap-2">
@@ -403,7 +410,7 @@
                          @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
                          x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('products.*') || request()->routeIs('categories.*') || request()->routeIs('suppliers.*') ? 'true' : 'false' }}); })()">
                         <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (popover = !popover)"
-                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg"
+                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white" style="color: var(--sidebar-text)"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-database"></i>
@@ -415,13 +422,13 @@
                             </svg>
                         </button>
                         <div x-show="sidebarOpen && open" x-cloak class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
-                            <a href="{{ route('products.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('products.*') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
+                            <a href="{{ route('products.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('products.*') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
                                 Barang
                             </a>
-                            <a href="{{ route('categories.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('categories.*') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
+                            <a href="{{ route('categories.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('categories.*') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
                                 Jenis Belanja
                             </a>
-                            <a href="{{ route('suppliers.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('suppliers.*') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
+                            <a href="{{ route('suppliers.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('suppliers.*') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
                                 Penyedia
                             </a>
                         </div>
@@ -434,15 +441,15 @@
                         </div>
                     </div>
                     
-                    <div x-data="{ key: 'pengadaan', open: false, popover:false }" class="relative" 
+                    <div x-data="{ key: 'transaksi', open: false, popover:false }" class="relative" 
                          @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
-                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('reports.belanja.*') || request()->routeIs('reports.nota.*') ? 'true' : 'false' }}); })()">
+                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('stock.*') || request()->routeIs('reports.belanja.modal.list') || request()->routeIs('reports.nota.list') || request()->routeIs('reports.belanja.modal.preview_all') ? 'true' : 'false' }}); })()">
                         <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (popover = !popover)"
-                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg"
+                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white" style="color: var(--sidebar-text)"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
-                                <i class="fas fa-handshake"></i>
-                                <span x-show="sidebarOpen" x-cloak>Pengadaan</span>
+                                <i class="fas fa-exchange-alt"></i>
+                                <span x-show="sidebarOpen" x-cloak>Transaksi</span>
                             </span>
                             <svg x-show="sidebarOpen" x-cloak :class="{ 'rotate-180': open }" class="w-4 h-4 transform transition-transform duration-300"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -450,46 +457,38 @@
                             </svg>
                         </button>
                         <div x-show="sidebarOpen && open" x-cloak class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
-                            <div class="px-6 pt-2 pb-1 text-xs font-bold" style="color: var(--sidebar-muted)">Belanja Modal</div>
-                            <a href="{{ route('reports.belanja.modal.form') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.belanja.modal.form') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
-                                Belanja
+                            <a href="{{ route('stock.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('stock.index') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                                Mutasi Masuk/Keluar
                             </a>
-                            <a href="{{ route('reports.belanja.modal.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.belanja.modal.list') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
-                                Daftar Belanja
+                            <a href="{{ route('reports.belanja.modal.preview_all') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.belanja.modal.preview_all') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                                Daftar Belanja Modal
                             </a>
-                            
-                            <div class="px-6 pt-3 pb-1 text-xs font-bold" style="color: var(--sidebar-muted)">Belanja Barang dan Jasa</div>
-                            <a href="{{ route('reports.nota.form') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.nota.form') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
-                                Surat Pesanan
-                            </a>
-                            <a href="{{ route('reports.nota.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.nota.list') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
+                            <a href="{{ route('reports.nota.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.nota.list') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
                                 Daftar Surat Pesanan
                             </a>
-                            <a href="{{ route('reports.kwitansi.form') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.kwitansi.*') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
-                                Kwitansi
+                            <a href="{{ route('reports.belanja.modal.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.belanja.modal.list') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                                Daftar Belanja
                             </a>
                         </div>
                         <div x-show="!sidebarOpen && popover" x-cloak @click.away="popover=false"
                              class="absolute left-full ml-2 top-0 z-50 w-56 rounded-xl shadow-xl ring-1 ring-black/10 p-2"
                              :style="{ backgroundColor: (theme === 'dark' ? '#1B2230' : '#ffffff'), color: (theme === 'dark' ? '#E5E7EB' : '#111827') }">
-                            <div class="px-2 py-1 text-xs font-bold opacity-70">Belanja Modal</div>
-                            <a href="{{ route('reports.belanja.modal.form') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Belanja</a>
-                            <a href="{{ route('reports.belanja.modal.list') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Daftar Belanja</a>
-                            <div class="px-2 py-1 text-xs font-bold opacity-70 mt-2">Belanja Barang dan Jasa</div>
-                            <a href="{{ route('reports.nota.form') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Surat Pesanan</a>
+                            <a href="{{ route('stock.index') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Mutasi Masuk/Keluar</a>
+                            <a href="{{ route('reports.belanja.modal.preview_all') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Daftar Belanja Modal</a>
                             <a href="{{ route('reports.nota.list') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Daftar Surat Pesanan</a>
+                            <a href="{{ route('reports.belanja.modal.list') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Daftar Belanja</a>
                         </div>
-                    </div>
+                    </div>                  
                     
-                    <div x-data="{ key: 'transaksi', open: false }" 
+                    <div x-data="{ key: 'laporan', open: false }" 
                          @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
-                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('stock.*') || request()->routeIs('reports.index') || request()->routeIs('reports.kartu.tahunan') ? 'true' : 'false' }}); })()">
-                        <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('stock.index') }}')"
-                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg"
+                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('reports.index') || request()->routeIs('reports.kartu.tahunan') ? 'true' : 'false' }}); })()">
+                        <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('reports.index') }}')"
+                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white" style="color: var(--sidebar-text)"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
-                                <i class="fas fa-exchange-alt"></i>
-                                <span x-show="sidebarOpen" x-cloak>Transaksi & Laporan</span>
+                                <i class="fas fa-file-alt"></i>
+                                <span x-show="sidebarOpen" x-cloak>Laporan</span>
                             </span>
                             <svg x-show="sidebarOpen" x-cloak :class="{ 'rotate-180': open }" class="w-4 h-4 transform transition-transform duration-300"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -497,17 +496,11 @@
                             </svg>
                         </button>
                         <div x-show="sidebarOpen && open" x-cloak class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
-                            <a href="{{ route('stock.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('stock.*') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
-                                Mutasi Masuk/Keluar
-                            </a>
-                            <a href="{{ route('reports.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.index') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
+                            <a href="{{ route('reports.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.index') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
                                 Laporan Persediaan
                             </a>
-                            <a href="{{ route('reports.kartu.tahunan') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.kartu.tahunan') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
+                            <a href="{{ route('reports.kartu.tahunan') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.kartu.tahunan') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
                                 Kartu Persediaan Tahunan
-                            </a>
-                            <a href="{{ route('reports.belanja.modal.preview_all') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.belanja.modal.preview_all') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
-                                Daftar Belanja Modal
                             </a>
                         </div>
                     </div>
@@ -516,7 +509,7 @@
                          @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
                          x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('reports.kwitansi.*') ? 'true' : 'false' }}); })()">
                         <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('reports.kwitansi.list') }}')"
-                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg"
+                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white" style="color: var(--sidebar-text)"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-receipt"></i>
@@ -528,10 +521,10 @@
                             </svg>
                         </button>
                         <div x-show="sidebarOpen && open" x-cloak class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
-                            <a href="{{ route('reports.kwitansi.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.kwitansi.list') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
+                            <a href="{{ route('reports.kwitansi.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.kwitansi.list') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
                                 Daftar Kwitansi
                             </a>
-                            <a href="{{ route('reports.kwitansi.form') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.kwitansi.form') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
+                            <a href="{{ route('reports.kwitansi.form') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.kwitansi.form') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
                                 Buat Baru
                             </a>
                         </div>
@@ -541,7 +534,7 @@
                          @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
                          x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('reports.pinjam.*') || request()->routeIs('reports.opname.*') ? 'true' : 'false' }}); })()">
                         <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('reports.pinjam.list') }}')"
-                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg"
+                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white" style="color: var(--sidebar-text)"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-file-signature"></i>
@@ -553,25 +546,25 @@
                             </svg>
                         </button>
                         <div x-show="sidebarOpen && open" x-cloak class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
-                            <a href="{{ route('reports.pinjam.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.pinjam.list') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
-                                Daftar Berita Acara Pinjam Pakai
+                            <a href="{{ route('reports.pinjam.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.pinjam.list') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                                Daftar Pinjam Pakai
                             </a>
-                            <a href="{{ route('reports.opname.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.opname.list') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
-                                Daftar BA Stock Opname
+                            <a href="{{ route('reports.opname.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.opname.list') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                                Daftar Stock Opname
                             </a>
-                            <a href="{{ route('reports.pemeriksaan.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.pemeriksaan.*') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
-                                Daftar BA Pemeriksaan Barang/Pekerjaan
+                            <a href="{{ route('reports.pemeriksaan.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.pemeriksaan.list') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                                Daftar Pemeriksaan
                             </a>
-                            <a href="{{ route('reports.penerimaan.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition {{ request()->routeIs('reports.penerimaan.list') ? 'bg-indigo-500' : '' }}" style="color: var(--sidebar-text)">
-                                Daftar BA Penerimaan
+                            <a href="{{ route('reports.penerimaan.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.penerimaan.list') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                                Daftar Penerimaan
                             </a>
-                        </div>
+                        
                     </div>
                     <div x-data="{ key: 'settings', open: false }" 
                          @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
                          x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('settings.opd.*') || request()->routeIs('settings.nota.master.*') ? 'true' : 'false' }}); })()">
                         <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('settings.opd.index') }}')"
-                            class="w-full flex items-center px-4 py-3 text-white text-sm font-semibold hover:bg-indigo-700 transition rounded-lg"
+                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white" style="color: var(--sidebar-text)"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-gear"></i>
@@ -582,16 +575,16 @@
                                 <path stroke-linecap="round" stroke-linecap="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        <div x-show="sidebarOpen && open" x-cloak class="mt-2 bg-white/10 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''">
-                            <a href="{{ route('settings.opd.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium text-white hover:bg-indigo-500 transition {{ request()->routeIs('settings.opd.*') ? 'bg-indigo-500' : '' }}">
+                        <div x-show="sidebarOpen && open" x-cloak class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
+                            <a href="{{ route('settings.opd.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('settings.opd.*') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
                                 OPD
                             </a>
-                            <a href="{{ route('settings.nota.master.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium text-white hover:bg-indigo-500 transition {{ request()->routeIs('settings.nota.master.*') ? 'bg-indigo-500' : '' }}">
+                            <a href="{{ route('settings.nota.master.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('settings.nota.master.*') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
                                 Penandatangan
                             </a>
                             
                             @if (Auth::check() && Auth::user()->isAdmin())
-                            <a href="{{ route('users.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium text-white hover:bg-indigo-500 transition {{ request()->routeIs('users.*') ? 'bg-indigo-500' : '' }}">
+                            <a href="{{ route('users.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('users.*') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
                                 Pengguna
                             </a>
                             @endif
@@ -603,18 +596,18 @@
 
             <div class="p-4 text-center" style="background: var(--sidebar-hover)">
                 <button @click="sidebarOpen = !sidebarOpen"
-                    class="w-8 h-8 rounded-full flex items-center justify-center transition focus:outline-none"
+                    class="w-8 h-8 rounded-full flex items-center justify-center transition focus:outline-none cursor-pointer"
                     :style="{ backgroundColor: (theme === 'dark' ? '#1F2937' : '#E5E7EB'), color: (theme === 'dark' ? '#E5E7EB' : '#111827') }">
                     <i class="fas" :class="sidebarOpen ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
                 </button>
                 <div class="mt-3 flex items-center justify-center gap-2" x-show="sidebarOpen" x-cloak>
                     <button @click="theme = 'light'; localStorage.setItem('theme','light')"
-                        class="px-3 py-1 rounded-full text-xs font-semibold"
+                        class="px-3 py-1 rounded-full text-xs font-semibold cursor-pointer"
                         :style="{ backgroundColor: theme === 'light' ? 'var(--sidebar-active)' : 'transparent', color: 'var(--sidebar-text)', border: '1px solid ' + (theme === 'light' ? 'transparent' : 'var(--sidebar-muted)') }">
                         <i class="fas fa-sun"></i> Light
                     </button>
                     <button @click="theme = 'dark'; localStorage.setItem('theme','dark')"
-                        class="px-3 py-1 rounded-full text-xs font-semibold"
+                        class="px-3 py-1 rounded-full text-xs font-semibold cursor-pointer"
                         :style="{ backgroundColor: theme === 'dark' ? 'var(--sidebar-active)' : 'transparent', color: 'var(--sidebar-text)', border: '1px solid ' + (theme === 'dark' ? 'transparent' : 'var(--sidebar-muted)') }">
                         <i class="fas fa-moon"></i> Dark
                     </button>
@@ -648,7 +641,7 @@
                 <div class="flex items-center space-x-4 flex-shrink-0">
                     <div class="relative" x-data="{ notifyOpen: false }">
                         <button @click="notifyOpen = !notifyOpen"
-                            class="text-gray-400 hover:text-blue-600 transition relative focus:outline-none">
+                            class="text-gray-400 hover:text-blue-600 transition relative focus:outline-none cursor-pointer">
                             <i class="fas fa-bell text-xl"></i>
                             @if (isset($lowStockProducts) && $lowStockProducts->count() > 0)
                                 <span
@@ -708,7 +701,7 @@
                     <div class="h-6 w-px bg-gray-300 mx-2"></div>
 
                     <div class="relative" x-data="{ open: false }">
-                        <button @click="open = !open" class="flex items-center gap-3 focus:outline-none">
+                        <button @click="open = !open" class="flex items-center gap-3 focus:outline-none cursor-pointer">
                             <img class="h-9 w-9 rounded-full object-cover ring-2 ring-indigo-200"
                                 src="{{ Auth::user()->avatar ? asset('storage/'.Auth::user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=4F46E5&color=ffffff' }}"
                                 alt="User">
@@ -820,35 +813,6 @@
             const isSameOrigin = (url) => {
                 try { const u = new URL(url, window.location.origin); return u.origin === window.location.origin; } catch { return false; }
             };
-            const ensureTrailEl = () => {
-                let el = document.getElementById('nav-trail');
-                if (!el) {
-                    el = document.createElement('div');
-                    el.id = 'nav-trail';
-                    el.className = 'nav-trail';
-                    main.insertBefore(el, main.firstChild);
-                }
-                return el;
-            };
-            const renderTrail = (trail) => {
-                const el = ensureTrailEl();
-                el.innerHTML = '';
-                (trail || JSON.parse(localStorage.getItem('navTrail') || '[]'))
-                    .forEach((label) => {
-                        const span = document.createElement('span');
-                        span.className = 'crumb';
-                        span.textContent = label;
-                        el.appendChild(span);
-                    });
-            };
-            const setTrail = (labels) => {
-                const trail = (labels || []).slice(0, 6);
-                localStorage.setItem('navTrail', JSON.stringify(trail));
-                renderTrail(trail);
-            };
-            const getTrail = () => {
-                try { return JSON.parse(localStorage.getItem('navTrail') || '[]'); } catch { return []; }
-            };
             const isActionLink = (a) => {
                 const txt = (a.textContent || '').trim();
                 const href = a.getAttribute('href') || '';
@@ -865,9 +829,9 @@
             };
             const setActive = (href) => {
                 const anchors = sidebar.querySelectorAll('a[href]');
-                anchors.forEach(a => a.classList.remove('bg-indigo-800'));
+                anchors.forEach(a => a.classList.remove('bg-indigo-800', 'bg-indigo-500', 'text-white'));
                 const target = sidebar.querySelector(`a[href="${href}"]`);
-                if (target) target.classList.add('bg-indigo-800');
+                if (target) target.classList.add('bg-indigo-500', 'text-white');
             };
             const initScripts = (root) => {
                 const scripts = root.querySelectorAll('script');
@@ -889,12 +853,10 @@
                     if (!newMain) { window.location.href = href; return; }
                     document.title = doc.title || document.title;
                     main.innerHTML = newMain.innerHTML;
-                    ensureTrailEl();
                     setActive(href);
                     initScripts(main);
                     if (push) history.pushState({}, '', href);
                     main.scrollTop = 0;
-                    renderTrail();
                 } catch {
                     window.location.href = href;
                 }
@@ -906,17 +868,6 @@
                 if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
                 e.preventDefault();
                 const href = a.getAttribute('href');
-                const groupLabel = a.closest('div[x-data]')?.querySelector('button span')?.textContent?.trim();
-                const linkLabel = a.textContent?.trim() || href;
-                if (groupLabel) {
-                    if (groupLabel === linkLabel) {
-                        setTrail([groupLabel]);
-                    } else {
-                        setTrail([groupLabel, linkLabel]);
-                    }
-                } else {
-                    setTrail([linkLabel]);
-                }
                 swapMain(href, true);
             });
             window.addEventListener('popstate', () => swapMain(window.location.href, false));
@@ -928,14 +879,6 @@
                 if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
                 e.preventDefault();
                 const href = a.getAttribute('href');
-                const linkLabel = a.textContent?.trim() || href;
-                if (isActionLink(a)) {
-                    const base = getTrail();
-                    const head = base.slice(0, 2);
-                    setTrail([...head, linkLabel]);
-                } else {
-                    setTrail([linkLabel]);
-                }
                 swapMain(href, true);
             });
             document.addEventListener('submit', async (e) => {
@@ -948,26 +891,35 @@
                 e.preventDefault();
                 try {
                     const fd = new FormData(form);
-                    const res = await fetch(action, {
+                    let url = action;
+                    const options = {
                         method,
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                        body: method === 'GET' ? null : fd
-                    });
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    };
+
+                    if (method === 'GET') {
+                        const u = new URL(action, window.location.origin);
+                        const params = new URLSearchParams(fd);
+                        params.forEach((v, k) => u.searchParams.set(k, v));
+                        url = u.toString();
+                    } else {
+                        options.body = fd;
+                    }
+
+                    const res = await fetch(url, options);
                     const html = await res.text();
                     const doc = new DOMParser().parseFromString(html, 'text/html');
                     const newMain = doc.querySelector('main');
-                    if (!newMain) { window.location.href = action; return; }
+                    if (!newMain) { window.location.href = url; return; }
                     document.title = doc.title || document.title;
                     main.innerHTML = newMain.innerHTML;
                     initScripts(main);
-                    history.pushState({}, '', res.url || action);
+                    history.pushState({}, '', url);
                     main.scrollTop = 0;
-                    renderTrail();
                 } catch {
                     window.location.href = action;
                 }
             });
-            renderTrail();
         });
     </script>
 

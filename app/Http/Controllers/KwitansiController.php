@@ -416,6 +416,20 @@ class KwitansiController extends Controller
         return redirect()->route('reports.kwitansi.list')->with('status', 'Kwitansi dihapus');
     }
 
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        $count = 0;
+        foreach ($ids as $id) {
+            $path = "users/".Auth::id()."/kwitansi/{$id}.json";
+            if (Storage::disk('local')->exists($path)) {
+                Storage::disk('local')->delete($path);
+                $count++;
+            }
+        }
+        return redirect()->route('reports.kwitansi.list')->with('status', "{$count} Kwitansi dihapus");
+    }
+
 
 
     public function printAll(Request $request)

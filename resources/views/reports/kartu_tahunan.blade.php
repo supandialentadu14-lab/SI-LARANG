@@ -158,8 +158,8 @@
                 DI LINGKUNGAN PEMERINTAH KABUPATEN BOLAANG MONGONDOW SELATAN
             </div>
             <h5 class="text-sm font-semibold mt-1">
-                    Per {{ \Carbon\Carbon::parse($endDate)->translatedFormat('d F Y') }}
-                </h5>
+                Per {{ \Carbon\Carbon::parse($endDate)->translatedFormat('d F Y') }}
+            </h5>
         </div>
 
         {{-- HEADER SKPD --}}
@@ -196,8 +196,6 @@
                 </tr>
             </table>
             <div class="mb-8">
-
-                <hr class="mb-2">
 
                 {{-- HEADER PRODUK --}}
                 <table class="report-table">
@@ -287,17 +285,18 @@
             @if ($current == $lastIndex)
                 <table class="ttd-table">
                     <tr>
-                        <td align="center">
-                            Mengetahui<br>
-                            Kepala Dinas<br><br><br><br><br>
-                            <strong><u>{{ $opd->kepala_nama ?? '' }}</u></strong><br>
-                            <strong>{{ $opd->kepala_nip ?? '' }}</strong>
-                        </td>
+                        
                         <td align="center">
                             Dibuat Oleh<br>
                             Pengurus Barang<br><br><br><br><br>
                             <strong><u>{{ $opd->pengurus_nama ?? '' }}</u></strong><br>
-                            <strong>{{ $opd->pengurus_nip ?? '' }}</strong>
+                            NIP. {{ $opd->pengurus_nip ?? '' }}
+                        </td>
+                        <td align="center">
+                            Mengetahui<br>
+                            Kepala Dinas<br><br><br><br><br>
+                            <strong><u>{{ $opd->kepala_nama ?? '' }}</u></strong><br>
+                            NIP. {{ $opd->kepala_nip ?? '' }}
                         </td>
                     </tr>
                 </table>

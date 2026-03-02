@@ -83,6 +83,14 @@ class SupplierController extends Controller
     }
 
     /**
+     * Menampilkan detail supplier
+     */
+    public function show(Supplier $supplier): View
+    {
+        return view('suppliers.show', compact('supplier'));
+    }
+
+    /**
      * Mengupdate data supplier
      */
     public function update(Request $request, Supplier $supplier): RedirectResponse

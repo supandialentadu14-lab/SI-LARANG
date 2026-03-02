@@ -37,6 +37,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Set locale Carbon ke Bahasa Indonesia
+        \Carbon\Carbon::setLocale('id');
+
         /**
          * ==========================================
          * 🔐 GATE: ADMIN ACCESS

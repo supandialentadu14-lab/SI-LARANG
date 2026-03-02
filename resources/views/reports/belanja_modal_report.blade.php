@@ -96,8 +96,8 @@
             }
 
             @page {
-                size: auto;
-                margin: 12mm;
+                size: 330mm 210mm;
+                margin: 5mm 15mm;
             }
 
             body {

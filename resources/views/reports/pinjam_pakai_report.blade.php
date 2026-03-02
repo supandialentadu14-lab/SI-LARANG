@@ -45,10 +45,22 @@
                     body * { visibility: hidden; }
                     #print-area, #print-area * { visibility: visible; }
                     #print-area { position: static !important; width: auto !important; overflow: visible !important; }
-                    @page { size: 210mm 330mm; margin: 10mm 10mm 10mm 10mm; }
+                    @page { size: 210mm 330mm; margin: 5mm 15mm; }
                     body { margin: 0; }
                     .kop { margin-top: 0 !important; }
-                    .preview-paper { width: 190mm !important; min-height: auto !important; padding: 0 6mm 2mm 6mm !important; margin: 0 !important; box-sizing: border-box; background: #ffffff !important; box-shadow: none !important; }
+                    .preview-paper { 
+                        width: 100% !important; 
+                        min-height: auto !important; 
+                        padding: 0 !important; 
+                        margin: 0 !important; 
+                        box-sizing: border-box; 
+                        background: #ffffff !important; 
+                        box-shadow: none !important; 
+                        line-height: 1.4;
+                    }
+                    .preview-paper p { margin: 5px 0; }
+                    .preview-paper h2 { margin: 5px 0; }
+                    .preview-paper table { margin-top: 6px; }
                     #print-area { background: #ffffff !important; box-shadow: none !important; }
                     .bg-gray-50, .bg-gray-100, .bg-gray-200 { background: #ffffff !important; }
                     thead, tbody, tfoot, tr, th, td { background: #ffffff !important; }
@@ -68,12 +80,12 @@
                     min-height: 330mm;
                     margin: 0 auto;
                     background: #fff;
-                    padding: 10mm;
-                    line-height: 1.2;
+                    padding: 5mm 15mm;
+                    line-height: 1.4;
                 }
-                .preview-paper p { margin: 2px 0; }
-                .preview-paper h2 { margin: 2px 0; }
-                .preview-paper table { margin-top: 4px; }
+                .preview-paper p { margin: 5px 0; }
+                .preview-paper h2 { margin: 5px 0; }
+                .preview-paper table { margin-top: 6px; }
             </style>
             @include('partials.kop', ['opd' => $opd])
         </div>
@@ -154,7 +166,7 @@
                             <td class="border border-black px-2 py-1">{{ $item['nama'] }}</td>
                             <td class="border border-black px-2 py-1">{{ $item['merk'] ?? '-' }}</td>
                             <td class="border border-black px-2 py-1">{{ $item['tipe'] ?? '-' }}</td>
-                            <td class="border border-black px-2 py-1">{{ $item['identitas'] ?? '-' }}</td>
+                            <td class="border border-black px-2 py-1 text-center">{{ $item['identitas'] ?? '-' }}</td>
                             <td class="border border-black px-2 py-1 text-center">{{ $item['tahun'] ?? '-' }}</td>
                             <td class="border border-black px-2 py-1 text-center">{{ $item['kondisi'] ?? '-' }}</td>
                             <td class="border border-black px-2 py-1 text-center">{{ $item['jumlah'] }}</td>

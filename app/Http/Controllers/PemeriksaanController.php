@@ -307,5 +307,17 @@ class PemeriksaanController extends Controller
         return redirect()->route('reports.pemeriksaan.list')->with('status', 'Berita acara dihapus');
     }
 
-
+    public function bulkDelete(Request $request): RedirectResponse
+    {
+        $ids = $request->input('ids', []);
+        $count = 0;
+        foreach ($ids as $id) {
+            $path = "users/".Auth::id()."/bap-pemeriksaan/{$id}.json";
+            if (Storage::disk('local')->exists($path)) {
+                Storage::disk('local')->delete($path);
+                $count++;
+            }
+        }
+        return redirect()->route('reports.pemeriksaan.list')->with('status', "{$count} Berita acara dihapus");
+    }
 }

@@ -1,66 +1,88 @@
 @extends('layouts.admin')
 
-@section('title', 'Daftar Berita Acara Pinjam Pakai')
 @section('header', 'Daftar Berita Acara Pinjam Pakai')
-@section('subheader', 'Lihat dan edit berita acara yang telah disimpan')
-
-@section('actions')
-    <a href="{{ route('reports.pinjam.form') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow">
-        Buat Baru
-    </a>
-@endsection
-
 @section('content')
-    <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
-        @php $flash = session('status') ?? ($status ?? null); @endphp
-        @if($flash)
-            <div class="mb-4 px-4 py-3 bg-green-50 text-green-700 border border-green-200 rounded">
-                {{ $flash }}
+    <div x-data="{
+        selected: [],
+        allSelected: false,
+        toggleAll() {
+            this.allSelected = !this.allSelected;
+            if (this.allSelected) {
+                this.selected = [
+                    @foreach ($items as $item)
+                        '{{ $item['id'] }}',
+                    @endforeach
+                ];
+            } else {
+                this.selected = [];
+            }
+        },
+        updateSelectAll() {
+            this.allSelected = this.selected.length === {{ count($items) }};
+        }
+    }" class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center gap-2">
+                <a href="{{ route('reports.pinjam.form') }}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold shadow">
+                    <i class="fas fa-plus"></i> Buat Berita Acara Pinjam Pakai
+                </a>
+                <form x-show="selected.length > 0" method="POST" action="{{ route('reports.pinjam.bulk_delete') }}" class="inline-block" onsubmit="return confirm('Hapus ' + this.closest('div').querySelector('[x-text]').innerText + ' item terpilih?')">
+                    @csrf
+                    <input type="hidden" name="ids[]" x-model="selected">
+                    <button type="submit" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold shadow">
+                        <i class="fas fa-trash"></i> Hapus (<span x-text="selected.length"></span>)
+                    </button>
+                </form>
             </div>
-        @endif
-        <div class="overflow-x-auto">
+        </div>
+        <div class="overflow-x-auto border rounded-lg">
             <table class="w-full text-sm text-left text-gray-700">
-                <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                <thead class="bg-gray-100 text-xs uppercase font-bold">
                     <tr>
-                        <th class="px-6 py-3">Nomor</th>
-                        <th class="px-6 py-3">Tanggal</th>
-                        <th class="px-6 py-3">Tempat</th>
-                        <th class="px-6 py-3">Pihak Pertama</th>
-                        <th class="px-6 py-3">Pihak Kedua</th>
-                        <th class="px-6 py-3 text-right">Aksi</th>
+                        <th class="px-3 py-2 w-10">
+                            <input type="checkbox" @click="toggleAll()" x-model="allSelected" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        </th>
+                        <th class="px-3 py-2">Nomor</th>
+                        <th class="px-3 py-2">Tanggal</th>
+                        <th class="px-3 py-2">Tempat</th>
+                        <th class="px-3 py-2">Pihak Pertama</th>
+                        <th class="px-3 py-2">Pihak Kedua</th>
+                        <th class="px-3 py-2">Diperbarui</th>
+                        <th class="px-3 py-2 text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
+                <tbody>
                     @forelse ($items as $item)
-                        <tr class="hover:bg-orange-50 transition">
-                            <td class="px-6 py-4 font-bold text-gray-800">{{ $item['nomor'] }}</td>
-                            <td class="px-6 py-4">{{ \Illuminate\Support\Carbon::parse($item['tanggal'])->translatedFormat('d F Y') }}</td>
-                            <td class="px-6 py-4">{{ $item['tempat'] }}</td>
-                            <td class="px-6 py-4">{{ $item['pihak_pertama'] }}</td>
-                            <td class="px-6 py-4">{{ $item['pihak_kedua'] }}</td>
-                            <td class="px-6 py-4 text-right space-x-2">
-                                <a href="{{ route('reports.pinjam.show', $item['id']) }}" class="inline-block text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 p-2 rounded transition">
-                                    <i class="fas fa-eye"></i></a>
-                                <a href="{{ route('reports.pinjam.edit', $item['id']) }}" class="inline-block text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 p-2 rounded transition">
-                                    <i class="fas fa-edit"></i></a>
-                                <form method="POST" action="{{ route('reports.pinjam.delete', $item['id']) }}" class="inline-block" onsubmit="return confirm('Hapus berita acara ini?')">
-                                    @csrf
-                                    <button type="submit"
-                                        class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded transition">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                        <tr class="border-t hover:bg-gray-50 transition" :class="{ 'bg-indigo-50': selected.includes('{{ $item['id'] }}') }">
+                            <td class="px-3 py-2">
+                                <input type="checkbox" value="{{ $item['id'] }}" x-model="selected" @click="updateSelectAll()" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            </td>
+                            <td class="px-3 py-2">{{ $item['nomor'] }}</td>
+                            <td class="px-3 py-2">{{ \Carbon\Carbon::parse($item['tanggal'])->translatedFormat('d F Y') }}</td>
+                            <td class="px-3 py-2">{{ $item['tempat'] }}</td>
+                            <td class="px-3 py-2">{{ $item['pihak_pertama'] }}</td>
+                            <td class="px-3 py-2">{{ $item['pihak_kedua'] }}</td>
+                            <td class="px-3 py-2 text-gray-500 text-xs">
+                                {{ \Carbon\Carbon::createFromTimestamp($item['updated'])->translatedFormat('d F Y H:i') }}
+                            </td>
+                            <td class="px-3 py-2 text-right">
+                                @include('partials.action_buttons', [
+                                    'show' => route('reports.pinjam.show', $item['id']),
+                                    'edit' => route('reports.pinjam.edit', $item['id']),
+                                    'delete' => route('reports.pinjam.delete', $item['id']),
+                                ])
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-8 text-center text-gray-400">
-                                Belum ada berita acara disimpan.
-                            </td>
+                            <td colspan="8" class="px-3 py-6 text-center text-gray-500">Belum ada berita acara disimpan.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        <div class="mt-4">
+            {{ $items->links() }}
         </div>
     </div>
 @endsection

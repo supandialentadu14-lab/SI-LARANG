@@ -4,122 +4,160 @@
 
 @section('content')
 
-    <div class="bg-white rounded-lg shadow p-6 mb-6 print:hidden">
-        <form action="{{ route('reports.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-            <div>
-                <label class="block text-[10px] font-bold text-indigo-700 uppercase mb-1">From Date</label>
-                <input type="date" name="start_date" value="{{ $startDate }}" class="w-full rounded-lg border-indigo-200 text-sm bg-white shadow-sm focus:ring-2 focus:ring-orange-300 focus:border-orange-500">
+    <div class="print:hidden rounded-xl shadow-md border bg-white p-4 mb-6">
+        <form method="GET" action="{{ route('reports.index') }}" class="flex items-end justify-between gap-4">
+            <div class="flex gap-4 flex-1">
+                <div class="w-1/4">
+                    <label class="block text-[10px] font-bold text-indigo-700 uppercase mb-1">From Date</label>
+                    <input type="date" name="start_date" value="{{ $startDate }}"
+                        class="w-full rounded-lg border-indigo-200 text-sm bg-white shadow-sm focus:ring-2 focus:ring-orange-300 focus:border-orange-500">
+                </div>
+                <div class="w-1/4">
+                    <label class="block text-[10px] font-bold text-indigo-700 uppercase mb-1">To Date</label>
+                    <input type="date" name="end_date" value="{{ $endDate }}"
+                        class="w-full rounded-lg border-indigo-200 text-sm bg-white shadow-sm focus:ring-2 focus:ring-orange-300 focus:border-orange-500">
+                </div>
             </div>
-            <div>
-                <label class="block text-[10px] font-bold text-indigo-700 uppercase mb-1">To Date</label>
-                <input type="date" name="end_date" value="{{ $endDate }}" class="w-full rounded-lg border-indigo-200 text-sm bg-white shadow-sm focus:ring-2 focus:ring-orange-300 focus:border-orange-500">
-            </div>
-            <div class="md:col-span-2"></div>
-            <div class="flex gap-1 justify-end">
-                <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm bg-orange-500 text-white hover:bg-orange-600">
+            <div class="flex gap-2">
+                <button type="submit"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-500 text-white font-bold hover:bg-orange-600 shadow-sm">
                     <i class="fas fa-filter"></i>
                     Filter
                 </button>
-                <button type="button" onclick="window.print()" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm bg-black text-white hover:bg-black">
+                <button type="button" onclick="window.print()"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black text-white font-bold hover:bg-gray-800 shadow-sm">
                     <i class="fas fa-print"></i>
                     Print
                 </button>
-
             </div>
         </form>
     </div>
 
     <style>
-
-    /* ============================= */
-    /* HILANGKAN BORDER LUAR        */
-    /* ============================= */
-    html, body {
-        margin: 0;
-        padding: 0;
-        border: none;
-    }
-
-    .print-area {
-        border: none !important;
-        box-shadow: none !important;
-    }
-
-    /* ============================= */
-    /* TABEL REPORT                 */
-    /* ============================= */
-    .report-table {
-        border-collapse: collapse;
-        width: 100%;
-        table-layout: fixed;
-    }
-
-    .report-table th,
-    .report-table td {
-        border: 1px solid #000; /* Border hanya di dalam tabel */
-        padding: 5px;
-        font-size: 12px;
-    }
-
-    .report-table thead {
-        display: table-header-group;
-    }
-
-    .report-table tr {
-        page-break-inside: avoid;
-    }
-    .split-cell { position: relative; display: flex; width: 100%; height: 100%; }
-    .split-cell .left { flex: 1; text-align: center; padding: 6px 8px; }
-    .split-cell .right { flex: 1; text-align: right; padding: 6px 8px; }
-    td.split-col { position: relative; padding: 0 !important; }
-    td.split-col::after { content: ''; position: absolute; left: 50%; top: -1px; bottom: -1px; width: 1px; background: #9ca3af; pointer-events: none; }
-
-    /* ============================= */
-    /* PRINT SETTING                */
-    /* ============================= */
-    @media screen {
-        #print-area {
-            width: 330mm;
-            min-height: 210mm;
-            margin: 16px auto;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            background: #ffffff;
-        }
-        .report-table { width: 100%; }
-    }
-    @media print {
-
-        body * {
-            visibility: hidden;
-        }
-
-        .print-area,
-        .print-area * {
-            visibility: visible;
+        /* ============================= */
+        /* HILANGKAN BORDER LUAR        */
+        /* ============================= */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            border: none;
         }
 
         .print-area {
-            position: static !important;
-            width: auto !important;
-            overflow: visible !important;
             border: none !important;
+            box-shadow: none !important;
         }
 
-        .print\:hidden {
-            display: none !important;
+        /* ============================= */
+        /* TABEL REPORT                 */
+        /* ============================= */
+        .report-table {
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
         }
 
-        @page {
-            size: 330mm 210mm;
-            margin: 12mm;
+        .report-table th,
+        .report-table td {
+            border: 1px solid #000;
+            /* Border hanya di dalam tabel */
+            padding: 5px;
+            font-size: 12px;
         }
 
-        body {
-            margin: 0;
+        .report-table thead {
+            display: table-header-group;
         }
-    }
 
-</style>
+        .report-table tr {
+            page-break-inside: avoid;
+        }
+
+        .split-cell {
+            position: relative;
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .split-cell .left {
+            flex: 1;
+            text-align: center;
+            padding: 6px 8px;
+        }
+
+        .split-cell .right {
+            flex: 1;
+            text-align: right;
+            padding: 6px 8px;
+        }
+
+        td.split-col {
+            position: relative;
+            padding: 0 !important;
+        }
+
+        td.split-col::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: -1px;
+            bottom: -1px;
+            width: 1px;
+            background: #9ca3af;
+            pointer-events: none;
+        }
+
+        /* ============================= */
+        /* PRINT SETTING                */
+        /* ============================= */
+        @media screen {
+            #print-area {
+                width: 330mm;
+                min-height: 210mm;
+                margin: 16px auto;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+                background: #ffffff;
+            }
+
+            .report-table {
+                width: 100%;
+            }
+        }
+
+        @media print {
+
+            body * {
+                visibility: hidden;
+            }
+
+            .print-area,
+            .print-area * {
+                visibility: visible;
+            }
+
+            .print-area {
+                position: static !important;
+                width: auto !important;
+                overflow: visible !important;
+                border: none !important;
+            }
+
+            .print\:hidden {
+                display: none !important;
+            }
+
+            @page {
+                size: 330mm 210mm;
+                margin: 12mm;
+            }
+
+            body {
+                margin: 0;
+            }
+        }
+    </style>
 
 
 
@@ -140,7 +178,7 @@
                     <tr>
                         <td width="140"><strong>SKPD</strong></td>
                         <td width="10">:</td>
-                        <td>{{ ($master['opd']['nama'] ?? null) ?: ($opd->nama_opd ?? '-') }}</td>
+                        <td>{{ $master['opd']['nama'] ?? null ?: $opd->nama_opd ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td><strong>Kabupaten</strong></td>
@@ -321,21 +359,6 @@
 
                 {{-- KIRI --}}
                 <div class="text-center w-1/2">
-                    <p class="font-semibold">Mengetahui</p>
-                    <p class="font-semibold">Kepala Dinas</p>
-
-                    <div style="height:90px;"></div>
-
-                    <p class="font-bold underline">
-                        {{ $opd->kepala_nama ?? '' }}
-                    </p>
-                    <p class="font-semibold">
-                        NIP. {{ $opd->kepala_nip ?? '' }}
-                    </p>
-                </div>
-
-                {{-- KANAN --}}
-                <div class="text-center w-1/2">
                     <p class="font-semibold">Dibuat Oleh</p>
                     <p class="font-semibold">Pengurus Barang</p>
 
@@ -346,6 +369,22 @@
                     </p>
                     <p class="font-semibold">
                         NIP. {{ $opd->pengurus_nip ?? '' }}
+                    </p>
+
+                </div>
+
+                {{-- KANAN --}}
+                <div class="text-center w-1/2">
+                    <p class="font-semibold">Mengetahui</p>
+                    <p class="font-semibold">Kepala Dinas</p>
+
+                    <div style="height:90px;"></div>
+
+                    <p class="font-bold underline">
+                        {{ $opd->kepala_nama ?? '' }}
+                    </p>
+                    <p class="font-semibold">
+                        NIP. {{ $opd->kepala_nip ?? '' }}
                     </p>
                 </div>
 

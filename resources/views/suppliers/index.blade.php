@@ -1,122 +1,94 @@
-@extends('layouts.admin') {{-- Menggunakan layout utama admin --}}
+@extends('layouts.admin')
 
-@section('header', 'Daftar Penyedia') {{-- Judul halaman manajemen supplier --}}
-
-@section('actions')
-    {{-- Tombol untuk menambah supplier baru --}}
-    <a href="{{ route('suppliers.create') }}"
-        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition transform hover:-translate-y-0.5 flex items-center">
-        <i class="fas fa-plus mr-2"></i> {{-- Icon tambah --}}
-        Tambah Penyedia
-    </a>
-@endsection
-
+@section('header', 'Penyedia')
 @section('content')
 
-    {{-- Card pembungkus tabel supplier --}}
-    <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
+<div x-data="{
+    selected: [],
+    allSelected: false,
+    toggleAll() {
+        this.allSelected = !this.allSelected;
+        if (this.allSelected) {
+            this.selected = [
+                @foreach ($suppliers as $supplier)
+                    '{{ $supplier->id }}',
+                @endforeach
+            ];
+        } else {
+            this.selected = [];
+        }
+    },
+    updateSelectAll() {
+        this.allSelected = this.selected.length === {{ count($suppliers) }};
+    }
+}" class="bg-white rounded-lg shadow p-6 mb-6">
 
-        {{-- Membuat tabel responsive jika layar kecil --}}
-        <div class="overflow-x-auto">
-
-            {{-- Tabel daftar supplier --}}
-            <table class="w-full text-sm text-left text-gray-600">
-
-                {{-- Header tabel --}}
-                <thead class="bg-gray-100 text-gray-600 uppercase text-xs font-bold">
-                    <tr>
-                        <th class="px-6 py-3">Nama Perushaan</th> {{-- Kolom nama supplier --}}
-                        <th class="px-6 py-3">Nama Pemilik</th> {{-- Kolom nama supplier --}}
-                        <th class="px-6 py-3">Kontak</th> {{-- Kolom email & phone --}}
-                        <th class="px-6 py-3">Alamat</th> {{-- Kolom alamat --}}
-                        <th class="px-6 py-3 text-right">Aksi</th> {{-- Kolom tombol aksi --}}
-                    </tr>
-                </thead>
-
-                {{-- Isi tabel --}}
-                <tbody class="divide-y divide-gray-100">
-
-                    {{-- Looping data supplier --}}
-                    @forelse($suppliers as $supplier)
-                        {{-- Baris data supplier --}}
-                        <tr class="hover:bg-orange-50 transition">
-
-                            {{-- Nama supplier --}}
-                            <td class="px-6 py-4 font-bold text-gray-800">
-                                {{ $supplier->name }}
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex flex-col">
-
-                                    {{-- Email (jika kosong tampilkan '-') --}}
-                                    <span class="font-semibold text-gray-700">
-                                        {{ $supplier->dir ?? '-' }}
-                                    </span>
-                                    {{-- Kontak supplier (email & phone) --}}
-                            <td class="px-6 py-4">
-                                <div class="flex flex-col">
-
-                                    {{-- Email (jika kosong tampilkan '-') --}}
-                                    <span class="font-semibold text-gray-700">
-                                        {{ $supplier->email ?? '-' }}
-                                    </span>
-
-                                    {{-- Nomor telepon (jika kosong tampilkan '-') --}}
-                                    <span class="text-xs text-orange-600">
-                                        {{ $supplier->phone ?? '-' }}
-                                    </span>
-
-                                </div>
-                            </td>
-
-                            {{-- Alamat supplier (dibatasi 50 karakter) --}}
-                            <td class="px-6 py-4 font-bold text-gray-800 text-xs">
-                                {{ Str::limit($supplier->address, 50) ?: '-' }}
-                                {{-- Jika kosong tampilkan '-' --}}
-                            </td>
-
-                            {{-- Kolom aksi (Edit & Delete) --}}
-                            <td class="px-6 py-4 text-right space-x-2">
-                                {{-- Tombol edit --}}
-                                <a href="{{ route('suppliers.edit', $supplier) }}"
-                                    class="inline-block text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 p-2 rounded transition">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                {{-- Form delete supplier --}}
-                                <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST"
-                                    class="inline-block" onsubmit="return confirm('Delete supplier?');">
-
-                                    @csrf {{-- Token keamanan --}}
-                                    @method('DELETE') {{-- Method spoofing untuk delete --}}
-
-                                    {{-- Tombol hapus --}}
-                                    <button type="submit"
-                                        class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded transition">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-
-                            </td>
-                        </tr>
-
-                        {{-- Jika tidak ada data supplier --}}
-                    @empty
-                        <tr>
-                            <td colspan="4" class="px-6 py-8 text-center text-gray-400">
-                                No suppliers found.
-                            </td>
-                        </tr>
-                    @endforelse
-
-                </tbody>
-            </table>
+    <div class="flex justify-between items-center mb-4">
+        <div class="flex items-center gap-2">
+            <a href="{{ route('suppliers.create') }}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold shadow">
+                <i class="fas fa-plus"></i> Tambah Penyedia
+            </a>
+            <form x-show="selected.length > 0" method="POST" action="{{ route('suppliers.bulk_delete') }}" class="inline-block" onsubmit="return confirm('Hapus ' + this.closest('div').querySelector('[x-text]').innerText + ' item terpilih?')">
+                @csrf
+                <input type="hidden" name="ids[]" x-model="selected">
+                <button type="submit" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold shadow">
+                    <i class="fas fa-trash"></i> Hapus (<span x-text="selected.length"></span>)
+                </button>
+            </form>
         </div>
-
-        {{-- Pagination --}}
-        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
-            {{ $suppliers->links() }} {{-- Menampilkan link pagination --}}
-        </div>
-
+        
+        {{-- Search --}}
+        <form action="{{ route('suppliers.index') }}" method="GET" class="relative w-full max-w-sm">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="     Cari penyedia..."
+                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500 outline-none transition text-sm">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                <i class="fas fa-search"></i>
+            </span>
+        </form>
     </div>
 
+    <div class="overflow-x-auto border rounded-lg">
+        <table class="w-full text-sm text-left text-gray-700">
+            <thead class="bg-gray-100 text-xs uppercase font-bold">
+                <tr>
+                    <th class="px-3 py-2 w-10">
+                        <input type="checkbox" @click="toggleAll()" x-model="allSelected" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </th>
+                    <th class="px-3 py-2">Nama Toko/CV/PT</th>
+                    <th class="px-3 py-2">Direktur/Pemilik</th>
+                    <th class="px-3 py-2">Alamat</th>
+                    <th class="px-3 py-2">NPWP</th>
+                    <th class="px-3 py-2 text-right">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($suppliers as $supplier)
+                    <tr class="border-t hover:bg-gray-50 transition" :class="{ 'bg-indigo-50': selected.includes('{{ $supplier->id }}') }">
+                        <td class="px-3 py-2">
+                            <input type="checkbox" value="{{ $supplier->id }}" x-model="selected" @click="updateSelectAll()" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        </td>
+                        <td class="px-3 py-2 font-bold text-gray-800">{{ $supplier->name }}</td>
+                        <td class="px-3 py-2">{{ $supplier->dir ?: '-' }}</td>
+                        <td class="px-3 py-2">{{ Str::limit($supplier->address, 40) ?: '-' }}</td>
+                        <td class="px-3 py-2 font-mono text-xs text-gray-600">{{ $supplier->npwp ?: '-' }}</td>
+                        <td class="px-3 py-2 text-right">
+                            @include('partials.action_buttons', [
+                                'edit' => route('suppliers.edit', $supplier->id),
+                                'delete' => route('suppliers.destroy', $supplier->id),
+                            ])
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="px-3 py-6 text-center text-gray-500">Belum ada data penyedia.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="mt-4">
+        {{ $suppliers->links() }}
+    </div>
+</div>
 @endsection

@@ -59,8 +59,23 @@
                 .kop-text .line1 { font-weight: 800; font-size: 16px; letter-spacing: .4px; }
                 .kop-text .line2 { font-weight: 800; font-size: 22px; }
                 .kop-text .line3, .kop-text .line4 { font-style: italic; font-size: 13px; line-height: 1.25; }
-                @media print { @page { size: auto; margin: 10mm; } }
-                @media print {
+                @media print { 
+                    @page { size: 210mm 330mm; margin: 5mm 15mm; } 
+                    body { margin: 0; }
+                    .kop { margin-top: 0 !important; }
+                    .preview-paper { 
+                        width: 100% !important; 
+                        min-height: auto !important; 
+                        padding: 0 !important; 
+                        margin: 0 !important; 
+                        box-sizing: border-box; 
+                        background: #ffffff !important; 
+                        box-shadow: none !important; 
+                        line-height: 1.4;
+                    }
+                    .preview-paper p { margin: 5px 0; }
+                    .preview-paper h2 { margin: 5px 0; }
+                    .preview-paper table { margin-top: 6px; }
                     .kop-logo { width: 100px; }
                     .kop-text .line2 { font-size: 22px; }
                 }
@@ -69,8 +84,12 @@
                     min-height: 330mm;
                     margin: 0 auto;
                     background: #fff;
-                    padding: 10mm;
+                    padding: 5mm 15mm;
+                    line-height: 1.4;
                 }
+                .preview-paper p { margin: 5px 0; }
+                .preview-paper h2 { margin: 5px 0; }
+                .preview-paper table { margin-top: 6px; }
             </style>
             @include('partials.kop', ['opd' => $opd])
         </div>
