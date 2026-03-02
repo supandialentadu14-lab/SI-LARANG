@@ -39,6 +39,11 @@ class ProductController extends Controller
         return view('products.edit', compact('product', 'categories', 'suppliers'));
     }
 
+    public function show(Product $product)
+    {
+        return view('products.show', compact('product'));
+    }
+
     public function index(Request $request)
     {
         $products = Product::with(['category', 'transactions'])

@@ -7,6 +7,7 @@ use App\Models\OpdSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class KwitansiController extends Controller
 {
@@ -357,7 +358,7 @@ class KwitansiController extends Controller
         }
     }
 
-    public function list()
+    public function list(Request $request)
     {
         $disk = Storage::disk('local');
         $dir = 'users/'.Auth::id().'/kwitansi';
@@ -376,6 +377,19 @@ class KwitansiController extends Controller
             ];
         }
         usort($items, fn($a, $b) => ($b['tanggal'] ?? '') <=> ($a['tanggal'] ?? ''));
+
+        $page = $request->input('page', 1);
+        $perPage = 10;
+        $offset = ($page * $perPage) - $perPage;
+        $itemsForCurrentPage = array_slice($items, $offset, $perPage);
+        $items = new LengthAwarePaginator(
+            $itemsForCurrentPage,
+            count($items),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
         return view('kwitansi.index', compact('items'));
     }
 

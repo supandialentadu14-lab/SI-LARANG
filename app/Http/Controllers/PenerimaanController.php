@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PenerimaanController extends Controller
 {
@@ -220,7 +221,7 @@ class PenerimaanController extends Controller
         return redirect()->route('reports.penerimaan.list')->with('status', $currentId ? 'BAP Penerimaan diperbarui' : 'BAP Penerimaan disimpan');
     }
 
-    public function list(): View
+    public function list(Request $request): View
     {
         $disk = Storage::disk('local');
         $bapMap = $this->getBapNomorMap(); // Use helper
@@ -246,6 +247,19 @@ class PenerimaanController extends Controller
             ];
         }
         usort($items, fn($a, $b) => $b['updated'] <=> $a['updated']);
+
+        $page = $request->input('page', 1);
+        $perPage = 10;
+        $offset = ($page * $perPage) - $perPage;
+        $itemsForCurrentPage = array_slice($items, $offset, $perPage);
+        $items = new LengthAwarePaginator(
+            $itemsForCurrentPage,
+            count($items),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
         return view('penerimaan.index', compact('items'));
     }
 

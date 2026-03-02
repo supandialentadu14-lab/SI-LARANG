@@ -8,7 +8,7 @@
 @section('content')
 
     {{-- Container utama dengan lebar maksimal 4xl dan posisi di tengah --}}
-    <div class=" mx-auto">
+    <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
 
             {{-- Header card --}}
@@ -47,7 +47,7 @@
                                 → Jika tidak, tampilkan data lama dari database
                             --}}
                             <input type="text" name="name" value="{{ old('name', $product->name) }}"
-                                class="w-full px-4 py-2 rounded-lg border border-gray-300" required>
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition" required>
                         </div>
 
                         {{-- Input Kode Barang / SKU --}}
@@ -57,7 +57,7 @@
                             </label>
 
                             <input type="text" name="sku" value="{{ old('sku', $product->sku) }}"
-                                class="w-full px-4 py-2 rounded-lg border border-gray-300 bg-gray-100"
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 bg-gray-100 focus:outline-none"
                                 readonly>
                         </div>
 
@@ -72,7 +72,7 @@
 
                                 <input type="number" step="0.01" name="price"
                                     value="{{ old('price', $product->price) }}"
-                                    class="w-full px-4 py-2 rounded-lg border border-gray-300" required>
+                                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition" required>
                             </div>
 
                             {{-- Input Jumlah Barang (DISABLE saat edit) --}}
@@ -187,17 +187,10 @@
 
                 </div>
 
-                {{-- Tombol submit --}}
-                <div class="mt-8 flex justify-end gap-x-3">
-                    <a href="{{ route('products.index') }}"
-                        class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg">
-                        Batal
-                    </a>
-                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg">
-                        Perbarui
-                    </button>
-                </div>
-
+                @include('partials.form-actions', [
+                    'backRoute' => route('products.index'),
+                    'saveText' => 'Perbarui',
+                ])
             </form>
         </div>
     </div>

@@ -23,7 +23,7 @@
     }
 }" class="bg-white rounded-lg shadow p-6 mb-6">
 
-    <div class="flex justify-between items-center mb-4">
+    <div class="flex justify-between items-start mb-4">
         <div class="flex items-center gap-2">
             <a href="{{ route('reports.belanja.modal.form') }}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold shadow">
                 <i class="fas fa-plus"></i> Tambah Kontrak
@@ -31,12 +31,15 @@
             <a href="{{ route('reports.belanja.modal.preview_all') }}" class="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg font-bold shadow">
                 <i class="fas fa-print"></i> Print
             </a>
-            <form x-show="selected.length > 0" method="POST" action="{{ route('reports.belanja.modal.bulk_delete') }}" class="inline-block" onsubmit="return confirm('Hapus ' + this.closest('div').querySelector('[x-text]').innerText + ' item terpilih?')">
-                @csrf
-                <input type="hidden" name="ids[]" x-model="selected">
-                <button type="submit" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold shadow">
-                    <i class="fas fa-trash"></i> Hapus (<span x-text="selected.length"></span>)
-                </button>
+        </div>
+
+        <div class="flex flex-col items-end gap-1 w-full max-w-sm">
+            <form action="{{ route('reports.belanja.modal.list') }}" method="GET" class="relative w-full">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="     Cari belanja modal..."
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500 outline-none transition text-sm">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                    <i class="fas fa-search"></i>
+                </span>
             </form>
         </div>
     </div>
@@ -83,6 +86,21 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
+
+    <div class="mt-4 flex justify-between items-center">
+        <form x-show="selected.length > 0" method="POST" action="{{ route('reports.belanja.modal.bulk_delete') }}" class="inline-block">
+            @csrf
+            <template x-for="id in selected" :key="id">
+                <input type="hidden" name="ids[]" :value="id">
+            </template>
+            <button type="button" @click="if(confirm('Hapus ' + selected.length + ' item terpilih?')) $el.closest('form').submit()" class="text-red-600 italic hover:underline text-xs">
+                Hapus data yang terpilih (<span x-text="selected.length"></span>)
+            </button>
+        </form>
+        <div class="flex-1">
+            {{ $items->links() }}
+        </div>
     </div>
 </div>
 @endsection

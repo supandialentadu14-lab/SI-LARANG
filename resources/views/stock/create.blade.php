@@ -146,25 +146,10 @@
                                outline-none transition">{{ old('notes') }}</textarea>
                 </div>
 
-                {{-- TOMBOL AKSI --}}
-                <div class="flex justify-end space-x-3 pt-4">
-
-                    {{-- Tombol batal kembali ke halaman index --}}
-                    <a href="{{ route('stock.index') }}"
-                        class="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 
-                               font-bold hover:bg-gray-100 transition">
-                        Batal
-                    </a>
-
-                    {{-- Tombol submit simpan --}}
-                    <button type="submit"
-                        class="px-4 py-2 rounded-lg bg-blue-600 text-white 
-                               font-bold shadow hover:bg-blue-700 transition">
-                        Simpan
-                    </button>
-
-                </div>
-
+                @include('partials.form-actions', [
+                    'backRoute' => route('stock.index'),
+                    'saveText' => 'Simpan',
+                ])
             </form>
         </div>
     </div>

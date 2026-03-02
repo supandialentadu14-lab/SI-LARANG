@@ -175,7 +175,7 @@ class BelanjaModalController extends Controller
             ->with('status', $currentId ? 'Belanja modal diperbarui' : 'Belanja modal disimpan');
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
         $disk = Storage::disk('local');
         $dir = 'users/'.Auth::id().'/belanja-modal';
@@ -198,6 +198,19 @@ class BelanjaModalController extends Controller
             ];
         }
         usort($items, fn($a, $b) => $b['updated'] <=> $a['updated']);
+
+        $page = $request->input('page', 1);
+        $perPage = 10;
+        $offset = ($page * $perPage) - $perPage;
+        $itemsForCurrentPage = array_slice($items, $offset, $perPage);
+        $items = new \Illuminate\Pagination\LengthAwarePaginator(
+            $itemsForCurrentPage,
+            count($items),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
         return view('belanja_modal.index', compact('items'));
     }
 

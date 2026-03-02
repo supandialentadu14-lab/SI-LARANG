@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PemeriksaanController extends Controller
 {
@@ -236,7 +237,7 @@ class PemeriksaanController extends Controller
         return redirect()->route('reports.pemeriksaan.list')->with('status', $currentId ? 'Berita acara diperbarui' : 'Berita acara disimpan');
     }
 
-    public function list(): View
+    public function list(Request $request): View
     {
         $disk = Storage::disk('local');
         $dir = 'users/'.Auth::id().'/bap-pemeriksaan';
@@ -259,6 +260,19 @@ class PemeriksaanController extends Controller
             ];
         }
         usort($items, fn($a, $b) => $b['updated'] <=> $a['updated']);
+
+        $page = $request->input('page', 1);
+        $perPage = 10;
+        $offset = ($page * $perPage) - $perPage;
+        $itemsForCurrentPage = array_slice($items, $offset, $perPage);
+        $items = new LengthAwarePaginator(
+            $itemsForCurrentPage,
+            count($items),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
         return view('pemeriksaan.index', compact('items'));
     }
 

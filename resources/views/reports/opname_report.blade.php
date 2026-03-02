@@ -38,7 +38,7 @@
             };
         }
     </script>
-    <div id="print-area" class="preview-paper bg-white shadow border border-gray-100 text-black">
+    <div id="print-area" class="preview-paper bg-white  text-black">
         @if (isset($status))
             <div class="no-print mb-4 px-4 py-3 bg-green-50 text-green-700 border border-green-200 rounded">
                 {{ $status }}

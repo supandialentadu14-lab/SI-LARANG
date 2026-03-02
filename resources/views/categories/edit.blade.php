@@ -67,25 +67,10 @@
                     </textarea>
                 </div>
 
-                {{-- ================= TOMBOL AKSI ================= --}}
-                <div class="flex justify-end space-x-3 pt-4">
-
-                    {{-- Tombol batal kembali ke halaman index --}}
-                    <a 
-                        href="{{ route('categories.index') }}"
-                        class="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 font-bold hover:bg-gray-100 transition">
-                        Batal
-                    </a>
-
-                    {{-- Tombol submit untuk memperbarui data --}}
-                    <button 
-                        type="submit"
-                        class="px-4 py-2 rounded-lg bg-orange-600 text-white font-bold shadow hover:bg-orange-700 transition">
-                        Perbarui
-                    </button>
-
-                </div>
-
+                @include('partials.form-actions', [
+                    'backRoute' => route('categories.index'),
+                    'saveText' => 'Perbarui',
+                ])
             </form>
         </div>
     </div>

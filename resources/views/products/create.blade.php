@@ -1,5 +1,5 @@
 {{-- Menggunakan layout utama admin --}} @extends('layouts.admin') {{-- Mengisi section header pada layout --}} @section('header', 'Tambah Barang') {{-- Mengisi section content pada layout --}}
-@section('content') {{-- Container utama dengan lebar maksimal 4xl dan posisi tengah --}} <div class=" mx-auto">
+@section('content') {{-- Container utama dengan lebar maksimal 4xl dan posisi tengah --}} <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden"> {{-- Header Card --}} <div
                 class="px-6 py-4 border-b border-gray-100 bg-orange-50">
                 <h6 class="font-bold text-blue-700 flex items-center"> {{-- Icon tambah --}} <i
@@ -74,12 +74,10 @@
                                 @endforeach
                             </select> </div>
                     </div>
-                </div> {{-- Tombol Aksi --}} <div class="mt-8 pt-4 border-t border-gray-100 flex justify-end space-x-3">
-                    {{-- Tombol kembali ke halaman index --}} <a href="{{ route('products.index') }}"
-                        class="px-6 py-2.5 rounded-lg border border-gray-300 text-gray-600 font-bold hover:bg-gray-100 transition">
-                        Batal </a> {{-- Tombol submit form --}} <button type="submit"
-                        class="px-6 py-2.5 rounded-lg bg-blue-600 text-white font-bold shadow-md hover:bg-blue-700 hover:shadow-lg transform hover:-translate-y-0.5 transition">
-                        <i class="fas fa-save mr-2"></i> Simpan </button> </div>
+                </div> @include('partials.form-actions', [
+                    'backRoute' => route('products.index'),
+                    'saveText' => 'Simpan',
+                ])
             </form>
         </div>
 </div> @endsection

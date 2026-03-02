@@ -125,20 +125,10 @@
                     </div>
                 </div>
 
-                {{-- Tombol Aksi --}}
-                <div class="flex justify-end space-x-3 pt-4">
-
-                    {{-- Tombol batal kembali ke halaman user --}}
-                    <a href="{{ route('users.index') }}"
-                        class="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 font-bold hover:bg-gray-100 transition">
-                        Cancel
-                    </a>
-
-                    {{-- Tombol submit update data --}}
-                    <button type="submit" class="px-4 py-2 rounded-lg bg-indigo-600 text-white font-bold shadow hover:bg-indigo-700 transition">Perbarui</button>
-
-                </div>
-
+                @include('partials.form-actions', [
+                    'backRoute' => route('users.index'),
+                    'saveText' => 'Perbarui',
+                ])
             </form>
         </div>
     </div>

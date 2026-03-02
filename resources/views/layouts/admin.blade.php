@@ -74,6 +74,7 @@
             --sidebar-active: #374151;
             --accent: #4F46E5;
         }
+
         .theme-light {
             --body-bg: #F3F4F6;
             --body-text: #111827;
@@ -84,6 +85,7 @@
             --sidebar-active: #D1D5DB;
             --accent: #4F46E5;
         }
+
         .theme-dark {
             --body-bg: #0F131A;
             --body-text: #E5E7EB;
@@ -96,15 +98,20 @@
             --marquee-start: #93C5FD;
             --marquee-end: #C4B5FD;
         }
-        .theme-light { --marquee-start: #60A5FA; --marquee-end: #A78BFA; }
+
+        .theme-light {
+            --marquee-start: #60A5FA;
+            --marquee-end: #A78BFA;
+        }
+
         [x-cloak] {
             display: none !important;
         }
 
         .sidebar-modern {
-            background: radial-gradient(1200px 600px at -10% 10%, rgba(167, 139, 250, 0.25) 0%, rgba(14, 20, 40, 0) 50%) , 
-                        radial-gradient(1200px 600px at 120% 40%, rgba(56, 189, 248, 0.25) 0%, rgba(14, 20, 40, 0) 50%) , 
-                        var(--sidebar-bg);
+            background: radial-gradient(1200px 600px at -10% 10%, rgba(167, 139, 250, 0.25) 0%, rgba(14, 20, 40, 0) 50%),
+                radial-gradient(1200px 600px at 120% 40%, rgba(56, 189, 248, 0.25) 0%, rgba(14, 20, 40, 0) 50%),
+                var(--sidebar-bg);
             color: var(--sidebar-text);
             min-height: 100vh;
             will-change: transform, opacity;
@@ -112,85 +119,161 @@
             transform: translateZ(0);
         }
 
-        .nav-link { display:flex; align-items:center; padding:.9rem 1rem; color: var(--sidebar-text); transition: all .2s; border-left: 3px solid transparent; border-radius:.75rem; cursor: pointer; }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: .9rem 1rem;
+            color: var(--sidebar-text);
+            transition: all .2s;
+            border-left: 3px solid transparent;
+            border-radius: .75rem;
+            cursor: pointer;
+        }
 
-        .nav-link:hover { color: var(--sidebar-text); background-color: var(--sidebar-hover); }
+        .nav-link:hover {
+            color: var(--sidebar-text);
+            background-color: var(--sidebar-hover);
+        }
 
-        .nav-link.active { 
-            color: var(--sidebar-text); 
+        .nav-link.active {
+            color: var(--sidebar-text);
             background: linear-gradient(90deg, rgba(125, 211, 252, .25), rgba(192, 132, 252, .25));
             box-shadow: 0 0 0 1px rgba(125, 211, 252, .25) inset, 0 6px 18px rgba(125, 211, 252, .22);
-            font-weight: 700; 
-            border-left: 3px solid var(--accent); 
+            font-weight: 700;
+            border-left: 3px solid var(--accent);
         }
+
         .bg-indigo-800 {
             background: linear-gradient(90deg, rgba(125, 211, 252, .22), rgba(192, 132, 252, .22));
             box-shadow: 0 0 0 1px rgba(125, 211, 252, .18) inset, 0 6px 18px rgba(192, 132, 252, .18);
         }
+
         #page-header h2 {
             font-size: 1.75rem;
             font-weight: 800;
             color: #111827;
             letter-spacing: .2px;
         }
+
         #page-header p {
             color: #6b7280;
         }
+
         .card {
             border: 1px solid #f3f4f6;
             border-radius: .75rem;
             background: #ffffff;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,.05), 0 4px 6px -4px rgba(0,0,0,.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .05), 0 4px 6px -4px rgba(0, 0, 0, .05);
         }
+
         .table-clean thead {
             background: #f3f4f6;
         }
+
         .table-clean tbody tr:hover {
             background: #fff7ed;
         }
-        input[type="text"], input[type="email"], input[type="password"], input[type="date"], textarea, select {
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="date"],
+        textarea,
+        select {
             border-color: #e5e7eb;
             border-radius: 0.5rem;
             padding: 0.6rem 0.9rem;
             transition: all .2s;
         }
-        input:focus, textarea:focus, select:focus {
+
+        input:focus,
+        textarea:focus,
+        select:focus {
             outline: none;
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
             border-color: #6366f1;
         }
+
         button {
             transition: transform .05s ease, box-shadow .2s ease;
         }
+
         button:hover {
             transform: translateY(-1px);
         }
+
         /* GLOBAL CURSOR RULES */
-        a, button, [role="button"], input[type="submit"], input[type="button"], input[type="reset"], select {
+        a,
+        button,
+        [role="button"],
+        input[type="submit"],
+        input[type="button"],
+        input[type="reset"],
+        select {
             cursor: pointer !important;
         }
+
         /* Cursor for datalist dropdown arrow */
         input[list]::-webkit-calendar-picker-indicator {
             cursor: pointer !important;
         }
-        .cursor-pointer { cursor: pointer !important; }
+
+        .cursor-pointer {
+            cursor: pointer !important;
+        }
+
         .submenu-stagger a {
             opacity: 0;
             transform: translateY(4px);
             transition: opacity .18s ease, transform .18s ease;
             will-change: opacity, transform;
         }
-        .submenu-open a { opacity: 1; transform: translateY(0); }
-        .submenu-open a:nth-child(1) { transition-delay: 30ms; }
-        .submenu-open a:nth-child(2) { transition-delay: 60ms; }
-        .submenu-open a:nth-child(3) { transition-delay: 90ms; }
-        .submenu-open a:nth-child(4) { transition-delay: 120ms; }
-        .submenu-open a:nth-child(5) { transition-delay: 150ms; }
-        .submenu-open a:nth-child(6) { transition-delay: 180ms; }
-        .submenu-open a:nth-child(7) { transition-delay: 210ms; }
-        .submenu-open a:nth-child(8) { transition-delay: 240ms; }
-        .submenu-open a:nth-child(9) { transition-delay: 270ms; }
-        .submenu-open a:nth-child(10) { transition-delay: 300ms; }
+
+        .submenu-open a {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .submenu-open a:nth-child(1) {
+            transition-delay: 30ms;
+        }
+
+        .submenu-open a:nth-child(2) {
+            transition-delay: 60ms;
+        }
+
+        .submenu-open a:nth-child(3) {
+            transition-delay: 90ms;
+        }
+
+        .submenu-open a:nth-child(4) {
+            transition-delay: 120ms;
+        }
+
+        .submenu-open a:nth-child(5) {
+            transition-delay: 150ms;
+        }
+
+        .submenu-open a:nth-child(6) {
+            transition-delay: 180ms;
+        }
+
+        .submenu-open a:nth-child(7) {
+            transition-delay: 210ms;
+        }
+
+        .submenu-open a:nth-child(8) {
+            transition-delay: 240ms;
+        }
+
+        .submenu-open a:nth-child(9) {
+            transition-delay: 270ms;
+        }
+
+        .submenu-open a:nth-child(10) {
+            transition-delay: 300ms;
+        }
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -205,19 +288,72 @@
             box-shadow: none;
             transition: background-color .15s ease, border-color .15s ease, color .15s ease;
         }
-        .btn:hover { background: #f9fafb; }
-        .btn:focus { outline: none; box-shadow: 0 0 0 3px rgba(99,102,241,.25); }
-        .btn i { font-size: .9rem; }
-        .btn-primary { background: linear-gradient(90deg, #4F46E5, #7DD3FC); color: #ffffff; border-color: transparent; }
-        .btn-primary:hover { background: linear-gradient(90deg, #3F37E0, #60A5FA); color: #ffffff; border-color: transparent; box-shadow: 0 6px 16px rgba(96,165,250,.35); }
-        .btn-success { background: #16a34a; color: #ffffff; border-color: transparent; }
-        .btn-success:hover { background: #15803d; }
-        .btn-warning { background: #f97316; color: #ffffff; border-color: transparent; }
-        .btn-warning:hover { background: #ea580c; }
-        .btn-neutral { background: #111827; color: #ffffff; border-color: transparent; }
-        .btn-neutral:hover { background: #0f172a; }
-        .btn-outline { background: transparent; color: #374151; border-color: #d1d5db; }
-        .btn-outline:hover { background: #f9fafb; }
+
+        .btn:hover {
+            background: #f9fafb;
+        }
+
+        .btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, .25);
+        }
+
+        .btn i {
+            font-size: .9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #4F46E5, #7DD3FC);
+            color: #ffffff;
+            border-color: transparent;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #3F37E0, #60A5FA);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 6px 16px rgba(96, 165, 250, .35);
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: #ffffff;
+            border-color: transparent;
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .btn-warning {
+            background: #f97316;
+            color: #ffffff;
+            border-color: transparent;
+        }
+
+        .btn-warning:hover {
+            background: #ea580c;
+        }
+
+        .btn-neutral {
+            background: #111827;
+            color: #ffffff;
+            border-color: transparent;
+        }
+
+        .btn-neutral:hover {
+            background: #0f172a;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #374151;
+            border-color: #d1d5db;
+        }
+
+        .btn-outline:hover {
+            background: #f9fafb;
+        }
 
         /* MARQUEE */
         .marquee-container {
@@ -228,8 +364,8 @@
             min-height: 36px;
             padding: 4px 0;
             border-radius: 0.5rem;
-            background: linear-gradient(90deg, rgba(99,102,241,.12), rgba(124,58,237,.12));
-            border: 1px solid rgba(99,102,241,.15);
+            background: linear-gradient(90deg, rgba(99, 102, 241, .12), rgba(124, 58, 237, .12));
+            border: 1px solid rgba(99, 102, 241, .15);
             display: flex;
             align-items: center;
         }
@@ -245,9 +381,10 @@
             color: transparent;
             letter-spacing: .4px;
             animation: marqueeMove 18s linear infinite;
-            text-shadow: 0 0 1px rgba(255,255,255,.2);
+            text-shadow: 0 0 1px rgba(255, 255, 255, .2);
             line-height: normal;
         }
+
         .marquee-container:hover .marquee-text {
             animation-play-state: paused;
         }
@@ -261,104 +398,168 @@
                 transform: translateX(-100%);
             }
         }
+
         @media print {
+
             aside,
             header,
             #page-header,
             .no-print {
                 display: none !important;
             }
-            marquee, .marquee-container, .marquee-text, [data-marquee] {
+
+            marquee,
+            .marquee-container,
+            .marquee-text,
+            [data-marquee] {
                 display: none !important;
             }
+
             * {
                 animation: none !important;
                 transition: none !important;
             }
-            .h-screen { height: auto !important; }
-            .overflow-hidden, .overflow-y-auto, .overflow-x-hidden { overflow: visible !important; }
+
+            .h-screen {
+                height: auto !important;
+            }
+
+            .overflow-hidden,
+            .overflow-y-auto,
+            .overflow-x-hidden {
+                overflow: visible !important;
+            }
+
             main {
                 padding: 0 !important;
                 background: #ffffff !important;
             }
+
             body {
                 background: #ffffff !important;
             }
+
             * {
                 box-shadow: none !important;
             }
         }
-        #print-area, #print-area * {
+
+        #print-area,
+        #print-area * {
             animation: none !important;
             transition: none !important;
         }
-        html, body { background-color: var(--body-bg); color: var(--body-text); }
+
+        html,
+        body {
+            background-color: var(--body-bg);
+            color: var(--body-text);
+        }
+
         body {
             overscroll-behavior: none;
         }
-        .no-marquee .marquee-container { display: none !important; }
-        .no-marquee .marquee-text { animation: none !important; }
+
+        .no-marquee .marquee-container {
+            display: none !important;
+        }
+
+        .no-marquee .marquee-text {
+            animation: none !important;
+        }
+
         main {
             content-visibility: auto;
             contain-intrinsic-size: 800px;
             animation: none !important;
         }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(2px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(2px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        main.fade-out { animation: none !important; }
+
+        main.fade-out {
+            animation: none !important;
+        }
+
         @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(2px); }
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(2px);
+            }
         }
+
         @media (prefers-reduced-motion: reduce) {
             * {
                 transition: none !important;
                 animation: none !important;
             }
         }
+
         .no-anim * {
             animation: none !important;
             transition: none !important;
         }
-        .no-anim main { animation: none !important; }
+
+        .no-anim main {
+            animation: none !important;
+        }
+
         .no-anim .sidebar-gradient,
-        .no-anim .overflow-y-auto { scroll-behavior: auto; }
-        
+        .no-anim .overflow-y-auto {
+            scroll-behavior: auto;
+        }
     </style>
     <style>
         html {
             scrollbar-width: thin;
-            scrollbar-color: #6366F1 rgba(99,102,241,.12);
+            scrollbar-color: #6366F1 rgba(99, 102, 241, .12);
         }
+
         .sidebar-gradient,
         .overflow-y-auto {
             scroll-behavior: smooth;
         }
+
         .sidebar-gradient::-webkit-scrollbar,
         .overflow-y-auto::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
+
         .sidebar-gradient::-webkit-scrollbar-track,
         .overflow-y-auto::-webkit-scrollbar-track {
-            background: rgba(255,255,255,.08);
+            background: rgba(255, 255, 255, .08);
             border-radius: 999px;
         }
+
         .sidebar-gradient::-webkit-scrollbar-thumb,
         .overflow-y-auto::-webkit-scrollbar-thumb {
             background-image: linear-gradient(180deg, #6366F1 0%, #7C3AED 100%);
             border-radius: 999px;
-            border: 2px solid rgba(255,255,255,.25);
+            border: 2px solid rgba(255, 255, 255, .25);
         }
+
         .sidebar-gradient::-webkit-scrollbar-thumb:hover,
         .overflow-y-auto::-webkit-scrollbar-thumb:hover {
             background-image: linear-gradient(180deg, #4F46E5 0%, #7C3AED 100%);
         }
     </style>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             if (document.querySelector('#print-area')) {
                 document.body.classList.add('no-marquee');
                 document.body.classList.add('no-anim');
@@ -366,11 +567,17 @@
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             var collapse = {!! json_encode(session('collapse_submenus') ? true : false) !!};
             if (collapse) {
                 try {
-                    localStorage.setItem('sidebarOpenGroups', JSON.stringify({master:false,pengadaan:false,transaksi:false,berita:false,settings:false}));
+                    localStorage.setItem('sidebarOpenGroups', JSON.stringify({
+                        master: false,
+                        pengadaan: false,
+                        transaksi: false,
+                        berita: false,
+                        settings: false
+                    }));
                 } catch (e) {}
             }
         });
@@ -383,12 +590,13 @@
         <!-- Sidebar -->
         <aside
             class="sidebar-modern flex-shrink-0 flex flex-col transition-all duration-300 shadow-xl z-30 overflow-x-hidden"
-            :class="[ sidebarOpen ? 'w-64' : 'w-20', (theme === 'dark' ? 'theme-dark' : 'theme-light') ]">
+            :class="[sidebarOpen ? 'w-64' : 'w-20', (theme === 'dark' ? 'theme-dark' : 'theme-light')]">
 
             <div class="h-16 flex items-center justify-center border-b border-white/20">
-                <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 group cursor-pointer" style="color: var(--sidebar-text)">
+                <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 group cursor-pointer"
+                    style="color: var(--sidebar-text)">
                     <img src="{{ asset('images/silarang-logo.png') }}" alt="Logo SI-LARANG"
-                         class="h-8 w-8 rounded-md ring-2 ring-white/40" onerror="this.style.display='none'">
+                        class="h-8 w-8 rounded-md ring-2 ring-white/40" onerror="this.style.display='none'">
                     <span class="text-xl font-bold tracking-wider" x-show="sidebarOpen" x-cloak>SI-LARANG</span>
                 </a>
             </div>
@@ -406,209 +614,267 @@
                 </a>
 
                 <div class="w-full space-y-2">
-                    <div x-data="{ key: 'master', open: false, popover:false }" class="relative" 
-                         @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
-                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('products.*') || request()->routeIs('categories.*') || request()->routeIs('suppliers.*') ? 'true' : 'false' }}); })()">
-                        <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (popover = !popover)"
-                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white" style="color: var(--sidebar-text)"
+                    <div x-data="{ key: 'master', open: false, popover: false }" class="relative"
+                        @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
+                        x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}');
+                            open = s[key] ?? ({{ request()->routeIs('products.*') || request()->routeIs('categories.*') || request()->routeIs('suppliers.*') ? 'true' : 'false' }}); })()">
+                        <button
+                            @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (popover = !popover)"
+                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white"
+                            style="color: var(--sidebar-text)"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-database"></i>
                                 <span x-show="sidebarOpen" x-cloak>Master Data</span>
                             </span>
-                            <svg x-show="sidebarOpen" x-cloak :class="{ 'rotate-180': open }" class="w-4 h-4 transform transition-transform duration-300"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linecap="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            <svg x-show="sidebarOpen" x-cloak :class="{ 'rotate-180': open }"
+                                class="w-4 h-4 transform transition-transform duration-300" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linecap="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        <div x-show="sidebarOpen && open" x-cloak class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
-                            <a href="{{ route('products.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('products.*') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                        <div x-show="sidebarOpen && open" x-cloak
+                            class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''"
+                            style="background: var(--sidebar-hover)">
+                            <a href="{{ route('products.index') }}"
+                                class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('products.*') ? 'bg-indigo-500 text-white' : '' }}"
+                                style="color: var(--sidebar-text)">
                                 Barang
                             </a>
-                            <a href="{{ route('categories.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('categories.*') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                            <a href="{{ route('categories.index') }}"
+                                class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('categories.*') ? 'bg-indigo-500 text-white' : '' }}"
+                                style="color: var(--sidebar-text)">
                                 Jenis Belanja
                             </a>
-                            <a href="{{ route('suppliers.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('suppliers.*') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                            <a href="{{ route('suppliers.index') }}"
+                                class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('suppliers.*') ? 'bg-indigo-500 text-white' : '' }}"
+                                style="color: var(--sidebar-text)">
                                 Penyedia
                             </a>
                         </div>
                         <div x-show="!sidebarOpen && popover" x-cloak @click.away="popover=false"
-                             class="absolute left-full ml-2 top-0 z-50 w-56 rounded-xl shadow-xl ring-1 ring-black/10 p-2"
-                             :style="{ backgroundColor: (theme === 'dark' ? '#1B2230' : '#ffffff'), color: (theme === 'dark' ? '#E5E7EB' : '#111827') }">
-                            <a href="{{ route('products.index') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Barang</a>
-                            <a href="{{ route('categories.index') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Jenis Belanja</a>
-                            <a href="{{ route('suppliers.index') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Penyedia</a>
+                            class="absolute left-full ml-2 top-0 z-50 w-56 rounded-xl shadow-xl ring-1 ring-black/10 p-2"
+                            :style="{ backgroundColor: (theme === 'dark' ? '#1B2230' : '#ffffff'), color: (
+                                    theme === 'dark' ? '#E5E7EB' : '#111827') }">
+                            <a href="{{ route('products.index') }}"
+                                class="block px-3 py-2 rounded hover:bg-gray-700/40">Barang</a>
+                            <a href="{{ route('categories.index') }}"
+                                class="block px-3 py-2 rounded hover:bg-gray-700/40">Jenis Belanja</a>
+                            <a href="{{ route('suppliers.index') }}"
+                                class="block px-3 py-2 rounded hover:bg-gray-700/40">Penyedia</a>
                         </div>
                     </div>
-                    
-                    <div x-data="{ key: 'transaksi', open: false, popover:false }" class="relative" 
-                         @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
-                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('stock.*') || request()->routeIs('reports.belanja.modal.list') || request()->routeIs('reports.nota.list') || request()->routeIs('reports.belanja.modal.preview_all') ? 'true' : 'false' }}); })()">
-                        <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (popover = !popover)"
-                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white" style="color: var(--sidebar-text)"
+
+                    <div x-data="{ key: 'transaksi', open: false, popover: false }" class="relative"
+                        @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
+                        x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}');
+                            open = s[key] ?? ({{ request()->routeIs('stock.*') || request()->routeIs('reports.belanja.modal.list') || request()->routeIs('reports.nota.list') || request()->routeIs('reports.belanja.modal.preview_all') ? 'true' : 'false' }}); })()">
+                        <button
+                            @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (popover = !popover)"
+                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white"
+                            style="color: var(--sidebar-text)"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-exchange-alt"></i>
                                 <span x-show="sidebarOpen" x-cloak>Transaksi</span>
                             </span>
-                            <svg x-show="sidebarOpen" x-cloak :class="{ 'rotate-180': open }" class="w-4 h-4 transform transition-transform duration-300"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linecap="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            <svg x-show="sidebarOpen" x-cloak :class="{ 'rotate-180': open }"
+                                class="w-4 h-4 transform transition-transform duration-300" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linecap="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        <div x-show="sidebarOpen && open" x-cloak class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
-                            <a href="{{ route('stock.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('stock.index') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                        <div x-show="sidebarOpen && open" x-cloak
+                            class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''"
+                            style="background: var(--sidebar-hover)">
+                            <a href="{{ route('stock.index') }}"
+                                class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('stock.index') ? 'bg-indigo-500 text-white' : '' }}"
+                                style="color: var(--sidebar-text)">
                                 Mutasi Masuk/Keluar
                             </a>
-                            <a href="{{ route('reports.belanja.modal.preview_all') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.belanja.modal.preview_all') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                            <a href="{{ route('reports.belanja.modal.list') }}"
+                                class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.belanja.modal.list') ? 'bg-indigo-500 text-white' : '' }}"
+                                style="color: var(--sidebar-text)">
                                 Daftar Belanja Modal
-                            </a>
-                            <a href="{{ route('reports.nota.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.nota.list') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
-                                Daftar Surat Pesanan
-                            </a>
-                            <a href="{{ route('reports.belanja.modal.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.belanja.modal.list') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
-                                Daftar Belanja
                             </a>
                         </div>
                         <div x-show="!sidebarOpen && popover" x-cloak @click.away="popover=false"
-                             class="absolute left-full ml-2 top-0 z-50 w-56 rounded-xl shadow-xl ring-1 ring-black/10 p-2"
-                             :style="{ backgroundColor: (theme === 'dark' ? '#1B2230' : '#ffffff'), color: (theme === 'dark' ? '#E5E7EB' : '#111827') }">
-                            <a href="{{ route('stock.index') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Mutasi Masuk/Keluar</a>
-                            <a href="{{ route('reports.belanja.modal.preview_all') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Daftar Belanja Modal</a>
-                            <a href="{{ route('reports.nota.list') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Daftar Surat Pesanan</a>
-                            <a href="{{ route('reports.belanja.modal.list') }}" class="block px-3 py-2 rounded hover:bg-gray-700/40">Daftar Belanja</a>
+                            class="absolute left-full ml-2 top-0 z-50 w-56 rounded-xl shadow-xl ring-1 ring-black/10 p-2"
+                            :style="{ backgroundColor: (theme === 'dark' ? '#1B2230' : '#ffffff'), color: (
+                                    theme === 'dark' ? '#E5E7EB' : '#111827') }">
+                            <a href="{{ route('stock.index') }}"
+                                class="block px-3 py-2 rounded hover:bg-gray-700/40">Mutasi Masuk/Keluar</a>
+                            <a href="{{ route('reports.belanja.modal.preview_all') }}"
+                                class="block px-3 py-2 rounded hover:bg-gray-700/40">Daftar Belanja Modal</a>
+                            <a href="{{ route('reports.nota.list') }}"
+                                class="block px-3 py-2 rounded hover:bg-gray-700/40">Daftar Surat Pesanan</a>
+                            <a href="{{ route('reports.belanja.modal.list') }}"
+                                class="block px-3 py-2 rounded hover:bg-gray-700/40">Daftar Belanja</a>
                         </div>
-                    </div>                  
-                    
-                    <div x-data="{ key: 'laporan', open: false }" 
-                         @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
-                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('reports.index') || request()->routeIs('reports.kartu.tahunan') ? 'true' : 'false' }}); })()">
-                        <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('reports.index') }}')"
-                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white" style="color: var(--sidebar-text)"
+                    </div>
+
+                    <div x-data="{ key: 'laporan', open: false }"
+                        @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
+                        x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}');
+                            open = s[key] ?? ({{ request()->routeIs('reports.index') || request()->routeIs('reports.kartu.tahunan') ? 'true' : 'false' }}); })()">
+                        <button
+                            @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('reports.index') }}')"
+                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white"
+                            style="color: var(--sidebar-text)"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-file-alt"></i>
                                 <span x-show="sidebarOpen" x-cloak>Laporan</span>
                             </span>
-                            <svg x-show="sidebarOpen" x-cloak :class="{ 'rotate-180': open }" class="w-4 h-4 transform transition-transform duration-300"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linecap="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            <svg x-show="sidebarOpen" x-cloak :class="{ 'rotate-180': open }"
+                                class="w-4 h-4 transform transition-transform duration-300" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linecap="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        <div x-show="sidebarOpen && open" x-cloak class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
-                            <a href="{{ route('reports.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.index') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                        <div x-show="sidebarOpen && open" x-cloak
+                            class="mt-2 rounded-lg overflow-hidden submenu-stagger"
+                            :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
+                            <a href="{{ route('reports.index') }}"
+                                class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.index') ? 'bg-indigo-500 text-white' : '' }}"
+                                style="color: var(--sidebar-text)">
                                 Laporan Persediaan
                             </a>
-                            <a href="{{ route('reports.kartu.tahunan') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.kartu.tahunan') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                            <a href="{{ route('reports.kartu.tahunan') }}"
+                                class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.kartu.tahunan') ? 'bg-indigo-500 text-white' : '' }}"
+                                style="color: var(--sidebar-text)">
                                 Kartu Persediaan Tahunan
+                            </a>
+                                                        <a href="{{ route('reports.opname.list') }}"
+                                class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.opname.list') ? 'bg-indigo-500 text-white' : '' }}"
+                                style="color: var(--sidebar-text)">
+                                Daftar Stock Opname
+                            </a>
+                            <a href="{{ route('reports.pinjam.list') }}"
+                                class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.pinjam.list') ? 'bg-indigo-500 text-white' : '' }}"
+                                style="color: var(--sidebar-text)">
+                                Daftar Pinjam Pakai
                             </a>
                         </div>
                     </div>
-                    
-                    <div x-data="{ key: 'kwitansi', open: false }" 
-                         @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
-                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('reports.kwitansi.*') ? 'true' : 'false' }}); })()">
-                        <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('reports.kwitansi.list') }}')"
-                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white" style="color: var(--sidebar-text)"
+
+                    <div x-data="{ key: 'kwitansi', open: false }"
+                        @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
+                        x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}');
+                            open = s[key] ?? ({{ request()->routeIs('reports.kwitansi.*') ? 'true' : 'false' }}); })()">
+                        <button
+                            @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('reports.kwitansi.list') }}')"
+                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white"
+                            style="color: var(--sidebar-text)"
                             :class="sidebarOpen ? 'justify-between' : 'justify-center'">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-receipt"></i>
-                                <span x-show="sidebarOpen" x-cloak>Kwitansi</span>
+                                <span x-show="sidebarOpen" x-cloak>Berkas</span>
                             </span>
-                            <svg x-show="sidebarOpen" x-cloak :class="{ 'rotate-180': open }" class="w-4 h-4 transform transition-transform duration-300"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linecap="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            <svg x-show="sidebarOpen" x-cloak :class="{ 'rotate-180': open }"
+                                class="w-4 h-4 transform transition-transform duration-300" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linecap="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        <div x-show="sidebarOpen && open" x-cloak class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
-                            <a href="{{ route('reports.kwitansi.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.kwitansi.list') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
-                                Daftar Kwitansi
+                        <div x-show="sidebarOpen && open" x-cloak
+                            class="mt-2 rounded-lg overflow-hidden submenu-stagger"
+                            :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
+                            <a href="{{ route('reports.nota.list') }}"
+                                class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.nota.list') ? 'bg-indigo-500 text-white' : '' }}"
+                                style="color: var(--sidebar-text)">
+                                Daftar Surat Pesanan
                             </a>
-                            <a href="{{ route('reports.kwitansi.form') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.kwitansi.form') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
-                                Buat Baru
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div x-data="{ key: 'berita', open: false }" 
-                         @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
-                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('reports.pinjam.*') || request()->routeIs('reports.opname.*') ? 'true' : 'false' }}); })()">
-                        <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('reports.pinjam.list') }}')"
-                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white" style="color: var(--sidebar-text)"
-                            :class="sidebarOpen ? 'justify-between' : 'justify-center'">
-                            <span class="flex items-center gap-2">
-                                <i class="fas fa-file-signature"></i>
-                                <span x-show="sidebarOpen" x-cloak>Berita Acara</span>
-                            </span>
-                            <svg x-show="sidebarOpen" x-cloak :class="{ 'rotate-180': open }" class="w-4 h-4 transform transition-transform duration-300"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linecap="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        <div x-show="sidebarOpen && open" x-cloak class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
-                            <a href="{{ route('reports.pinjam.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.pinjam.list') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
-                                Daftar Pinjam Pakai
-                            </a>
-                            <a href="{{ route('reports.opname.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.opname.list') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
-                                Daftar Stock Opname
-                            </a>
-                            <a href="{{ route('reports.pemeriksaan.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.pemeriksaan.list') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                            <a href="{{ route('reports.pemeriksaan.list') }}"
+                                class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.pemeriksaan.list') ? 'bg-indigo-500 text-white' : '' }}"
+                                style="color: var(--sidebar-text)">
                                 Daftar Pemeriksaan
                             </a>
-                            <a href="{{ route('reports.penerimaan.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.penerimaan.list') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
+                            <a href="{{ route('reports.penerimaan.list') }}"
+                                class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.penerimaan.list') ? 'bg-indigo-500 text-white' : '' }}"
+                                style="color: var(--sidebar-text)">
                                 Daftar Penerimaan
                             </a>
-                        
-                    </div>
-                    <div x-data="{ key: 'settings', open: false }" 
-                         @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
-                         x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); open = s[key] ?? ({{ request()->routeIs('settings.opd.*') || request()->routeIs('settings.nota.master.*') ? 'true' : 'false' }}); })()">
-                        <button @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('settings.opd.index') }}')"
-                            class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white" style="color: var(--sidebar-text)"
-                            :class="sidebarOpen ? 'justify-between' : 'justify-center'">
-                            <span class="flex items-center gap-2">
-                                <i class="fas fa-gear"></i>
-                                <span x-show="sidebarOpen" x-cloak>Pengaturan</span>
-                            </span>
-                            <svg x-show="sidebarOpen" x-cloak :class="{ 'rotate-180': open }" class="w-4 h-4 transform transition-transform duration-300"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linecap="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        <div x-show="sidebarOpen && open" x-cloak class="mt-2 rounded-lg overflow-hidden submenu-stagger" :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
-                            <a href="{{ route('settings.opd.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('settings.opd.*') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
-                                OPD
+                            <a href="{{ route('reports.kwitansi.list') }}"
+                                class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('reports.kwitansi.list') ? 'bg-indigo-500 text-white' : '' }}"
+                                style="color: var(--sidebar-text)">
+                                Daftar Kwitansi
                             </a>
-                            <a href="{{ route('settings.nota.master.list') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('settings.nota.master.*') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
-                                Penandatangan
-                            </a>
-                            
-                            @if (Auth::check() && Auth::user()->isAdmin())
-                            <a href="{{ route('users.index') }}" class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('users.*') ? 'bg-indigo-500 text-white' : '' }}" style="color: var(--sidebar-text)">
-                                Pengguna
-                            </a>
-                            @endif
                         </div>
                     </div>
-                </div>
+
+                    
+                        <div x-data="{ key: 'settings', open: false }"
+                            @sidebar-group-opened.window="if ($event.detail.key !== key) { open = false; const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = false; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); }"
+                            x-init="(() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}');
+                                open = s[key] ?? ({{ request()->routeIs('settings.opd.*') || request()->routeIs('settings.nota.master.*') ? 'true' : 'false' }}); })()">
+                            <button
+                                @click="sidebarOpen ? (open = !open, open && $dispatch('sidebar-group-opened', { key: key }), (() => { const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}'); s[key] = open; localStorage.setItem('sidebarOpenGroups', JSON.stringify(s)); })()) : (window.location.href='{{ route('settings.opd.index') }}')"
+                                class="w-full flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg cursor-pointer hover:bg-indigo-500 hover:text-white"
+                                style="color: var(--sidebar-text)"
+                                :class="sidebarOpen ? 'justify-between' : 'justify-center'">
+                                <span class="flex items-center gap-2">
+                                    <i class="fas fa-gear"></i>
+                                    <span x-show="sidebarOpen" x-cloak>Pengaturan</span>
+                                </span>
+                                <svg x-show="sidebarOpen" x-cloak :class="{ 'rotate-180': open }"
+                                    class="w-4 h-4 transform transition-transform duration-300" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linecap="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div x-show="sidebarOpen && open" x-cloak
+                                class="mt-2 rounded-lg overflow-hidden submenu-stagger"
+                                :class="open ? 'submenu-open' : ''" style="background: var(--sidebar-hover)">
+                                <a href="{{ route('settings.opd.index') }}"
+                                    class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('settings.opd.*') ? 'bg-indigo-500 text-white' : '' }}"
+                                    style="color: var(--sidebar-text)">
+                                    OPD
+                                </a>
+                                <a href="{{ route('settings.nota.master.list') }}"
+                                    class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('settings.nota.master.*') ? 'bg-indigo-500 text-white' : '' }}"
+                                    style="color: var(--sidebar-text)">
+                                    Penandatangan
+                                </a>
+
+                                @if (Auth::check() && Auth::user()->isAdmin())
+                                    <a href="{{ route('users.index') }}"
+                                        class="block pl-10 pr-6 py-2 text-sm font-medium transition hover:bg-indigo-500 hover:text-white {{ request()->routeIs('users.*') ? 'bg-indigo-500 text-white' : '' }}"
+                                        style="color: var(--sidebar-text)">
+                                        Pengguna
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
 
             </nav>
 
             <div class="p-4 text-center" style="background: var(--sidebar-hover)">
                 <button @click="sidebarOpen = !sidebarOpen"
                     class="w-8 h-8 rounded-full flex items-center justify-center transition focus:outline-none cursor-pointer"
-                    :style="{ backgroundColor: (theme === 'dark' ? '#1F2937' : '#E5E7EB'), color: (theme === 'dark' ? '#E5E7EB' : '#111827') }">
+                    :style="{ backgroundColor: (theme === 'dark' ? '#1F2937' : '#E5E7EB'), color: (theme === 'dark' ?
+                            '#E5E7EB' : '#111827') }">
                     <i class="fas" :class="sidebarOpen ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
                 </button>
                 <div class="mt-3 flex items-center justify-center gap-2" x-show="sidebarOpen" x-cloak>
                     <button @click="theme = 'light'; localStorage.setItem('theme','light')"
                         class="px-3 py-1 rounded-full text-xs font-semibold cursor-pointer"
-                        :style="{ backgroundColor: theme === 'light' ? 'var(--sidebar-active)' : 'transparent', color: 'var(--sidebar-text)', border: '1px solid ' + (theme === 'light' ? 'transparent' : 'var(--sidebar-muted)') }">
+                        :style="{ backgroundColor: theme === 'light' ? 'var(--sidebar-active)' : 'transparent',
+                            color: 'var(--sidebar-text)', border: '1px solid ' + (theme === 'light' ?
+                                'transparent' : 'var(--sidebar-muted)') }">
                         <i class="fas fa-sun"></i> Light
                     </button>
                     <button @click="theme = 'dark'; localStorage.setItem('theme','dark')"
                         class="px-3 py-1 rounded-full text-xs font-semibold cursor-pointer"
-                        :style="{ backgroundColor: theme === 'dark' ? 'var(--sidebar-active)' : 'transparent', color: 'var(--sidebar-text)', border: '1px solid ' + (theme === 'dark' ? 'transparent' : 'var(--sidebar-muted)') }">
+                        :style="{ backgroundColor: theme === 'dark' ? 'var(--sidebar-active)' : 'transparent',
+                            color: 'var(--sidebar-text)', border: '1px solid ' + (theme === 'dark' ?
+                                'transparent' : 'var(--sidebar-muted)') }">
                         <i class="fas fa-moon"></i> Dark
                     </button>
                 </div>
@@ -618,9 +884,10 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden" :style="{ backgroundColor: 'var(--body-bg)' }">
             <!-- Topbar -->
-            <header class="shadow min-h-[4rem] h-auto flex items-center justify-between px-6 z-20 py-2" :style="{ backgroundColor: '#ffffff', color: 'var(--body-text)' }">
-                <button @click="sidebarOpen = !sidebarOpen"
-                    class="lg:hidden focus:outline-none" :style="{ color: '#374151' }">
+            <header class="shadow min-h-[4rem] h-auto flex items-center justify-between px-6 z-20 py-2"
+                :style="{ backgroundColor: '#ffffff', color: 'var(--body-text)' }">
+                <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden focus:outline-none"
+                    :style="{ color: '#374151' }">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
 
@@ -631,7 +898,8 @@
                         <div class="marquee-text">
                             <span class="inline-flex items-center">
                                 <i class="fas fa-bullhorn mr-2 text-indigo-600 group-hover:text-indigo-700"></i>
-                                Sistem Informasi Pengelolaan Persediaan Barang (SI-LARANG) • Dinas Komunikasi dan Informatika • Bolaang Mongondow Selatan
+                                Sistem Informasi Pengelolaan Persediaan Barang (SI-LARANG) • Dinas Komunikasi dan
+                                Informatika • Bolaang Mongondow Selatan
                             </span>
                         </div>
                     </div>
@@ -701,12 +969,14 @@
                     <div class="h-6 w-px bg-gray-300 mx-2"></div>
 
                     <div class="relative" x-data="{ open: false }">
-                        <button @click="open = !open" class="flex items-center gap-3 focus:outline-none cursor-pointer">
+                        <button @click="open = !open"
+                            class="flex items-center gap-3 focus:outline-none cursor-pointer">
                             <img class="h-9 w-9 rounded-full object-cover ring-2 ring-indigo-200"
-                                src="{{ Auth::user()->avatar ? asset('storage/'.Auth::user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=4F46E5&color=ffffff' }}"
+                                src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=4F46E5&color=ffffff' }}"
                                 alt="User">
                             <div class="hidden md:block text-left">
-                                <p class="text-sm font-bold leading-tight" style="color:#111827">{{ Auth::user()->name }}</p>
+                                <p class="text-sm font-bold leading-tight" style="color:#111827">
+                                    {{ Auth::user()->name }}</p>
                                 <p class="text-xs" style="color:#6B7280">{{ Auth::user()->email }}</p>
                             </div>
                             <i class="fas fa-chevron-down hidden md:block" style="color:#9CA3AF"></i>
@@ -720,7 +990,7 @@
                             <div class="p-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
                                 <div class="flex items-center gap-3">
                                     <img class="h-10 w-10 rounded-full object-cover ring-2 ring-white"
-                                        src="{{ Auth::user()->avatar ? asset('storage/'.Auth::user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=4F46E5&color=ffffff' }}"
+                                        src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=4F46E5&color=ffffff' }}"
                                         alt="User">
                                     <div>
                                         <p class="font-bold leading-tight">{{ Auth::user()->name }}</p>
@@ -729,13 +999,17 @@
                                 </div>
                             </div>
                             <div class="py-2">
-                                <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50" style="color:#374151">
+                                <a href="{{ route('profile.edit') }}"
+                                    class="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50"
+                                    style="color:#374151">
                                     <i class="fas fa-user-edit text-indigo-600"></i>
                                     Edit Profil
                                 </a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50" style="color:#374151">
+                                    <button type="submit"
+                                        class="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50"
+                                        style="color:#374151">
                                         <i class="fas fa-sign-out-alt text-red-600"></i>
                                         Keluar
                                     </button>
@@ -756,7 +1030,8 @@
                     </div>
                     <div class="flex items-center space-x-3">
                         @if (request()->routeIs('*.edit') || request()->routeIs('*.show'))
-                            <button type="button" class="btn btn-outline" onclick="history.back()"><i class="fas fa-arrow-left"></i> Back</button>
+                            <button type="button" class="btn btn-outline" onclick="history.back()"><i
+                                    class="fas fa-arrow-left"></i> Back</button>
                         @endif
                         @yield('actions')
                     </div>
@@ -807,16 +1082,22 @@
     {{-- <script src="//unpkg.com/alpinejs" defer></script> --}}
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const main = document.querySelector('main');
             const sidebar = document.querySelector('aside nav');
             const isSameOrigin = (url) => {
-                try { const u = new URL(url, window.location.origin); return u.origin === window.location.origin; } catch { return false; }
+                try {
+                    const u = new URL(url, window.location.origin);
+                    return u.origin === window.location.origin;
+                } catch {
+                    return false;
+                }
             };
             const isActionLink = (a) => {
                 const txt = (a.textContent || '').trim();
                 const href = a.getAttribute('href') || '';
-                return /(edit|lihat|view|show|detail)/i.test(txt) || /(\/edit|\/show|\/view|detail)/i.test(href);
+                return /(edit|lihat|view|show|detail)/i.test(txt) || /(\/edit|\/show|\/view|detail)/i.test(
+                href);
             };
             const shouldSoftLink = (a) => {
                 const href = a.getAttribute('href') || '';
@@ -837,7 +1118,11 @@
                 const scripts = root.querySelectorAll('script');
                 scripts.forEach(s => {
                     const n = document.createElement('script');
-                    if (s.src) { n.src = s.src; } else { n.textContent = s.textContent; }
+                    if (s.src) {
+                        n.src = s.src;
+                    } else {
+                        n.textContent = s.textContent;
+                    }
                     if (s.type) n.type = s.type;
                     root.appendChild(n);
                 });
@@ -845,12 +1130,19 @@
             };
             const swapMain = async (href, push = true) => {
                 try {
-                    const res = await fetch(href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                    const res = await fetch(href, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
                     if (!res.ok) throw new Error('Failed');
                     const html = await res.text();
                     const doc = new DOMParser().parseFromString(html, 'text/html');
                     const newMain = doc.querySelector('main');
-                    if (!newMain) { window.location.href = href; return; }
+                    if (!newMain) {
+                        window.location.href = href;
+                        return;
+                    }
                     document.title = doc.title || document.title;
                     main.innerHTML = newMain.innerHTML;
                     setActive(href);
@@ -894,7 +1186,9 @@
                     let url = action;
                     const options = {
                         method,
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
                     };
 
                     if (method === 'GET') {
@@ -910,7 +1204,10 @@
                     const html = await res.text();
                     const doc = new DOMParser().parseFromString(html, 'text/html');
                     const newMain = doc.querySelector('main');
-                    if (!newMain) { window.location.href = url; return; }
+                    if (!newMain) {
+                        window.location.href = url;
+                        return;
+                    }
                     document.title = doc.title || document.title;
                     main.innerHTML = newMain.innerHTML;
                     initScripts(main);

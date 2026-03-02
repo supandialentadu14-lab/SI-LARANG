@@ -105,23 +105,10 @@
 
                 </div>
 
-                {{-- Tombol Aksi --}}
-                <div class="flex justify-end space-x-3 pt-4">
-
-                    {{-- Tombol batal kembali ke halaman user --}}
-                    <a href="{{ route('users.index') }}"
-                        class="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 font-bold hover:bg-gray-100 transition">
-                        Cancel
-                    </a>
-
-                    {{-- Tombol submit simpan user --}}
-                    <button type="submit"
-                        class="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold shadow hover:bg-blue-700 transition">
-                        Simpan
-                    </button>
-
-                </div>
-
+                @include('partials.form-actions', [
+                    'backRoute' => route('users.index'),
+                    'saveText' => 'Simpan',
+                ])
             </form>
         </div>
     </div>

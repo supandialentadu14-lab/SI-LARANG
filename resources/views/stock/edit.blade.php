@@ -113,18 +113,10 @@
                     focus:border-blue-500 focus:ring-1 focus:ring-blue-300 outline-none">{{ $transaction->notes }}</textarea>
             </div>
 
-            {{-- BUTTON --}}
-            <div class="flex justify-end mt-8 space-x-3">
-                <a href="{{ route('stock.index') }}"
-                    class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg">
-                    Batal
-                </a>
-
-                <button type="submit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold shadow">
-                    Perbarui
-                </button>
-            </div>
+            @include('partials.form-actions', [
+                'backRoute' => route('stock.index'),
+                'saveText' => 'Perbarui',
+            ])
 
         </form>
 

@@ -5,7 +5,7 @@
 @section('content')
 
     {{-- Container utama dengan lebar maksimal dan posisi di tengah --}}
-    <div class=" mx-auto">
+    <div class="max-w-4xl mx-auto">
 
         {{-- Card pembungkus form --}}
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
@@ -93,23 +93,10 @@
                         class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">{{ old('address') }}</textarea> {{-- Isi kembali jika gagal validasi --}}
                 </div>
                 </div>
-                {{-- Tombol aksi (Cancel & Simpan) --}}
-                <div class="flex justify-end space-x-3 pt-4">
-
-                    {{-- Tombol kembali ke halaman index --}}
-                    <a href="{{ route('suppliers.index') }}"
-                        class="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 font-bold hover:bg-gray-100 transition">
-                        Cancel
-                    </a>
-
-                    {{-- Tombol submit untuk menyimpan data --}}
-                    <button type="submit"
-                        class="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold shadow hover:bg-blue-700 transition">
-                        Simpan
-                    </button>
-
-                </div>
-
+                @include('partials.form-actions', [
+                    'backRoute' => route('suppliers.index'),
+                    'saveText' => 'Simpan',
+                ])
             </form>
         </div>
     </div>

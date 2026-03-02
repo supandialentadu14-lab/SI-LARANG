@@ -29,14 +29,14 @@
                         <input type="text" name="kepala_nip" value="{{ old('kepala_nip', $setting->kepala_nip) }}" placeholder="NIP" class="w-full px-4 py-3 rounded-lg border border-gray-300">
                     </div>
                     <div class="space-y-3">
-                        <h3 class="font-bold text-gray-800">Pengurus Barang OPD</h3>
+                        <h3 class="font-bold text-gray-800">Pengurus Barang</h3>
                         <input type="text" name="pengurus_nama" value="{{ old('pengurus_nama', $setting->pengurus_nama) }}" placeholder="Nama Lengkap" class="w-full px-4 py-3 rounded-lg border border-gray-300">
                         <input type="text" name="pengurus_pangkat" value="{{ old('pengurus_pangkat', $setting->pengurus_pangkat) }}" placeholder="Pangkat" class="w-full px-4 py-3 rounded-lg border border-gray-300">
                         <input type="text" name="pengurus_jabatan" value="{{ old('pengurus_jabatan', $setting->pengurus_jabatan) }}" placeholder="Jabatan" class="w-full px-4 py-3 rounded-lg border border-gray-300">
                         <input type="text" name="pengurus_nip" value="{{ old('pengurus_nip', $setting->pengurus_nip) }}" placeholder="NIP" class="w-full px-4 py-3 rounded-lg border border-gray-300">
                     </div>
                     <div class="space-y-3">
-                        <h3 class="font-bold text-gray-800">Pengurus Barang Pengguna OPD</h3>
+                        <h3 class="font-bold text-gray-800">Pengurus Barang Pembantu</h3>
                         <input type="text" name="pengguna_nama" value="{{ old('pengguna_nama', $setting->pengguna_nama) }}" placeholder="Nama Lengkap" class="w-full px-4 py-3 rounded-lg border border-gray-300">
                         <input type="text" name="pengguna_pangkat" value="{{ old('pengguna_pangkat', $setting->pengguna_pangkat) }}" placeholder="Pangkat" class="w-full px-4 py-3 rounded-lg border border-gray-300">
                         <input type="text" name="pengguna_jabatan" value="{{ old('pengguna_jabatan', $setting->pengguna_jabatan) }}" placeholder="Jabatan" class="w-full px-4 py-3 rounded-lg border border-gray-300">
@@ -46,11 +46,9 @@
 
                 
 
-                <div class="flex justify-end">
-                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg shadow">
-                        Simpan Data OPD
-                    </button>
-                </div>
+                @include('partials.form-actions', [
+                    'saveText' => 'Simpan Data OPD',
+                ])
             </form>
         </div>
     </div>

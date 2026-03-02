@@ -5,14 +5,14 @@
 @section('content')
 
     {{-- Container utama dengan lebar maksimal dan posisi di tengah --}}
-    <div class=" mx-auto">
+    <div class="max-w-4xl mx-auto">
 
         {{-- Card pembungkus form edit --}}
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
 
             {{-- Header card --}}
             <div class="px-6 py-4 border-b border-gray-100 bg-orange-50">
-                <h6 class="font-bold text-orange-700">
+                <h6 class="font-bold text-blue-700">
                     Informasi Penyedia {{-- Judul bagian informasi supplier --}}
                 </h6>
             </div>
@@ -79,23 +79,10 @@
                         class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">{{ old('address', $supplier->address) }}</textarea> {{-- Menampilkan data lama atau old input --}}
                 </div>
 
-                {{-- Tombol aksi (Cancel & Update) --}}
-                <div class="flex justify-end space-x-3 pt-4">
-
-                    {{-- Tombol kembali ke halaman index supplier --}}
-                    <a href="{{ route('suppliers.index') }}"
-                        class="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 font-bold hover:bg-gray-100 transition">
-                        Batal
-                    </a>
-
-                    {{-- Tombol submit untuk memperbarui data supplier --}}
-                    <button type="submit"
-                        class="px-4 py-2 rounded-lg bg-orange-600 text-white font-bold shadow hover:bg-orange-700 transition">
-                        Perbarui
-                    </button>
-
-                </div>
-
+                @include('partials.form-actions', [
+                    'backRoute' => route('suppliers.index'),
+                    'saveText' => 'Perbarui',
+                ])
             </form>
         </div>
     </div>

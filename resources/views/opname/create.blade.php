@@ -2,7 +2,6 @@
 
 @section('title', 'Berita Acara Stock Opname')
 @section('header', 'Berita Acara Stock Opname Persediaan Barang Habis Pakai')
-@section('subheader', 'Isi data atau gunakan prefill dari persediaan')
 
 @section('content')
     <script>
@@ -55,103 +54,99 @@
             }
         }
     </script>
-    <form method="POST" action="{{ route('reports.opname.save') }}" x-data="opnameForm()" x-init="$nextTick(() => { updatePembuka(); })" class="bg-white rounded-lg shadow p-6 space-y-6">
-        @csrf
-        @if(session('opname_current_id'))
-            <input type="hidden" name="id" value="{{ session('opname_current_id') }}">
-        @endif
-        @if(isset($data['id']))
-            <input type="hidden" name="id" value="{{ $data['id'] }}">
-        @endif
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">Nomor</label>
-                <input type="text" name="nomor" value="{{ $data['nomor'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
-                <p class="text-xs text-gray-500 mt-1">Masukkan nomor urut (contoh: 001). Akan otomatis diformat.</p>
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 bg-orange-50">
+                <h6 class="font-bold text-blue-700">Form Berita Acara Opname</h6>
             </div>
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">Tanggal</label>
-                <input x-ref="tanggal" @change="updatePembuka()" type="date" name="tanggal" value="{{ $data['tanggal'] ?? now()->toDateString() }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
-            </div>
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">Tempat</label>
-                <input x-ref="tempat" @input="updatePembuka()" type="text" name="tempat" value="{{ $data['tempat'] ?? ($opd->nama_opd ?? '') }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
-            </div>
-        </div>
 
-        <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Narasi Pembuka</label>
-            <textarea x-ref="pembuka" name="pembuka" rows="4" class="w-full px-4 py-2 rounded-lg border border-gray-300">{{ $data['pembuka'] ?? '' }}</textarea>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-3">
-                <h3 class="font-bold text-gray-800">Kepala Dinas</h3>
-                @if(isset($opd) && $opd->kepala_nama)
-                    <div class="text-xs text-gray-500 mb-2">Ambil dari Data OPD</div>
-                    <div class="flex gap-2 mb-2">
-                        <button type="button" class="px-3 py-1 rounded bg-indigo-600 text-white" @click="
-                            $refs.pp_nama.value='{{ $opd->kepala_nama }}';
-                            $refs.pp_nip.value='{{ $opd->kepala_nip }}';
-                            $refs.pp_jabatan.value='{{ $opd->kepala_jabatan }}';
-                        ">Gunakan Kepala OPD</button>
-                    </div>
+            <form method="POST" action="{{ route('reports.opname.save') }}" x-data="opnameForm()" x-init="$nextTick(() => { updatePembuka(); })" class="p-6 space-y-6">
+                @csrf
+                @if(session('opname_current_id'))
+                    <input type="hidden" name="id" value="{{ session('opname_current_id') }}">
                 @endif
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">Nama</label>
-                    <input x-ref="pp_nama" type="text" name="pihak_pertama[nama]" value="{{ $data['pihak_pertama']['nama'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
+                @if(isset($data['id']))
+                    <input type="hidden" name="id" value="{{ $data['id'] }}">
+                @endif
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Nomor</label>
+                        <input type="text" name="nomor" value="{{ $data['nomor'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">
+                        <p class="text-xs text-gray-500 mt-1">Masukkan nomor urut (contoh: 001). Akan otomatis diformat.</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Tanggal</label>
+                        <input x-ref="tanggal" @change="updatePembuka()" type="date" name="tanggal" value="{{ $data['tanggal'] ?? now()->toDateString() }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Tempat</label>
+                        <input x-ref="tempat" @input="updatePembuka()" type="text" name="tempat" value="{{ $data['tempat'] ?? ($opd->nama_opd ?? '') }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">
+                    </div>
                 </div>
+
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">NIP</label>
-                    <input x-ref="pp_nip" type="text" name="pihak_pertama[nip]" value="{{ $data['pihak_pertama']['nip'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Narasi Pembuka</label>
+                    <textarea x-ref="pembuka" name="pembuka" rows="4" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">{{ $data['pembuka'] ?? '' }}</textarea>
                 </div>
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">Jabatan</label>
-                    <input x-ref="pp_jabatan" type="text" name="pihak_pertama[jabatan]" value="{{ $data['pihak_pertama']['jabatan'] ?? 'Mengetahui, Kepala Dinas Komunikasi dan Informatika' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
-                </div>
-            </div>
-            <div class="space-y-3">
-                <h3 class="font-bold text-gray-800">Pengurus Barang Pengguna</h3>
-                @if(isset($opd) && $opd->pengurus_nama)
-                    <div class="text-xs text-gray-500 mb-2">Ambil dari Data OPD</div>
-                    <div class="flex gap-2 mb-2">
-                        <button type="button" class="px-3 py-1 rounded bg-indigo-600 text-white" @click="
-                            $refs.pk_nama.value='{{ $opd->pengurus_nama }}';
-                            $refs.pk_nip.value='{{ $opd->pengurus_nip }}';
-                            $refs.pk_jabatan.value='{{ $opd->pengurus_jabatan }}';
-                        ">Gunakan Pengurus OPD</button>
-                        @if(isset($opd->pengguna_nama) && $opd->pengguna_nama)
-                        <button type="button" class="px-3 py-1 rounded bg-indigo-600 text-white" @click="
-                            $refs.pk_nama.value='{{ $opd->pengguna_nama }}';
-                            $refs.pk_nip.value='{{ $opd->pengguna_nip }}';
-                            $refs.pk_jabatan.value='{{ $opd->pengguna_jabatan }}';
-                        ">Gunakan Pengurus Barang Pengguna OPD</button>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <h3 class="font-bold text-blue-700 border-b pb-2">Pihak Pertama (Kepala Dinas)</h3>
+                        @if(isset($opd) && $opd->kepala_nama)
+                            <div class="flex gap-2 mb-2">
+                                <button type="button" class="px-3 py-1 rounded bg-indigo-100 text-indigo-700 text-xs font-bold hover:bg-indigo-200 transition" @click="
+                                    $refs.pp_nama.value='{{ $opd->kepala_nama }}';
+                                    $refs.pp_nip.value='{{ $opd->kepala_nip }}';
+                                    $refs.pp_jabatan.value='{{ $opd->kepala_jabatan }}';
+                                ">Isi dari Data OPD</button>
+                            </div>
                         @endif
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Nama</label>
+                            <input x-ref="pp_nama" type="text" name="pihak_pertama[nama]" value="{{ $data['pihak_pertama']['nama'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">NIP</label>
+                            <input x-ref="pp_nip" type="text" name="pihak_pertama[nip]" value="{{ $data['pihak_pertama']['nip'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Jabatan</label>
+                            <input x-ref="pp_jabatan" type="text" name="pihak_pertama[jabatan]" value="{{ $data['pihak_pertama']['jabatan'] ?? 'Mengetahui, Kepala Dinas Komunikasi dan Informatika' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">
+                        </div>
                     </div>
-                @endif
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">Nama</label>
-                    <input x-ref="pk_nama" type="text" name="pihak_kedua[nama]" value="{{ $data['pihak_kedua']['nama'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
+                    <div class="space-y-3">
+                        <h3 class="font-bold text-blue-700 border-b pb-2">Pihak Kedua (Pengurus Barang)</h3>
+                        @if(isset($opd) && $opd->pengurus_nama)
+                            <div class="flex gap-2 mb-2">
+                                <button type="button" class="px-3 py-1 rounded bg-indigo-100 text-indigo-700 text-xs font-bold hover:bg-indigo-200 transition" @click="
+                                    $refs.pk_nama.value='{{ $opd->pengurus_nama }}';
+                                    $refs.pk_nip.value='{{ $opd->pengurus_nip }}';
+                                    $refs.pk_jabatan.value='{{ $opd->pengurus_jabatan }}';
+                                ">Isi dari Data OPD</button>
+                            </div>
+                        @endif
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Nama</label>
+                            <input x-ref="pk_nama" type="text" name="pihak_kedua[nama]" value="{{ $data['pihak_kedua']['nama'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">NIP</label>
+                            <input x-ref="pk_nip" type="text" name="pihak_kedua[nip]" value="{{ $data['pihak_kedua']['nip'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Jabatan</label>
+                            <input x-ref="pk_jabatan" type="text" name="pihak_kedua[jabatan]" value="{{ $data['pihak_kedua']['jabatan'] ?? 'Yang Melaksanakan Stock Opname, Pengurus Barang Pengguna' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">NIP</label>
-                    <input x-ref="pk_nip" type="text" name="pihak_kedua[nip]" value="{{ $data['pihak_kedua']['nip'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">Jabatan</label>
-                    <input x-ref="pk_jabatan" type="text" name="pihak_kedua[jabatan]" value="{{ $data['pihak_kedua']['jabatan'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300">
-                </div>
-            </div>
-        </div>
 
-        <div class="flex items-center justify-end gap-2 pt-2">
-            <button type="submit" formaction="{{ route('reports.opname.save') }}" class="btn btn-success text-white">
-                <i class="fas fa-save"></i> Simpan
-            </button>
-            <button type="submit" formaction="{{ route('reports.opname.report') }}" class="btn btn-warning">
-                <i class="fas fa-file-alt"></i> Preview Laporan
-            </button>
+                @include('partials.form-actions', [
+                    'backRoute' => route('reports.opname.list'),
+                    'previewRoute' => route('reports.opname.report'),
+                ])
+            </form>
         </div>
-    </form>
+    </div>
 @endsection

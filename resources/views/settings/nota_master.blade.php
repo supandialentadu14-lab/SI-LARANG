@@ -94,8 +94,8 @@
                 </div>
             </div>
         </div>
-        <div class="flex justify-end">
-            <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg shadow">Simpan</button>
-        </div>
+        @include('partials.form-actions', [
+            'saveText' => 'Simpan',
+        ])
     </form>
 @endsection

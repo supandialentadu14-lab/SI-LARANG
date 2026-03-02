@@ -81,6 +81,14 @@ class CategoryController extends Controller
     }
 
     /**
+     * Menampilkan detail kategori
+     */
+    public function show(Category $category): View
+    {
+        return view('categories.show', compact('category'));
+    }
+
+    /**
      * Mengupdate data kategori di database
      */
     public function update(Request $request, Category $category): RedirectResponse
