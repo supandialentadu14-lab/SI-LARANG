@@ -107,6 +107,9 @@
     </style>
 
     <div class="bg-white rounded-lg shadow p-6 mb-6 print:hidden">
+        <a href="{{ route('reports.belanja.modal.list') }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm bg-gray-500 text-white hover:bg-gray-600 mr-2">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </a>
         <button type="button" onclick="window.print()"
             class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm bg-black text-white hover:bg-black">
             <i class="fas fa-print"></i>

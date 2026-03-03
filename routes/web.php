@@ -72,7 +72,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports/berita-pinjam-pakai/{id}/edit', [PinjamPakaiController::class, 'edit'])->name('reports.pinjam.edit');
     Route::get('reports/berita-pinjam-pakai/list', [PinjamPakaiController::class, 'list'])->name('reports.pinjam.list');
     Route::get('reports/berita-pinjam-pakai/{id}', [PinjamPakaiController::class, 'show'])->name('reports.pinjam.show');
-    Route::post('reports/berita-pinjam-pakai/{id}/delete', [PinjamPakaiController::class, 'delete'])->name('reports.pinjam.delete');
+    Route::delete('reports/berita-pinjam-pakai/{id}/delete', [PinjamPakaiController::class, 'delete'])->name('reports.pinjam.delete');
     Route::get('reports/berita-pinjam-pakai/{id}/delete', function () {
         return redirect()->route('reports.pinjam.list');
     });
@@ -86,7 +86,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports/berita-opname/{id}/edit', [OpnameController::class, 'edit'])->name('reports.opname.edit');
     Route::get('reports/berita-opname/list', [OpnameController::class, 'list'])->name('reports.opname.list');
     Route::get('reports/berita-opname/{id}', [OpnameController::class, 'show'])->name('reports.opname.show');
-    Route::post('reports/berita-opname/{id}/delete', [OpnameController::class, 'delete'])->name('reports.opname.delete');
+    Route::delete('reports/berita-opname/{id}/delete', [OpnameController::class, 'delete'])->name('reports.opname.delete');
     Route::post('reports/berita-opname/bulk-delete', [OpnameController::class, 'bulkDelete'])->name('reports.opname.bulk_delete');
     
     // Belanja Modal
@@ -100,7 +100,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports/belanja-modal/preview-all', [BelanjaModalController::class, 'previewAll'])->name('reports.belanja.modal.preview_all');
     Route::get('reports/belanja-modal/{id}', [BelanjaModalController::class, 'show'])->name('reports.belanja.modal.show');
     Route::get('reports/belanja-modal/{id}/edit', [BelanjaModalController::class, 'edit'])->name('reports.belanja.modal.edit');
-    Route::post('reports/belanja-modal/{id}/delete', [BelanjaModalController::class, 'delete'])->name('reports.belanja.modal.delete');
+    Route::delete('reports/belanja-modal/{id}/delete', [BelanjaModalController::class, 'delete'])->name('reports.belanja.modal.delete');
     Route::post('reports/belanja-modal/bulk-delete', [BelanjaModalController::class, 'bulkDelete'])->name('reports.belanja.modal.bulk_delete');
     
     // Nota Pesanan
@@ -111,17 +111,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports/nota-pesanan/{id}', [NotaPesananController::class, 'show'])->name('reports.nota.show');
     Route::get('reports/nota-pesanan/{id}/edit', [NotaPesananController::class, 'edit'])->name('reports.nota.edit');
     Route::post('reports/nota-pesanan/{id}/update', [NotaPesananController::class, 'update'])->name('reports.nota.update');
-    Route::post('reports/nota-pesanan/{id}/delete', [NotaPesananController::class, 'delete'])->name('reports.nota.delete');
+    Route::delete('reports/nota-pesanan/{id}/delete', [NotaPesananController::class, 'delete'])->name('reports.nota.delete');
     Route::post('reports/nota-pesanan/bulk-delete', [NotaPesananController::class, 'bulkDelete'])->name('reports.nota.bulk_delete');
 
     // Berita Acara Pemeriksaan Barang/Pekerjaan (berdasarkan Nota Pesanan)
     Route::get('reports/berita-pemeriksaan', [PemeriksaanController::class, 'form'])->name('reports.pemeriksaan.form');
     Route::post('reports/berita-pemeriksaan', [PemeriksaanController::class, 'report'])->name('reports.pemeriksaan.report');
+    Route::get('reports/berita-pemeriksaan/save', function() { return redirect()->route('reports.pemeriksaan.form'); });
     Route::post('reports/berita-pemeriksaan/save', [PemeriksaanController::class, 'save'])->name('reports.pemeriksaan.save');
     Route::get('reports/berita-pemeriksaan/list', [PemeriksaanController::class, 'list'])->name('reports.pemeriksaan.list');
     Route::get('reports/berita-pemeriksaan/{id}', [PemeriksaanController::class, 'show'])->name('reports.pemeriksaan.show');
     Route::get('reports/berita-pemeriksaan/{id}/edit', [PemeriksaanController::class, 'edit'])->name('reports.pemeriksaan.edit');
-    Route::post('reports/berita-pemeriksaan/{id}/delete', [PemeriksaanController::class, 'delete'])->name('reports.pemeriksaan.delete');
+    Route::delete('reports/berita-pemeriksaan/{id}/delete', [PemeriksaanController::class, 'delete'])->name('reports.pemeriksaan.delete');
     Route::post('reports/berita-pemeriksaan/bulk-delete', [PemeriksaanController::class, 'bulkDelete'])->name('reports.pemeriksaan.bulk_delete');
     
     Route::get('reports/berita-penerimaan', [PenerimaanController::class, 'form'])->name('reports.penerimaan.form');
@@ -130,7 +131,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports/berita-penerimaan/list', [PenerimaanController::class, 'list'])->name('reports.penerimaan.list');
     Route::get('reports/berita-penerimaan/{id}/edit', [PenerimaanController::class, 'edit'])->name('reports.penerimaan.edit');
     Route::get('reports/berita-penerimaan/{id}', [PenerimaanController::class, 'show'])->name('reports.penerimaan.show');
-    Route::post('reports/berita-penerimaan/{id}/delete', [PenerimaanController::class, 'delete'])->name('reports.penerimaan.delete');
+    Route::delete('reports/berita-penerimaan/{id}/delete', [PenerimaanController::class, 'delete'])->name('reports.penerimaan.delete');
     Route::post('reports/berita-penerimaan/bulk-delete', [PenerimaanController::class, 'bulkDelete'])->name('reports.penerimaan.bulk_delete');
     
     Route::get('reports/kwitansi', [KwitansiController::class, 'form'])->name('reports.kwitansi.form');
@@ -141,7 +142,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports/kwitansi/{id}/show', [KwitansiController::class, 'show'])->name('reports.kwitansi.show');
     Route::get('reports/kwitansi/{id}/edit', [KwitansiController::class, 'edit'])->name('reports.kwitansi.edit');
     Route::post('reports/kwitansi/{id}/update', [KwitansiController::class, 'update'])->name('reports.kwitansi.update');
-    Route::post('reports/kwitansi/{id}/delete', [KwitansiController::class, 'delete'])->name('reports.kwitansi.delete');
+    Route::delete('reports/kwitansi/{id}/delete', [KwitansiController::class, 'delete'])->name('reports.kwitansi.delete');
     Route::post('reports/kwitansi/bulk-delete', [KwitansiController::class, 'bulkDelete'])->name('reports.kwitansi.bulk_delete');
     Route::get('settings/opd', [OpdController::class, 'edit'])->name('settings.opd.edit');
     Route::post('settings/opd', [OpdController::class, 'update'])->name('settings.opd.update');

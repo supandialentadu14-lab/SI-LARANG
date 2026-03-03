@@ -59,8 +59,8 @@
 
     <div class="max-w-full mx-auto">
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 bg-orange-50">
-                <h6 class="font-bold text-blue-700">Form Nota Pesanan</h6>
+            <div class="px-6 py-4 border-b border-gray-100 bg-slate-800">
+                <h6 class="font-bold text-white">Form Nota Pesanan</h6>
             </div>
 
             <form method="POST" action="{{ session('nota_current_id') ? route('reports.nota.update', session('nota_current_id')) : route('reports.nota.save') }}" x-data="notaForm()" x-init="init()" class="p-6 space-y-6">
@@ -87,7 +87,7 @@
                         </datalist>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Kode Rekening</label>
                         <input type="text" name="rekening" list="opt-rekening" value="{{ old('rekening', $data['rekening'] ?? '') }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">
@@ -104,6 +104,17 @@
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Tanggal Nota</label>
                         <input type="date" name="tanggal" x-model="tanggal" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition" required>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Jenis Belanja</label>
+                        <select name="belanja" x-model="belanja" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition" required>
+                            <option value="">-- Pilih Jenis Belanja --</option>
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->name }}">{{ $cat->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Penyedia</label>
@@ -141,17 +152,17 @@
                                 <template x-for="(item, i) in items" :key="i">
                                     <tr class="border-t hover:bg-gray-50 transition">
                                         <td class="p-2">
-                                            <input type="text" :name="`items[${i}][name]`" x-model="item.name" list="list-products" @change="onProductChange(i, $event.target.value)" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ketik nama barang...">
+                                            <input type="text" :name="`items[${i}][name]`" x-model="item.name" list="list-products" @change="onProductChange(i, $event.target.value)" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ketik nama barang...">
                                             <datalist id="list-products">
                                                 <template x-for="p in productsByBelanja()" :key="p.id">
                                                     <option :value="p.name"></option>
                                                 </template>
                                             </datalist>
                                         </td>
-                                        <td class="p-2"><input type="number" :name="`items[${i}][qty]`" x-model="item.qty" @input="recalc(i)" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right"></td>
-                                        <td class="p-2"><input type="text" :name="`items[${i}][unit]`" x-model="item.unit" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500"></td>
-                                        <td class="p-2"><input type="number" :name="`items[${i}][price]`" x-model="item.price" @input="recalc(i)" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right"></td>
-                                        <td class="p-2"><input type="text" :name="`items[${i}][total]`" x-model="item.total" readonly class="w-full rounded bg-gray-100 border-gray-300 text-xs text-right"></td>
+                                        <td class="p-2"><input type="number" :name="`items[${i}][qty]`" x-model="item.qty" @input="recalc(i)" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right py-2"></td>
+                                        <td class="p-2"><input type="text" :name="`items[${i}][unit]`" x-model="item.unit" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 py-2"></td>
+                                        <td class="p-2"><input type="number" :name="`items[${i}][price]`" x-model="item.price" @input="recalc(i)" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right py-2"></td>
+                                        <td class="p-2"><input type="text" :name="`items[${i}][total]`" x-model="item.total" readonly class="w-full rounded bg-gray-100 border border-gray-400 bg-white text-xs text-right py-2"></td>
                                         <td class="p-2 text-center">
                                             <button type="button" @click="removeItem(i)" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
                                         </td>

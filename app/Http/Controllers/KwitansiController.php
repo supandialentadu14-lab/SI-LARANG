@@ -233,7 +233,12 @@ class KwitansiController extends Controller
         try {
             $opd = OpdSetting::where('user_id', Auth::id())->first();
             $master = $this->loadNotaMaster();
+            
+            // Fallback to session if request data is empty (e.g. from preview save)
             $payload = $request->all();
+            if (empty($payload['penerimaan_nomor']) && session('kwitansi_current')) {
+                $payload = array_merge(session('kwitansi_current'), $payload);
+            }
             
             \Illuminate\Support\Facades\Log::info('Kwitansi Store Payload:', $payload);
 
@@ -349,7 +354,7 @@ class KwitansiController extends Controller
 
             session()->forget('kwitansi_current');
             $msg = $oldId ? 'Kwitansi berhasil diperbarui' : 'Kwitansi berhasil disimpan';
-            return redirect()->route('reports.kwitansi.list')->with('status', $msg);
+            return redirect()->route('reports.kwitansi.list')->with('success', $msg);
 
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::error("Gagal simpan kwitansi: " . $e->getMessage());
@@ -401,8 +406,9 @@ class KwitansiController extends Controller
         
         $data = json_decode($disk->get($path), true);
         $opd = OpdSetting::where('user_id', Auth::id())->first();
+        $saved_id = $id;
         
-        return view('reports.kwitansi_report', compact('data', 'opd'));
+        return view('reports.kwitansi_report', compact('data', 'opd', 'saved_id'));
     }
 
     public function edit($id)

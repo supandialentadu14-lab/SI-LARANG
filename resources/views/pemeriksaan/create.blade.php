@@ -6,8 +6,8 @@
 @section('content')
     <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 bg-orange-50">
-                <h6 class="font-bold text-blue-700">Form Berita Acara Pemeriksaan</h6>
+            <div class="px-6 py-4 border-b border-gray-100 bg-slate-800">
+                <h6 class="font-bold text-white">Form Berita Acara Pemeriksaan</h6>
             </div>
 
             <form action="{{ route('reports.pemeriksaan.save') }}" method="POST" class="p-6 space-y-6">
@@ -28,14 +28,14 @@
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Nomor Berita Acara Pemeriksaan</label>
-                        <input type="text" name="nomor" value="{{ old('nomor', $data['nomor'] ?? '') }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition" placeholder="contoh: 0004/BAP/KOMINFO/XI/2025" required>
+                        <input type="text" name="nomor" value="{{ old('nomor', preg_replace('/\D+/', '', $data['nomor'] ?? '')) }}" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/\D/g,'')" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition" placeholder="contoh: 001" required>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Tempat Surat</label>
-                        <input type="text" name="tempat" value="{{ old('tempat', $data['tempat'] ?? ($opd->nama_opd ?? '')) }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition" required>
+                        <input type="text" name="tempat" value="{{ old('tempat', $data['tempat'] ?? 'Bolaang Uki') }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition" required>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Tanggal Surat</label>
@@ -46,6 +46,7 @@
                 @include('partials.form-actions', [
                     'backRoute' => route('reports.pemeriksaan.list'),
                     'previewRoute' => route('reports.pemeriksaan.report'),
+                    'saveRoute' => route('reports.pemeriksaan.save'),
                 ])
             </form>
         </div>

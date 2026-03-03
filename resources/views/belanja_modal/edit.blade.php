@@ -53,8 +53,8 @@
 
     <div class="max-w-full mx-auto">
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 bg-orange-50">
-                <h6 class="font-bold text-blue-700">Form Belanja Modal</h6>
+            <div class="px-6 py-4 border-b border-gray-100 bg-slate-800">
+                <h6 class="font-bold text-white">Form Belanja Modal</h6>
             </div>
 
             <form method="POST" action="{{ route('reports.belanja.modal.save') }}" x-data="belanjaModalForm()" x-init="init()" class="p-6 space-y-6">
@@ -99,18 +99,18 @@
                         <tbody>
                             <template x-for="(item, i) in items" :key="i">
                                 <tr class="border-t hover:bg-gray-50 transition">
-                                    <td class="p-2"><input type="text" :name="`items[${i}][nama_kegiatan]`" x-model="item.nama_kegiatan" :x-ref="`row_${i}_kegiatan`" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500"></td>
-                                    <td class="p-2"><input type="text" :name="`items[${i}][pekerjaan]`" x-model="item.pekerjaan" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500"></td>
-                                    <td class="p-2"><input type="number" :name="`items[${i}][nilai_kontrak]`" x-model="item.nilai_kontrak" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right"></td>
-                                    <td class="p-2"><input type="date" :name="`items[${i}][tanggal_mulai]`" x-model="item.tanggal_mulai" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500"></td>
-                                    <td class="p-2"><input type="date" :name="`items[${i}][tanggal_akhir]`" x-model="item.tanggal_akhir" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500"></td>
-                                    <td class="p-2"><input type="number" :name="`items[${i}][uang_muka]`" x-model="item.uang_muka" @input="recalc(i)" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right"></td>
-                                    <td class="p-2"><input type="number" :name="`items[${i}][termin1]`" x-model="item.termin1" @input="recalc(i)" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right"></td>
-                                    <td class="p-2"><input type="number" :name="`items[${i}][termin2]`" x-model="item.termin2" @input="recalc(i)" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right"></td>
-                                    <td class="p-2"><input type="number" :name="`items[${i}][termin3]`" x-model="item.termin3" @input="recalc(i)" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right"></td>
-                                    <td class="p-2"><input type="number" :name="`items[${i}][termin4]`" x-model="item.termin4" @input="recalc(i)" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right"></td>
+                                    <td class="p-2"><input type="text" :name="`items[${i}][nama_kegiatan]`" x-model="item.nama_kegiatan" :x-ref="`row_${i}_kegiatan`" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 py-2"></td>
+                                    <td class="p-2"><input type="text" :name="`items[${i}][pekerjaan]`" x-model="item.pekerjaan" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 py-2"></td>
+                                    <td class="p-2"><input type="number" :name="`items[${i}][nilai_kontrak]`" x-model="item.nilai_kontrak" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right py-2"></td>
+                                    <td class="p-2"><input type="date" :name="`items[${i}][tanggal_mulai]`" x-model="item.tanggal_mulai" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 py-2"></td>
+                                    <td class="p-2"><input type="date" :name="`items[${i}][tanggal_akhir]`" x-model="item.tanggal_akhir" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 py-2"></td>
+                                    <td class="p-2"><input type="number" :name="`items[${i}][uang_muka]`" x-model="item.uang_muka" @input="recalc(i)" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right py-2"></td>
+                                    <td class="p-2"><input type="number" :name="`items[${i}][termin1]`" x-model="item.termin1" @input="recalc(i)" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right py-2"></td>
+                                    <td class="p-2"><input type="number" :name="`items[${i}][termin2]`" x-model="item.termin2" @input="recalc(i)" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right py-2"></td>
+                                    <td class="p-2"><input type="number" :name="`items[${i}][termin3]`" x-model="item.termin3" @input="recalc(i)" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right py-2"></td>
+                                    <td class="p-2"><input type="number" :name="`items[${i}][termin4]`" x-model="item.termin4" @input="recalc(i)" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 text-right py-2"></td>
                                     <td class="p-2 text-right font-mono text-xs" x-text="item.total"></td>
-                                    <td class="p-2"><input type="text" :name="`items[${i}][status]`" x-model="item.status" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500"></td>
+                                    <td class="p-2"><input type="text" :name="`items[${i}][status]`" x-model="item.status" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 py-2"></td>
                                     <td class="p-2 text-center">
                                         <button type="button" @click="removeItem(i)" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
                                     </td>

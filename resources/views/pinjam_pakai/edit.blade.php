@@ -74,13 +74,13 @@
 
     <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 bg-orange-50">
-                <h6 class="font-bold text-blue-700">Form Berita Acara Pinjam Pakai</h6>
+            <div class="px-6 py-4 border-b border-gray-100 bg-slate-800">
+                <h6 class="font-bold text-white">Form Berita Acara Pinjam Pakai</h6>
             </div>
 
-            <form method="POST" action="{{ route('reports.pinjam.update', $id) }}" x-data="formData()" x-init="init()" class="p-6 space-y-6">
+            <form method="POST" action="{{ route('reports.pinjam.save') }}" x-data="formData()" x-init="init()" class="p-6 space-y-6">
                 @csrf
-                <input type="hidden" name="id" value="{{ $id }}">
+                <input type="hidden" name="id" value="{{ $data['id'] ?? '' }}">
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                    <div>
@@ -104,7 +104,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-3">
-                        <h3 class="font-bold text-blue-700 border-b pb-2">PIHAK PERTAMA (Yang Menyerahkan)</h3>
+                        <h3 class="font-bold text-white border-b pb-2">PIHAK PERTAMA (Yang Menyerahkan)</h3>
                         @if(isset($opd) && $opd->kepala_nama)
                             <div class="flex gap-2 mb-2">
                                 <button type="button" class="px-3 py-1 rounded bg-indigo-100 text-indigo-700 text-xs font-bold hover:bg-indigo-200 transition" @click="
@@ -128,7 +128,7 @@
                         </div>
                     </div>
                     <div class="space-y-3">
-                        <h3 class="font-bold text-blue-700 border-b pb-2">PIHAK KEDUA (Peminjam)</h3>
+                        <h3 class="font-bold text-white border-b pb-2">PIHAK KEDUA (Peminjam)</h3>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Nama</label>
                             <input type="text" name="pihak_kedua[nama]" value="{{ $data['pihak_kedua']['nama'] ?? '' }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition" required>
@@ -172,12 +172,12 @@
                             <tbody>
                                 <template x-for="(item, i) in items" :key="item._key">
                                     <tr class="border-t hover:bg-gray-50 transition">
-                                        <td class="p-2"><input type="text" :name="`items[${i}][nama]`" x-model="item.nama" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500"></td>
-                                        <td class="p-2"><input type="text" :name="`items[${i}][merk]`" x-model="item.merk" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500"></td>
-                                        <td class="p-2"><input type="text" :name="`items[${i}][identitas]`" x-model="item.identitas" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500"></td>
-                                        <td class="p-2"><input type="text" :name="`items[${i}][tahun]`" x-model="item.tahun" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500"></td>
-                                        <td class="p-2"><input type="text" :name="`items[${i}][kondisi]`" x-model="item.kondisi" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500"></td>
-                                        <td class="p-2"><input type="text" :name="`items[${i}][jumlah]`" x-model="item.jumlah" class="w-full rounded border-gray-300 text-xs focus:ring-indigo-500 focus:border-indigo-500"></td>
+                                        <td class="p-2"><input type="text" :name="`items[${i}][nama]`" x-model="item.nama" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 py-2"></td>
+                                        <td class="p-2"><input type="text" :name="`items[${i}][merk]`" x-model="item.merk" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 py-2"></td>
+                                        <td class="p-2"><input type="text" :name="`items[${i}][identitas]`" x-model="item.identitas" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 py-2"></td>
+                                        <td class="p-2"><input type="text" :name="`items[${i}][tahun]`" x-model="item.tahun" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 py-2"></td>
+                                        <td class="p-2"><input type="text" :name="`items[${i}][kondisi]`" x-model="item.kondisi" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 py-2"></td>
+                                        <td class="p-2"><input type="text" :name="`items[${i}][jumlah]`" x-model="item.jumlah" class="w-full rounded border border-gray-400 bg-white text-xs focus:ring-indigo-500 focus:border-indigo-500 py-2"></td>
                                         <td class="p-2 text-center">
                                             <button type="button" @click="removeItem(i)" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
                                         </td>

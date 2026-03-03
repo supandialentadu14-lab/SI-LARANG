@@ -65,6 +65,27 @@ class PemeriksaanController extends Controller
         return $items;
     }
 
+    protected function listPemeriksaanDocs(): array
+    {
+        $disk = Storage::disk('local');
+        $dir = 'users/'.Auth::id().'/bap-pemeriksaan';
+        $files = $disk->exists($dir) ? $disk->files($dir) : [];
+        $items = [];
+        foreach ($files as $file) {
+            if (! str_ends_with($file, '.json')) continue;
+            $data = json_decode($disk->get($file), true) ?: [];
+            $items[] = [
+                'id' => basename($file, '.json'),
+                'nomor' => $data['nomor'] ?? '',
+                'tanggal' => $data['tanggal'] ?? '',
+                'nota_nomor' => $data['nota']['nomor'] ?? '',
+                'items' => $data['items'] ?? [],
+            ];
+        }
+        usort($items, fn($a, $b) => ($b['tanggal'] ?? '') <=> ($a['tanggal'] ?? ''));
+        return $items;
+    }
+
     protected function findNotaByNomor(?string $nomor): ?array
     {
         if (!$nomor) return null;
@@ -80,7 +101,7 @@ class PemeriksaanController extends Controller
         $notaDocs = $this->listNotaDocs();
         $data = session('bap_current') ?? [
             'tanggal' => now()->toDateString(),
-            'tempat' => $opd->nama_opd ?? '',
+            'tempat' => 'Bolaang Uki',
             'nomor' => '',
             'nota_nomor' => '',
         ];
@@ -161,20 +182,18 @@ class PemeriksaanController extends Controller
         
         $tanggalObj = \Carbon\Carbon::parse($payload['tanggal'] ?? now()->toDateString());
         $tahunAnggaran = $tanggalObj->year;
-        
-        // Format Nomor Otomatis: [Input]/BAPB/DISKOMINFO/[BulanRomawi]/[Tahun]
         $inputNomor = trim((string)($payload['nomor'] ?? ''));
-        if (preg_match('/^\d+$/', $inputNomor)) {
-            $bulanRomawi = $this->formatRomawi($tanggalObj->month);
-            $nomorFormatted = "{$inputNomor}/BAPB/DISKOMINFO/{$bulanRomawi}/{$tahunAnggaran}";
-        } else {
-            $nomorFormatted = $inputNomor;
+        if (!preg_match('/^\d+$/', $inputNomor)) {
+            return back()->withErrors(['nomor' => 'Nomor hanya boleh angka'])->withInput();
         }
+        $bulanRomawi = $this->formatRomawi($tanggalObj->month);
+        $nomorFormatted = "{$inputNomor}/BAPB/DISKOMINFO/{$bulanRomawi}/{$tahunAnggaran}";
 
         $data = [
             'nomor' => $nomorFormatted,
+            'nomor_raw' => $inputNomor,
             'tanggal' => $payload['tanggal'] ?? now()->toDateString(),
-            'tempat' => $payload['tempat'] ?? ($opd->nama_opd ?? ''),
+            'tempat' => $payload['tempat'] ?? 'Bolaang Uki',
             'nota' => [
                 'id' => $nota['id'] ?? null,
                 'nomor' => $nota['nomor'] ?? '',
@@ -201,7 +220,92 @@ class PemeriksaanController extends Controller
     {
         $currentId = session('bap_current_id') ?? $request->input('id');
         $id = $currentId ?: (string) Str::uuid();
-        $data = session('bap_current') ?? $request->all();
+        
+        // Prefer request data (from form) if 'nomor' is present, otherwise fallback to session (from preview)
+        $data = $request->all();
+        if ((!isset($data['nomor']) || $data['nomor'] === '') && session('bap_current')) {
+            $data = session('bap_current');
+        }
+        
+        $rawNomor = trim((string)($data['nomor_raw'] ?? $data['nomor'] ?? ''));
+        if (!preg_match('/^\d+$/', $rawNomor)) {
+            return back()->withErrors(['nomor' => 'Nomor hanya boleh angka'])->withInput();
+        }
+        
+        if (!isset($data['nota']) || !isset($data['items'])) {
+            $master = $this->loadNotaMaster();
+            $opd = OpdSetting::where('user_id', Auth::id())->first();
+            $nota = null;
+            if ($nid = $request->input('nota_id')) {
+                $nid = trim($nid);
+                foreach ($this->listNotaDocs() as $doc) {
+                    if ($doc['id'] === $nid) { $nota = $doc; break; }
+                }
+            }
+            if (!$nota) {
+                $nota = $this->findNotaByNomor($request->input('nota_nomor'));
+            }
+            if (!$nota) {
+                return back()->withErrors(['nota_nomor' => 'Nota pesanan tidak ditemukan'])->withInput();
+            }
+            $cleanItems = [];
+            foreach (($nota['items'] ?? []) as $it) {
+                $name = $it['name'] ?? '';
+                $qty = (int)($it['qty'] ?? 0);
+                $unit = $it['unit'] ?? '';
+                $price = (int)($it['price'] ?? 0);
+                $total = $qty * $price;
+                $cleanItems[] = [
+                    'nama' => $name,
+                    'kuantitas' => $qty,
+                    'satuan' => $unit,
+                    'harga' => $price,
+                    'jumlah' => $total,
+                ];
+            }
+            $totalSum = 0;
+            foreach ($cleanItems as $row) { $totalSum += (int)($row['jumlah'] ?? 0); }
+            $dt = \Carbon\Carbon::parse($data['tanggal'] ?? now()->toDateString())->locale('id');
+            $hari = $dt->translatedFormat('l');
+            $bulan = $dt->translatedFormat('F');
+            $tanggalKata = ucwords($this->toWordsId((int) $dt->format('d')));
+            $tahunKata = ucwords($this->toWordsId((int) $dt->format('Y')));
+            $data = [
+                'nomor' => $data['nomor'] ?? '',
+                'nomor_raw' => $rawNomor,
+                'tanggal' => $data['tanggal'] ?? now()->toDateString(),
+                'tempat' => $data['tempat'] ?? 'Bolaang Uki',
+                'nota' => [
+                    'id' => $nota['id'] ?? null,
+                    'nomor' => $nota['nomor'] ?? '',
+                    'tanggal' => $nota['tanggal'] ?? '',
+                    'belanja' => $nota['belanja'] ?? '',
+                    'penyedia' => $nota['penyedia'] ?? [],
+                ],
+                'items' => $cleanItems,
+                'terbilang' => ucwords($this->toWordsId((int) $totalSum)),
+                'total' => $totalSum,
+                'ppk' => [
+                    'nama' => ($master['ppk']['nama'] ?? '') ?: ($opd->kepala_nama ?? ''),
+                    'nip' => ($master['ppk']['nip'] ?? '') ?: ($opd->kepala_nip ?? ''),
+                    'jabatan' => 'Pejabat Pembuat Komitmen',
+                    'alamat' => ($master['ppk']['alamat'] ?? '') ?: (($master['opd']['alamat'] ?? '') ?: ($opd->alamat_opd ?? '')),
+                ],
+                'tanggal_kata' => "Pada hari {$hari} Tanggal {$tanggalKata} Bulan {$bulan} Tahun {$tahunKata}",
+            ];
+        }
+        $tanggalObj = \Carbon\Carbon::parse($data['tanggal'] ?? now()->toDateString());
+        $bulanRomawi = $this->formatRomawi($tanggalObj->month);
+        $nomorFormatted = "{$rawNomor}/BAPB/DISKOMINFO/{$bulanRomawi}/{$tanggalObj->year}";
+        foreach ($this->listPemeriksaanDocs() as $doc) {
+            if (($doc['nomor'] ?? '') === $nomorFormatted && ($doc['id'] ?? '') !== $id) {
+                return back()->withErrors(['nomor' => 'Nomor BAP sudah digunakan'])->withInput();
+            }
+        }
+        $data['nomor'] = $nomorFormatted;
+        $data['nomor_raw'] = $rawNomor;
+        $data['tempat'] = $data['tempat'] ?? 'Bolaang Uki';
+        session(['bap_current' => $data, 'bap_current_id' => $id]);
         Storage::disk('local')->put("users/".Auth::id()."/bap-pemeriksaan/{$id}.json", json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         session()->forget('bap_current_id');
         $bap = BapPemeriksaan::updateOrCreate(
@@ -234,7 +338,7 @@ class PemeriksaanController extends Controller
                 ]);
             }
         }
-        return redirect()->route('reports.pemeriksaan.list')->with('status', $currentId ? 'Berita acara diperbarui' : 'Berita acara disimpan');
+        return redirect()->route('reports.pemeriksaan.list')->with('success', $currentId ? 'Berita acara diperbarui' : 'Berita acara disimpan');
     }
 
     public function list(Request $request): View

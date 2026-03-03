@@ -83,15 +83,15 @@ class OpnameController extends Controller
 
     public function form(Request $request): View
     {
+        // Clear previous session data to ensure fresh form
+        session()->forget(['opname_current', 'opname_current_id']);
+        
         $opd = OpdSetting::where('user_id', Auth::id())->first();
-        $data = session('opname_current');
-        if (! $data) {
-            $data = [
-                'tanggal' => now()->toDateString(),
-                'items' => $this->prefillOpnameItemsByDate(now()->toDateString()),
-                'tempat' => $opd->nama_opd ?? '',
-            ];
-        }
+        $data = [
+            'tanggal' => now()->toDateString(),
+            'items' => $this->prefillOpnameItemsByDate(now()->toDateString()),
+            'tempat' => $opd->nama_opd ?? '',
+        ];
         return view('opname.create', compact('data', 'opd'));
     }
 
@@ -159,6 +159,9 @@ class OpnameController extends Controller
             $validated['pembuka'] = $this->buildPembuka($validated['tanggal'], $opdNama);
         }
         session(['opname_current' => $validated]);
+        if ($request->has('id')) {
+            session(['opname_current_id' => $request->input('id')]);
+        }
         return view('reports.opname_report', [
             'data' => $validated,
             'opd' => $opd,

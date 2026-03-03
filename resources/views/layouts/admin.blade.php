@@ -604,6 +604,12 @@
             <nav class="flex-1 overflow-y-auto py-4">
 
                 <a href="{{ route('dashboard') }}"
+                    @click="(() => {
+                        const s = JSON.parse(localStorage.getItem('sidebarOpenGroups') || '{}');
+                        for (let k in s) s[k] = false;
+                        localStorage.setItem('sidebarOpenGroups', JSON.stringify(s));
+                        $dispatch('sidebar-group-opened', { key: 'none' });
+                    })()"
                     class="flex items-center px-4 py-3 text-sm font-semibold transition rounded-lg hover:bg-indigo-500 hover:text-white {{ request()->routeIs('dashboard') ? 'bg-indigo-500 text-white' : '' }}"
                     :class="sidebarOpen ? 'justify-between' : 'justify-center'">
 

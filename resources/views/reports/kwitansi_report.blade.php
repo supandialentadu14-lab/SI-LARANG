@@ -4,8 +4,19 @@
 @section('subheader', 'Ringkasan pembayaran berdasarkan BAP Penerimaan')
 
 @section('actions')
+    <button onclick="window.print()" class="no-print btn btn-neutral"><i class="fas fa-print"></i> Cetak</button>
+    <form method="POST" action="{{ route('reports.kwitansi.save') }}" class="no-print inline-block ml-2">
+        @csrf
+        <input type="hidden" name="id" value="{{ session('kwitansi_current_id') ?? ($saved_id ?? '') }}">
+        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Simpan</button>
+    </form>
+    @if(session('kwitansi_current_id') || isset($saved_id))
+        <a href="{{ route('reports.kwitansi.edit', session('kwitansi_current_id') ?? ($saved_id ?? '')) }}" class="no-print btn btn-outline ml-2">Edit</a>
+    @else
+        <a href="{{ route('reports.kwitansi.form') }}" class="no-print btn btn-outline ml-2">Edit</a>
+    @endif
     @if (!empty($data['penerimaan_nomor']))
-        <a href="{{ route('reports.kwitansi.print_all', ['penerimaan_nomor' => $data['penerimaan_nomor']]) }}" class="btn btn-neutral ml-2">
+        <a href="{{ route('reports.kwitansi.print_all', ['penerimaan_nomor' => $data['penerimaan_nomor']]) }}" class="no-print btn btn-neutral ml-2">
             <i class="fas fa-print"></i> Cetak Berkas Full
         </a>
     @endif

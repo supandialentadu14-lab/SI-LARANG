@@ -57,8 +57,8 @@
 
     <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 bg-orange-50">
-                <h6 class="font-bold text-blue-700">Form Berita Acara Opname</h6>
+            <div class="px-6 py-4 border-b border-gray-100 bg-slate-800">
+                <h6 class="font-bold text-white">Form Berita Acara Opname</h6>
             </div>
 
             <form method="POST" action="{{ route('reports.opname.update', $id) }}" x-data="opnameForm()" x-init="$nextTick(() => { updatePembuka(); })" class="p-6 space-y-6">
@@ -88,7 +88,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-3">
-                        <h3 class="font-bold text-blue-700 border-b pb-2">Pihak Pertama (Kepala Dinas)</h3>
+                        <h3 class="font-bold text-white border-b pb-2">Pihak Pertama (Kepala Dinas)</h3>
                         @if(isset($opd) && $opd->kepala_nama)
                             <div class="flex gap-2 mb-2">
                                 <button type="button" class="px-3 py-1 rounded bg-indigo-100 text-indigo-700 text-xs font-bold hover:bg-indigo-200 transition" @click="
@@ -112,7 +112,7 @@
                         </div>
                     </div>
                     <div class="space-y-3">
-                        <h3 class="font-bold text-blue-700 border-b pb-2">Pihak Kedua (Pengurus Barang)</h3>
+                        <h3 class="font-bold text-white border-b pb-2">Pihak Kedua (Pengurus Barang)</h3>
                         @if(isset($opd) && $opd->pengurus_nama)
                             <div class="flex gap-2 mb-2">
                                 <button type="button" class="px-3 py-1 rounded bg-indigo-100 text-indigo-700 text-xs font-bold hover:bg-indigo-200 transition" @click="

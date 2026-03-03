@@ -1,6 +1,22 @@
 @extends('layouts.admin')
 
 @section('header', 'Berita Acara Penerimaan')
+@section('subheader', 'Pratinjau & cetak')
+
+@section('actions')
+    <button onclick="window.print()" class="no-print btn btn-neutral"><i class="fas fa-print"></i> Cetak</button>
+    <form method="POST" action="{{ route('reports.penerimaan.save') }}" class="no-print inline-block ml-2">
+        @csrf
+        <input type="hidden" name="id" value="{{ session('penerimaan_current_id') }}">
+        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Simpan</button>
+    </form>
+    @if (session('penerimaan_current_id'))
+        <a href="{{ route('reports.penerimaan.edit', session('penerimaan_current_id')) }}" class="no-print btn btn-outline ml-2">Edit</a>
+    @else
+        <a href="{{ route('reports.penerimaan.form') }}" class="no-print btn btn-outline ml-2">Edit</a>
+    @endif
+@endsection
+
 @section('content')
     <style>
         .preview-paper { 
@@ -44,20 +60,6 @@
         .kop { margin-bottom: 10px; }
         .kop h1 { text-align: center; font-weight: 800; text-transform: uppercase; font-size: 16px; margin: 6px 0; }
     </style>
-
-    <div class="bg-white rounded-lg shadow p-6 mb-6 print:hidden">
-        <button type="button" onclick="window.print()" class="btn btn-neutral"> <i class="fas fa-print"></i> Print</button>
-        <form method="POST" action="{{ route('reports.penerimaan.save') }}" class="inline-block ml-2">
-            @csrf
-            <input type="hidden" name="id" value="{{ session('penerimaan_current_id') }}">
-            <button type="submit" class="btn btn-success"> <i class="fas fa-save"></i> Simpan</button>
-        </form>
-        @if (session('penerimaan_current_id'))
-            <a href="{{ route('reports.penerimaan.edit', session('penerimaan_current_id')) }}" class="btn btn-outline ml-2"> Edit</a>
-        @else
-            <a href="{{ route('reports.penerimaan.form') }}" class="btn btn-outline ml-2"> Edit</a>
-        @endif
-    </div>
 
     <div id="print-area" class="preview-paper">
         @include('partials.kop', ['opd' => $opd])
@@ -111,16 +113,16 @@
                     <td class="text-center">{{ $row['kuantitas'] ?? '' }}</td>
                     <td class="text-center">{{ $row['satuan'] ?? '' }}</td>
                     <td class="text-right">Rp {{ number_format((int)($row['harga'] ?? 0), 0, ',', '.') }}</td>
-                    <td class="text-right">{{ number_format((int)($row['jumlah'] ?? 0), 0, ',', '.') }}</td>
+                    <td class="text-right">Rp {{ number_format((int)($row['jumlah'] ?? 0), 0, ',', '.') }}</td>
                 </tr>
                 @endforeach
                 <tr>
                     <td colspan="5" class="text-right font-bold">Jumlah</td>
-                    <td class="text-right font-bold">{{ number_format((int)($data['total'] ?? 0), 0, ',', '.') }}</td>
+                    <td class="text-right font-bold">Rp {{ number_format((int)($data['total'] ?? 0), 0, ',', '.') }}</td>
                     
                 </tr>
                 <tr>
-                    <td colspan="6" class="text-sm mb-6 text-center font-bold italic">Terbilang : {{ $data['terbilang'] ?? '' }} rupiah</td>
+                    <td colspan="6" class="text-center font-bold italic">Terbilang : {{ $data['terbilang'] ?? '' }} rupiah</td>
                 </tr>
             </tbody>
             
@@ -128,23 +130,28 @@
 
         
 
-        <div class="grid grid-cols-2 gap-6 text-sm mt-8 mb-12">
+        <div class="grid grid-cols-2 gap-6 text-sm mt-8 mb-4">
             <div class="text-center">
-                <div class="font-bold mb-12">Pengurus Barang Pengguna</div><br><br>
-                <div class="font-bold underline">{{ $data['pengguna']['nama'] ?? '' }}</div>
+                <div class="font-bold">Yang Menerima,</div>
+                <div class="font-bold mb-12">Pengurus Barang Pengguna</div>
+                <br>
+                <div class="font-bold underline uppercase">{{ $data['pengguna']['nama'] ?? '' }}</div>
                 <div>NIP: {{ $data['pengguna']['nip'] ?? '' }}</div>
             </div>
             <div class="text-center">
-                <div class="font-bold mb-12">Pejabat Pembuat Komitmen</div><br><br>
-                <div class="font-bold underline">{{ $data['ppk']['nama'] ?? '' }}</div>
+                <div class="font-bold">Mengetahui,</div>
+                <div class="font-bold mb-12">Pejabat Pembuat Komitmen</div>
+                <br>
+                <div class="font-bold underline uppercase">{{ $data['ppk']['nama'] ?? '' }}</div>
                 <div>NIP: {{ $data['ppk']['nip'] ?? '' }}</div>
             </div>
         </div>
-
-        <div class="text-center text-sm mt-8">
+<br>
+        <div class="text-center text-sm mt-4">
             <div class="font-bold mb-2">MENGETAHUI,</div>
-            <div class="mb-8">PENGGUNA ANGGARAN SELAKU PPK</div><br><br><br>
-            <div class="font-bold underline">{{ $data['ppk']['nama'] ?? '' }}</div>
+            <div class="mb-12">PENGGUNA ANGGARAN SELAKU PPK</div>
+            <br>
+            <div class="font-bold underline uppercase">{{ $data['ppk']['nama'] ?? '' }}</div>
             <div>NIP: {{ $data['ppk']['nip'] ?? '' }}</div>
         </div>
     </div>

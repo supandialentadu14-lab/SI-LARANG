@@ -6,8 +6,8 @@
 @section('content')
     <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 bg-orange-50">
-                <h6 class="font-bold text-blue-700">Form Edit Berita Acara Penerimaan</h6>
+            <div class="px-6 py-4 border-b border-gray-100 bg-slate-800">
+                <h6 class="font-bold text-white">Form Edit Berita Acara Penerimaan</h6>
             </div>
 
             <form method="POST" action="{{ route('reports.penerimaan.report') }}" class="p-6 space-y-6">

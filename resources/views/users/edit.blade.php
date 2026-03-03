@@ -11,8 +11,8 @@
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
 
             {{-- Header card --}}
-            <div class="px-6 py-4 border-b border-gray-100 bg-orange-50">
-                <h6 class="font-bold text-blue-700">
+            <div class="px-6 py-4 border-b border-gray-100 bg-slate-800">
+                <h6 class="font-bold text-white">
                     Kredensial Pengguna {{-- Judul bagian kredensial akun --}}
                 </h6>
             </div>
@@ -82,7 +82,7 @@
 
                     {{-- Keterangan bahwa password boleh dikosongkan --}}
                     <p class="text-xs text-gray-400 mb-4 font-bold uppercase tracking-wider">
-                        Change Password (Leave blank to keep current)
+                        Ganti Password, Kosongkan Jika Tidak Ingin Diubah
                     </p>
 
                     {{-- Grid 2 kolom untuk password baru --}}

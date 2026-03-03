@@ -148,6 +148,13 @@ class PenerimaanController extends Controller
         foreach ($this->listPemeriksaanDocs() as $doc) {
             if (($doc['nomor'] ?? '') === $realBapNomor) { $selected = $doc; break; }
         }
+        // Fallback: try raw input if mapping failed
+        if (!$selected) {
+            foreach ($this->listPemeriksaanDocs() as $doc) {
+                if (($doc['nomor'] ?? '') === $inputRef) { $selected = $doc; break; }
+            }
+        }
+        
         $items = $selected['items'] ?? [];
         $cleanItems = [];
         foreach ($items as $it) {
@@ -210,15 +217,100 @@ class PenerimaanController extends Controller
 
     public function save(Request $request): RedirectResponse
     {
-        $data = session('penerimaan_current') ?? [];
-        if (!$data) {
-            return redirect()->route('reports.penerimaan.form')->with('status', 'Data penerimaan tidak ditemukan');
-        }
+        $payload = $request->all();
         $currentId = session('penerimaan_current_id') ?? $request->input('id');
         $id = $currentId ?: (string) Str::uuid();
+
+        // If form submitted directly (has 'penerimaan_nomor'), rebuild data
+        // Also check if 'pemeriksaan_nomor' exists (used in create form)
+        if (!empty($payload['penerimaan_nomor']) || !empty($payload['pemeriksaan_nomor'])) {
+            $opd = OpdSetting::where('user_id', Auth::id())->first();
+            $master = $this->loadNotaMaster();
+            
+            // Use mapping to find correct BAP Doc
+            $bapMap = $this->getBapNomorMap();
+            $inputRef = $payload['pemeriksaan_nomor'] ?? $payload['penerimaan_nomor'] ?? '';
+            $realBapNomor = $bapMap[$inputRef] ?? $inputRef;
+            
+            $selected = null;
+            foreach ($this->listPemeriksaanDocs() as $doc) {
+                if (($doc['nomor'] ?? '') === $realBapNomor) { $selected = $doc; break; }
+            }
+            // If mapping failed, try to find by raw input
+            if (!$selected) {
+                foreach ($this->listPemeriksaanDocs() as $doc) {
+                    if (($doc['nomor'] ?? '') === $inputRef) { $selected = $doc; break; }
+                }
+            }
+            
+            $items = $selected['items'] ?? [];
+            $cleanItems = [];
+            foreach ($items as $it) {
+                $name = $it['nama'] ?? '';
+                $qty = (int)($it['kuantitas'] ?? 0);
+                $unit = $it['satuan'] ?? '';
+                $price = (int)($it['harga'] ?? 0);
+                $total = (int)($it['jumlah'] ?? ($qty * $price));
+                $cleanItems[] = [
+                    'nama' => $name,
+                    'kuantitas' => $qty,
+                    'satuan' => $unit,
+                    'harga' => $price,
+                    'jumlah' => $total,
+                ];
+            }
+            $totalSum = 0;
+            foreach ($cleanItems as $row) { $totalSum += (int)($row['jumlah'] ?? 0); }
+            $dt = \Carbon\Carbon::parse($payload['tanggal'] ?? now()->toDateString())->locale('id');
+            $hari = $dt->translatedFormat('l');
+            $bulan = $dt->translatedFormat('F');
+            $tanggalKata = ucwords($this->toWordsId((int) $dt->format('d')));
+            $tahunKata = ucwords($this->toWordsId((int) $dt->format('Y')));
+            
+            $tanggalObj = \Carbon\Carbon::parse($payload['tanggal'] ?? now()->toDateString());
+            $tahunAnggaran = $tanggalObj->year;
+            
+            // Format Nomor Otomatis: [Input]/BASTB/DISKOMINFO/[BulanRomawi]/[Tahun]
+            $inputNomor = trim((string)($payload['nomor'] ?? ''));
+            if (preg_match('/^\d+$/', $inputNomor)) {
+                $bulanRomawi = $this->formatRomawi($tanggalObj->month);
+                $nomorFormatted = "{$inputNomor}/BASTB/DISKOMINFO/{$bulanRomawi}/{$tahunAnggaran}";
+            } else {
+                $nomorFormatted = $inputNomor;
+            }
+
+            $data = [
+                'nomor' => $nomorFormatted,
+                'tanggal' => $payload['tanggal'] ?? now()->toDateString(),
+                'tempat' => $payload['tempat'] ?? ($opd->nama_opd ?? ''),
+                'pemeriksaan_nomor' => $realBapNomor,
+                'nota' => $selected['nota'] ?? [],
+                'items' => $cleanItems,
+                'terbilang' => ucwords($this->toWordsId((int) $totalSum)),
+                'total' => $totalSum,
+                'ppk' => [
+                    'nama' => ($master['ppk']['nama'] ?? '') ?: ($opd->kepala_nama ?? ''),
+                    'nip' => ($master['ppk']['nip'] ?? '') ?: ($opd->kepala_nip ?? ''),
+                ],
+                'pengguna' => [
+                    'nama' => $master['pengurus_pengguna']['nama'] ?? '',
+                    'nip' => $master['pengurus_pengguna']['nip'] ?? '',
+                    'jabatan' => 'Pengurus Barang Pengguna',
+                ],
+                'tanggal_kata' => "Pada hari ini {$hari} Tanggal {$tanggalKata} Bulan {$bulan} Tahun {$tahunKata}, kami yang bertanda tangan di bawah ini:",
+            ];
+        } else {
+            // Fallback to session
+            $data = session('penerimaan_current') ?? [];
+        }
+
+        if (!$data) {
+            return redirect()->route('reports.penerimaan.form')->with('error', 'Data penerimaan tidak ditemukan. Silakan isi form kembali.');
+        }
+
         Storage::disk('local')->put("users/".Auth::id()."/bap-penerimaan/{$id}.json", json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         session()->forget('penerimaan_current_id');
-        return redirect()->route('reports.penerimaan.list')->with('status', $currentId ? 'BAP Penerimaan diperbarui' : 'BAP Penerimaan disimpan');
+        return redirect()->route('reports.penerimaan.list')->with('success', $currentId ? 'BAP Penerimaan diperbarui' : 'BAP Penerimaan disimpan');
     }
 
     public function list(Request $request): View

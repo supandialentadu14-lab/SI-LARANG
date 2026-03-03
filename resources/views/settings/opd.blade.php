@@ -6,8 +6,8 @@
 @section('content')
     <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 bg-indigo-50">
-                <h6 class="font-bold text-indigo-700">Profil OPD</h6>
+            <div class="px-6 py-4 border-b border-gray-100 bg-slate-800">
+                <h6 class="font-bold text-white">Profil OPD</h6>
             </div>
             <form action="{{ route('settings.opd.update') }}" method="POST" class="p-6 space-y-6">
                 @csrf

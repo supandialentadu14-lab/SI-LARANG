@@ -1,8 +1,8 @@
 {{-- Menggunakan layout utama admin --}} @extends('layouts.admin') {{-- Mengisi section header pada layout --}} @section('header', 'Tambah Barang') {{-- Mengisi section content pada layout --}}
 @section('content') {{-- Container utama dengan lebar maksimal 4xl dan posisi tengah --}} <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden"> {{-- Header Card --}} <div
-                class="px-6 py-4 border-b border-gray-100 bg-orange-50">
-                <h6 class="font-bold text-blue-700 flex items-center"> {{-- Icon tambah --}} <i
+                class="px-6 py-4 border-b border-gray-100 bg-slate-800">
+                <h6 class="font-bold text-white flex items-center"> {{-- Icon tambah --}} <i
                         class="fas fa-plus-circle mr-2"></i> Informasi Barang </h6>
             </div> {{-- Form untuk menyimpan data produk --}} <form action="{{ route('products.store') }}" method="POST"
                 enctype="multipart/form-data" class="p-6"> {{-- Token keamanan Laravel (wajib pada form POST) --}} @csrf {{-- Grid 2 kolom untuk layout form --}} <div

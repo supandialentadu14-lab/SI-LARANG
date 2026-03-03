@@ -12,8 +12,8 @@
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
 
             {{-- Header card --}}
-            <div class="px-6 py-4 border-b border-gray-100 bg-orange-50">
-                <h6 class="font-bold text-blue-700 flex items-center">
+            <div class="px-6 py-4 border-b border-gray-100 bg-slate-800">
+                <h6 class="font-bold text-white flex items-center">
                     {{-- Icon edit --}}
                     <i class="fas fa-edit mr-2"></i>
                     Edit Barang

@@ -1,6 +1,6 @@
 @extends('layouts.admin') {{-- Menggunakan layout utama admin --}}
 
-@section('header', 'New User') {{-- Judul halaman tambah user baru --}}
+@section('header', 'Pengguna Baru') {{-- Judul halaman tambah user baru --}}
 
 @section('content')
 
@@ -11,9 +11,9 @@
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
 
             {{-- Header card --}}
-            <div class="px-6 py-4 border-b border-gray-100 bg-orange-50">
-                <h6 class="font-bold text-blue-700">
-                    Account Credentials {{-- Judul form --}}
+            <div class="px-6 py-4 border-b border-gray-100 bg-slate-800">
+                <h6 class="font-bold text-white">
+                    Data Pengguna {{-- Judul form --}}
                 </h6>
             </div>
 

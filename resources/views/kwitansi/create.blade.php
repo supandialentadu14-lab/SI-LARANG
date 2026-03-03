@@ -5,8 +5,8 @@
 @section('content')
     <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 bg-orange-50">
-                <h6 class="font-bold text-blue-700">Form Kwitansi</h6>
+            <div class="px-6 py-4 border-b border-gray-100 bg-slate-800">
+                <h6 class="font-bold text-white">Form Kwitansi</h6>
             </div>
             
             <form action="{{ route('reports.kwitansi.save') }}" method="POST" class="p-6 space-y-6">
@@ -45,6 +45,7 @@
                 @include('partials.form-actions', [
                     'backRoute' => route('reports.kwitansi.list'),
                     'previewRoute' => route('reports.kwitansi.report'),
+                    'saveRoute' => route('reports.kwitansi.save'),
                 ])
             </form>
         </div>
